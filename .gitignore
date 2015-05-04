@@ -1,0 +1,7 @@
+# git ignore file
+bin/*
+obj/*
+Lib/Cinchoo.Core.pdb
+*.suo
+*.user
+packages/*

@@ -260,6 +260,7 @@
                         Style="{StaticResource WaterMarkTextBoxStyle}" 
                         Tag="Choose source directory..."
                         ToolTip="Choose source directory..."
+                            Text="{Binding Path=SourceDirectory, UpdateSourceTrigger=PropertyChanged}"
                         />
                         <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                         Grid.Row="0"
@@ -281,14 +282,16 @@
                             </Image>
                         </Button>
                         <TextBox
-                        x:Name="txtDestDirectory" Text="{Binding MoveOrCopyToDirectory, UpdateSourceTrigger=PropertyChanged}"
+                        x:Name="txtDestDirectory" 
                         Grid.Row="1" 
                         Grid.Column="0"
                         Margin="1"
                         TabIndex="2" Grid.ColumnSpan="3" 
                         Style="{StaticResource WaterMarkTextBoxStyle}"
                         Tag="Choose destination directory..."
-                        ToolTip="Choose destination directory..."/>
+                        ToolTip="Choose destination directory..."
+                            Text="{Binding Path=DestDirectory, UpdateSourceTrigger=PropertyChanged}"
+                            />
                         <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                         Grid.Row="1"
                         Grid.Column="3"
@@ -318,11 +321,27 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition
+                    Height="100"
+                    MinHeight="100" />
+                    <RowDefinition
                     Height="Auto" />
                     <RowDefinition
                     Height="*"
                     MinHeight="100" />
                 </Grid.RowDefinitions>
+                <GroupBox
+                Margin="5,0,5,0"
+                Grid.Row="0"
+                Header="RoboCopy Command"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+                    <TextBox
+                    Margin="0,3,0,2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Name="txtRoboCopyCmd"
+                    TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsEnabled="True" />
+                </GroupBox>
                 <GridSplitter
                 Margin="5,5,5,0"
                 ResizeDirection="Rows"

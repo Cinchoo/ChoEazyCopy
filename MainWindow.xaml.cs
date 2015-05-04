@@ -39,6 +39,7 @@ namespace ChoEazyCopy
         private ChoAppSettings _appSettings;
         private bool _isRunning = false;
         private bool _isUndoRunning = false;
+        private bool _wndLoaded = false;
         private bool _isDirty = false;
         private bool IsDirty
         {
@@ -55,7 +56,7 @@ namespace ChoEazyCopy
                 IsDirty = false;
             }
         }
-        //ChoFileFolderProcessor _fileProcessor = null;
+        ChoRoboCopyManager _roboCopyManager = null;
         ChoWPFBindableConfigObject<ChoAppSettings> _bindObj;
 
         #endregion Instance Members (Private)
@@ -73,6 +74,7 @@ namespace ChoEazyCopy
         {
             _bindObj = new ChoWPFBindableConfigObject<ChoAppSettings>();
             _appSettings = _bindObj.UnderlyingSource;
+            _appSettings.Init();
             if (!SettingsFilePath.IsNullOrWhiteSpace() && File.Exists(SettingsFilePath))
                 _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
             else
@@ -97,18 +99,42 @@ namespace ChoEazyCopy
                      }));
             });
 
-            _appSettings.AfterConfigurationObjectMemberSet += (o, e) => IsDirty = true;
+            _appSettings.AfterConfigurationObjectMemberSet += ((o, e) =>
+                {
+                    if (_wndLoaded)
+                    {
+                        IsDirty = true;
+                        this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                             new Action(() =>
+                             {
+                                 txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
+                             }));
+                    }
+                });
+
             _appSettings.ConfigurationObjectMemberLoadError += _appSettings_ConfigurationObjectMemberLoadError;
             _appSettings.AfterConfigurationObjectPersisted += _appSettings_AfterConfigurationObjectPersisted;
             _appSettings.AfterConfigurationObjectLoaded += ((o, e) =>
             {
-                this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
-                     new Action(() =>
-                     {
-                         this.DataContext = null;
-                         this.DataContext = _appSettings;
-                         IsDirty = false;
-                     }));
+                if (_wndLoaded)
+                {
+                    this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                         new Action(() =>
+                         {
+                             this.DataContext = null;
+                             this.DataContext = _appSettings;
+                             txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
+                             IsDirty = false;
+                         }));
+                }
+                else
+                {
+                    this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                         new Action(() =>
+                         {
+                             txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
+                         }));
+                }
             });
 
             _mainUIThread = Thread.CurrentThread;
@@ -135,6 +161,11 @@ namespace ChoEazyCopy
             //else if (!_appSettings.Directories.IsNullOrWhiteSpace())
             //    AddToFilesListBox(_appSettings.Directories);
             IsDirty = false;
+        }
+
+        private void MyWindow_ContentRendered(object sender, EventArgs e)
+        {
+            _wndLoaded = true;
         }
 
         private void SaveDirectories()
@@ -165,9 +196,20 @@ namespace ChoEazyCopy
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
             grpFolders.IsEnabled = !_isRunning;
-            btnRun.IsEnabled = !_isRunning;
+            if (_isRunning)
+                btnRun.IsEnabled = false;
+            else
+            {
+                if (!txtSourceDirectory.Text.IsNullOrWhiteSpace()
+                    && Directory.Exists(txtSourceDirectory.Text)
+                    && !txtDestDirectory.Text.IsNullOrWhiteSpace()
+                    )
+                    btnRun.IsEnabled = true;
+                else
+                    btnRun.IsEnabled = false;
+            }
+
             btnStop.IsEnabled = _isRunning;
-            //btnDeleteFolder.IsEnabled = lstFolders.IsKeyboardFocusWithin && !_isRunning && lstFolders.SelectedItems.Count > 0;
             btnNewFile.IsEnabled = !_isRunning;
             btnOpenFile.IsEnabled = !_isRunning;
             btnSaveFile.IsEnabled = !_isRunning && IsDirty;
@@ -219,31 +261,6 @@ namespace ChoEazyCopy
             }
         }
 
-        private void btnPlugsBrowse_Click(object sender, RoutedEventArgs e)
-        {
-            ChoFolderBrowserDialog dlg1 = new ChoFolderBrowserDialog
-            {
-                Description = "Choose plug-ins folder...",
-                ShowNewFolderButton = true,
-                ShowEditBox = true,
-                ShowBothFilesAndFolders = false,
-                NewStyle = true,
-                //SelectedPath = (System.IO.Directory.Exists(txtPlugInsFolder.Text)) ? txtPlugInsFolder.Text : "",
-                ShowFullPathInEditBox = false,
-            };
-            dlg1.RootFolder = System.Environment.SpecialFolder.MyComputer;
-
-            var result = dlg1.ShowDialog();
-
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                //if (Directory.Exists(dlg1.SelectedPath))
-                //    txtPlugInsFolder.Text = dlg1.SelectedPath;
-                //else
-                //    txtPlugInsFolder.Text = System.IO.Path.GetDirectoryName(dlg1.SelectedPath);
-            }
-        }
-
         private void btnDestDirBrowse_Click(object sender, RoutedEventArgs e)
         {
             ChoFolderBrowserDialog dlg1 = new ChoFolderBrowserDialog
@@ -280,27 +297,10 @@ namespace ChoEazyCopy
             {
                 _isRunning = true;
 
-                //_fileProcessor = new ChoFileFolderProcessor();
-                //_fileProcessor.Status += (sender, e) => SetStatusMsg(e.Message);
-                //_fileProcessor.AppStatus += (sender, e) => UpdateStatus(e.Message, e.CleanupStatus == ChoFileProcessStatus.SUCCESS);
-                //foreach (string folder in lstFolders.Items)
-                //{
-                //    if (_cancelOps)
-                //        break;
-
-                //    //string folder = lstFolders.Items[0].ToString();
-
-                //    this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
-                //        new Action<string>((text) =>
-                //        {
-                //            //lstFolders.Items.Remove(text);
-                //            lstFolders.SelectedItem = text;
-                //            UpdateStatus("Ready", false);
-                //        }),
-                //         folder);
-
-                //    _fileProcessor.Process(folder);
-                //}
+                _roboCopyManager = new ChoRoboCopyManager();
+                _roboCopyManager.Status += (sender, e) => SetStatusMsg(e.Message);
+                _roboCopyManager.AppStatus += (sender, e) => UpdateStatus(e.Message, e.Tag.ToNString());
+                _roboCopyManager.Process();
             }
             catch (ThreadAbortException)
             {
@@ -312,8 +312,7 @@ namespace ChoEazyCopy
             finally
             {
                 _isRunning = false;
-                //_fileProcessor = null;
-                //_undoFilePath = ChoUndoFileProcessManager.Default.Value.Save();
+                _roboCopyManager = null;
             }
         }
 
@@ -337,13 +336,13 @@ namespace ChoEazyCopy
             }
         }
 
-        private void UpdateStatus(string text, bool setTooltipStatus)
+        private void UpdateStatus(string text, string toolTipText)
         {
             sbAppStatus.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 sbAppStatus.Text = text;
-                if (setTooltipStatus)
-                    ShowBalloonTipText(text);
+                if (!toolTipText.IsNullOrWhiteSpace())
+                    ShowBalloonTipText(toolTipText);
             }));
         }
 
@@ -354,21 +353,6 @@ namespace ChoEazyCopy
                 ChoApplication.NotifyIcon.BalloonTipText = msg;
                 ChoApplication.NotifyIcon.ShowBalloonTip(500);
             }
-        }
-
-        private void plugInEditorSettings_AfterConfigurationObjectLoaded(object sender, ChoConfigurationObjectEventArgs e)
-        {
-            ChoPlugInEditorSettings plugInEditorSettings = sender as ChoPlugInEditorSettings;
-            if (plugInEditorSettings == null) return;
-
-            plugInEditorSettings.NewPlugInDefFileVisible = false;
-            plugInEditorSettings.OpenPlugInDefFileVisible = false;
-            plugInEditorSettings.SaveAsPlugInDefFileVisible = false;
-            plugInEditorSettings.SavePlugInDefFileVisible = false;
-
-            plugInEditorSettings.AddNewPlugInsGroupEnabled = false;
-            plugInEditorSettings.RenamePlugInsGroupEnabled = false;
-            plugInEditorSettings.DeletePlugInsGroupEnabled = false;
         }
 
         private void tbrMain_Loaded(object sender, RoutedEventArgs e)
@@ -403,27 +387,9 @@ namespace ChoEazyCopy
             {
                 Thread.Sleep(1000);
 
-                if (_isUndoRunning)
-                {
-                    Thread undoProcessorThread = _undoProcessThread;
-                    if (undoProcessorThread != null)
-                    {
-                        try
-                        {
-                            undoProcessorThread.Abort();
-                        }
-                        catch (ThreadAbortException)
-                        {
-                            Thread.ResetAbort();
-                        }
-                        _undoProcessThread = null;
-                    }
-                    return;
-                }
-
-                //ChoFileFolderProcessor fileProcessor = _fileProcessor;
-                //if (fileProcessor != null)
-                //    fileProcessor.CancelProcessing();
+                ChoRoboCopyManager roboCopyManager = _roboCopyManager;
+                if (roboCopyManager != null)
+                    roboCopyManager.Cancel();
 
                 Thread fileNameProcessorThread = _fileNameProcessThread;
                 if (fileNameProcessorThread != null)
@@ -521,6 +487,8 @@ namespace ChoEazyCopy
             {
                 SettingsFilePath = dlg.FileName;
                 _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
+                this.DataContext = null;
+                this.DataContext = _appSettings;
                 IsDirty = false;
             }
         }
@@ -533,7 +501,7 @@ namespace ChoEazyCopy
             SettingsFilePath = null;
             _appSettings.Reset();
             this.DataContext = null;
-            this.DataContext = _bindObj;
+            this.DataContext = _appSettings;
             IsDirty = false;
         }
 
@@ -552,16 +520,6 @@ namespace ChoEazyCopy
             }
 
             e.Cancel = SaveSettings();
-        }
-
-        private void MyWindow_ContentRendered(object sender, EventArgs e)
-        {
-            //_wndLoaded = true;
-        }
-
-        private void btnRegexHelp_Click(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("https://msdn.microsoft.com/en-us/library/az24scfc%28v=vs.110%29.aspx");
         }
     }
 

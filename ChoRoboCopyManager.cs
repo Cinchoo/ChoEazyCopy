@@ -85,30 +85,39 @@
 
         public void Process()
         {
-            AppStatus.Raise(this, new ChoFileProcessEventArgs("Starting RoboCopy operation...", "Busy"));
+            AppStatus.Raise(this, new ChoFileProcessEventArgs("Starting RoboCopy operation..."));
 
-            // Setup the process start info
-            var processStartInfo = new ProcessStartInfo(_appSettings.RoboCopyFilePath, _appSettings.GetCmdLineParams())
+            try
             {
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true
-            };
+                // Setup the process start info
+                var processStartInfo = new ProcessStartInfo(_appSettings.RoboCopyFilePath, _appSettings.GetCmdLineParams())
+                {
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
 
-            // Setup the process
-            Process process = new Process { StartInfo = processStartInfo, EnableRaisingEvents = true };
+                // Setup the process
+                Process process = new Process { StartInfo = processStartInfo, EnableRaisingEvents = true };
 
-            // Register event
-            process.OutputDataReceived += OnOutputDataReceived;
+                // Register event
+                process.OutputDataReceived += OnOutputDataReceived;
 
-            _process = process;
+                _process = process;
 
-            // Start process
-            process.Start();
-            process.BeginOutputReadLine();
-            process.WaitForExit();
+                // Start process
+                process.Start();
+                process.BeginOutputReadLine();
+                process.WaitForExit();
 
-            AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation completed successfully.", "Ready"));
+                _process = null;
+                AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation completed successfully.", "RoboCopy operation completed successfully"));
+            }
+            catch (Exception ex)
+            {
+                Status.Raise(this, new ChoFileProcessEventArgs(ex.ToString()));
+                AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation failed.", "RoboCopy operation failed."));
+            }
         }
 
         internal void Cancel()
@@ -116,9 +125,13 @@
             Process process = _process;
             if (process == null) return;
 
-            process.Kill();
-            AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation canceled.", "Ready"));
-            _process = null;
+            try
+            {
+                process.Kill();
+                AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation canceled."));
+                _process = null;
+            }
+            catch { }
         }
 
         void OnOutputDataReceived(object sender, DataReceivedEventArgs e)

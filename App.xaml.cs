@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.IO;
 using System.Diagnostics;
+using ChoEazyCopy.Properties;
 
 namespace ChoEazyCopy
 {
@@ -87,7 +88,7 @@ namespace ChoEazyCopy
             {
                 ChoFileAssociationCmdLineArgs cmd = new ChoFileAssociationCmdLineArgs();
                 if (cmd.IsAppFile)
-                    return new MainWindow();//cmd.SettingsFilePath);
+                    return new MainWindow(cmd.SettingsFilePath);
                 else
                     return new MainWindow();
             }
@@ -97,7 +98,9 @@ namespace ChoEazyCopy
         {
             ni.Text = "Eazy Copy - Cinchoo";
 
-            ni.ContextMenuStrip.Items.Insert(1, new System.Windows.Forms.ToolStripMenuItem("Open New Instance", null, ((o, e) =>
+            ni.ContextMenuStrip.Items.Insert(1, new System.Windows.Forms.ToolStripMenuItem("Open New Instance",
+                System.Drawing.Image.FromStream(this.GetType().Assembly.GetManifestResourceStream("ChoEazyCopy.Resources.OpenNewWindow.png")),
+                ((o, e) =>
                 {
                     var info = new System.Diagnostics.ProcessStartInfo(ChoApplication.EntryAssemblyLocation);
                     System.Diagnostics.Process.Start(info);

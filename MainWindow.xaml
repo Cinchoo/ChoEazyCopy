@@ -105,7 +105,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="400" />
-            <ColumnDefinition Width="200" MinWidth="200" MaxWidth="350"/>
+            <ColumnDefinition Width="200" MinWidth="200" MaxWidth="550"/>
         </Grid.ColumnDefinitions>
 
         <ToolBarTray Grid.Row="0" Width="Auto">

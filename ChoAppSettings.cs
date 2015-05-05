@@ -30,23 +30,37 @@
     [Flags]
     public enum ChoCopyFlags
     {
+        [Description("D")]
         Data,
+        [Description("A")]
         Attributes,
+        [Description("T")]
         Timestamps,
+        [Description("S")]
         SecurityNTFSACLs,
+        [Description("O")]
         OwnerInfo,
+        [Description("U")]
         AuditingInfo
     }
 
     public enum ChoFileAttributes
     {
+        [Description("R")]
         ReadOnly,
+        [Description("H")]
         Hidden,
+        [Description("A")]
         Archive,
+        [Description("S")]
         System,
+        [Description("C")]
         Compressed,
+        [Description("N")]
         Normal,
+        [Description("E")]
         Encrypted,
+        [Description("T")]
         Temporary
     }
 
@@ -375,24 +389,42 @@
             set;
         }
 
+        private TimeSpan _runHourStartTime;
         [Category("Copy Options")]
         [Description("Run Hours StartTime, when new copies may be started after then. (/RH:hhmm-hhmm).")]
         [DisplayName("RunHourStartTime")]
         [ChoPropertyInfo("runHourStartTime")]
+        [XmlIgnore]
         public TimeSpan RunHourStartTime
         {
-            get;
-            set;
+            get { return _runHourStartTime; }
+            set { _runHourStartTime = value; }
         }
 
+        [Browsable(false)]
+        public long RunHourStartTimeTicks
+        {
+            get { return _runHourStartTime.Ticks; }
+            set { _runHourStartTime = new TimeSpan(value); }
+        }
+
+        private TimeSpan _runHourEndTime;
         [Category("Copy Options")]
-        [Description("Run Hours EndTime, when new copies may be started before then. (/RH:hhmm-hhmm).")]
+        [Description("Run Hours EndTime, when new copies may be Ended before then. (/RH:hhmm-hhmm).")]
         [DisplayName("RunHourEndTime")]
         [ChoPropertyInfo("runHourEndTime")]
+        [XmlIgnore]
         public TimeSpan RunHourEndTime
         {
-            get;
-            set;
+            get { return _runHourEndTime; }
+            set { _runHourEndTime = value; }
+        }
+
+        [Browsable(false)]
+        public long RunHourEndTimeTicks
+        {
+            get { return _runHourEndTime.Ticks; }
+            set { _runHourEndTime = new TimeSpan(value); }
         }
 
         [Category("Copy Options")]
@@ -725,7 +757,11 @@
             if (EncrptFileEFSRawMode)
                 cmdText.Append(" /EFSRAW");
             if (!CopyFlags.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /COPY:{0}", CopyFlags);
+            {
+                cmdText.AppendFormat(" /COPY:{0}", (from f in CopyFlags.SplitNTrim()
+                                                    where !f.IsNullOrWhiteSpace()
+                                                    select ((ChoCopyFlags)Enum.Parse(typeof(ChoCopyFlags), f)).ToDescription()).Join(""));
+            }
             if (CopyDirTimestamp)
                 cmdText.Append(" /DCOPY:T");
             if (CopyFilesWithSecurity)
@@ -749,9 +785,17 @@
             if (MoveFilesNDirs)
                 cmdText.Append(" /MOVE");
             if (!AddFileAttributes.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /A+:{0}", AddFileAttributes);
+            {
+                cmdText.AppendFormat(" /A+:{0}", (from f in AddFileAttributes.SplitNTrim()
+                                                  where !f.IsNullOrWhiteSpace()
+                                                  select ((ChoFileAttributes)Enum.Parse(typeof(ChoFileAttributes), f)).ToDescription()).Join(""));
+            }
             if (!RemoveFileAttributes.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /A-:{0}", RemoveFileAttributes);
+            {
+                cmdText.AppendFormat(" /A-:{0}", (from f in RemoveFileAttributes.SplitNTrim()
+                                                  where !f.IsNullOrWhiteSpace()
+                                                  select ((ChoFileAttributes)Enum.Parse(typeof(ChoFileAttributes), f)).ToDescription()).Join(""));
+            }
             if (CreateDirTree)
                 cmdText.Append(" /CREATE");
             if (CreateFATFileNames)
@@ -764,8 +808,9 @@
             if (RunAgainWithChangesSeenInMin > 0)
                 cmdText.AppendFormat(" /MOT:{0}", RunAgainWithChangesSeenInMin);
             if (RunHourStartTime != TimeSpan.Zero
-                && RunHourEndTime != TimeSpan.Zero)
-                cmdText.AppendFormat(" /RH:{0}={1}", RunHourStartTime.ToString("hhmm"), RunHourEndTime.ToString("hhmm"));
+                && RunHourEndTime != TimeSpan.Zero
+                && RunHourStartTime < RunHourEndTime)
+                cmdText.AppendFormat(" /RH:{0}-{1}", RunHourStartTime.ToString("hhmm"), RunHourEndTime.ToString("hhmm"));
             if (CheckRunHourPerFileBasis)
                 cmdText.Append(" /PF");
             if (InterPacketGapInMS > 0)

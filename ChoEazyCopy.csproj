@@ -123,26 +123,21 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\AddFile.png" />
-    <Resource Include="Resources\Copy.png" />
-    <Resource Include="Resources\Cut.png" />
-    <Resource Include="Resources\DeleteFile.ico" />
     <Resource Include="Resources\Erase.png" />
-    <Resource Include="Resources\ExprEditor.png" />
-    <Resource Include="Resources\Help.png" />
     <Resource Include="Resources\NewFile.png" />
     <Resource Include="Resources\OpenFile.png" />
     <Resource Include="Resources\OpenFolder.png" />
-    <Resource Include="Resources\OpenPlugInDefFile.png" />
-    <Resource Include="Resources\Paste.png" />
-    <Resource Include="Resources\ResetPlugInDefFile.png" />
+    <EmbeddedResource Include="Resources\OpenNewWindow.png" />
     <Resource Include="Resources\Run.png" />
     <Resource Include="Resources\SaveAsFile.png" />
     <Resource Include="Resources\SaveFile.png" />
     <Resource Include="Resources\Stop.png" />
-    <Resource Include="Resources\Undo.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\Cinchoo.Core.dll" />
+    <Resource Include="Resources\Copy.png" />
+    <Resource Include="Resources\Cut.png" />
+    <Resource Include="Resources\Paste.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

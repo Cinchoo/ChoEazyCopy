@@ -61,7 +61,7 @@
 
         #region Instance Data Members (Private)
 
-        private bool _cancelRequested = false;
+        private Process _process = null;
 
         #endregion Instance Data Members (Private)
 
@@ -91,7 +91,8 @@
             var processStartInfo = new ProcessStartInfo(_appSettings.RoboCopyFilePath, _appSettings.GetCmdLineParams())
             {
                 UseShellExecute = false,
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
             };
 
             // Setup the process
@@ -100,13 +101,24 @@
             // Register event
             process.OutputDataReceived += OnOutputDataReceived;
 
+            _process = process;
+
             // Start process
             process.Start();
             process.BeginOutputReadLine();
             process.WaitForExit();
 
-            process.Kill();
             AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation completed successfully.", "Ready"));
+        }
+
+        internal void Cancel()
+        {
+            Process process = _process;
+            if (process == null) return;
+
+            process.Kill();
+            AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation canceled.", "Ready"));
+            _process = null;
         }
 
         void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -123,10 +135,5 @@
         }
 
         #endregion
-
-        internal void Cancel()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

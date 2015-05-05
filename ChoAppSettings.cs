@@ -725,14 +725,20 @@
             return "{0} {1}".FormatString(RoboCopyFilePath, GetCmdLineParams());
         }
 
-        internal string GetCmdLineParams()
+        internal string GetCmdLineParams(string sourceDirectory = null, string destDirectory = null)
         {
             StringBuilder cmdText = new StringBuilder();
-
-            if (!SourceDirectory.IsNullOrWhiteSpace())
+            
+            if (!sourceDirectory.IsNullOrWhiteSpace())
+                cmdText.AppendFormat(" \"{0}\"", sourceDirectory);
+            else if (!SourceDirectory.IsNullOrWhiteSpace())
                 cmdText.AppendFormat(" \"{0}\"", SourceDirectory);
-            if (!DestDirectory.IsNullOrWhiteSpace())
+
+            if (!destDirectory.IsNullOrWhiteSpace())
+                cmdText.AppendFormat(" \"{0}\"", destDirectory);
+            else if (!DestDirectory.IsNullOrWhiteSpace())
                 cmdText.AppendFormat(" \"{0}\"", DestDirectory);
+
             if (!Files.IsNullOrWhiteSpace())
                 cmdText.AppendFormat(" {0}", Files);
             else

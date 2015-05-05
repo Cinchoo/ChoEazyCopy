@@ -75,46 +75,34 @@ namespace ChoEazyCopy
             }
         }
 
-        public void StartFileCopy()
+        public void StartFileCopy(string sourceDirectory = null, string destDirectory = null)
         {
             try
             {
-                //ChoAppSettings appSettings = new ChoAppSettings();
-                //if (!SettingsFilePath.IsNullOrWhiteSpace())
-                //{
-                //    if (!File.Exists(SettingsFilePath))
-                //        throw new ArgumentException("Can't find '{0}' settings file.".FormatString(SettingsFilePath));
+                ChoAppSettings appSettings = new ChoAppSettings();
+                if (!SettingsFilePath.IsNullOrWhiteSpace())
+                {
+                    if (!File.Exists(SettingsFilePath))
+                        throw new ArgumentException("Can't find '{0}' settings file.".FormatString(SettingsFilePath));
 
-                //    appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
-                //}
+                    appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
+                }
 
-                //ChoConsole.WriteLine("PREVIEW: {0}".FormatString(appSettings.PreviewMode ? "ON" : "OFF"), ConsoleColor.Magenta);
-                //if (!appSettings.MoveOrCopyToDirectory.IsNullOrWhiteSpace())
-                //    ChoConsole.WriteLine("{0} files to {1}".FormatString(appSettings.DoCopy ? "Coping" : "Moving", appSettings.MoveOrCopyToDirectory), ConsoleColor.Magenta);
-                //ChoConsole.WriteLine();
+                ChoConsole.WriteLine();
 
-                //ChoFileFolderProcessor _fileFolderNameReplacer = new ChoFileFolderProcessor(SettingsFilePath);
-                //_fileFolderNameReplacer.Status += (sender, e) =>
-                //{
-                //    ChoTrace.Debug(e.Message);
-                //    ChoConsole.WriteLine(e.Message, ConsoleColor.Yellow);
-                //};
-                //_fileFolderNameReplacer.AppStatus += (sender, e) =>
-                //{
-                //    ChoTrace.Debug(e.Message);
-                //    ChoConsole.WriteLine(e.Message, ConsoleColor.Yellow);
-                //};
+                ChoRoboCopyManager _roboCopyManager = new ChoRoboCopyManager(SettingsFilePath);
+                _roboCopyManager.Status += (sender, e) =>
+                {
+                    ChoTrace.Debug(e.Message);
+                    ChoConsole.WriteLine(e.Message, ConsoleColor.Yellow);
+                };
+                _roboCopyManager.AppStatus += (sender, e) =>
+                {
+                    ChoTrace.Debug(e.Message);
+                    ChoConsole.WriteLine(e.Message, ConsoleColor.Yellow);
+                };
 
-                //if (!Directory.IsNullOrWhiteSpace())
-                //{
-                //    foreach (string folder in Directory.SplitNTrim())
-                //        _fileFolderNameReplacer.Process(folder);
-                //}
-                //else if (!appSettings.Directories.IsNullOrWhiteSpace())
-                //{
-                //    foreach (string folder in appSettings.Directories.SplitNTrim())
-                //        _fileFolderNameReplacer.Process(folder);
-                //}
+                _roboCopyManager.Process(sourceDirectory, destDirectory);
             }
             catch (ThreadAbortException)
             {

@@ -34,13 +34,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>App.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cinchoo.Core">
-      <HintPath>packages\Cinchoo.1.0.9.5\lib\Cinchoo.Core.dll</HintPath>
+    <Reference Include="Cinchoo.Core, Version=1.0.9.5, Culture=neutral, PublicKeyToken=b7dacd80ff3e33de, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\Cinchoo.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -134,10 +136,12 @@
     <Resource Include="Resources\Stop.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Lib\Cinchoo.Core.dll" />
     <Resource Include="Resources\Copy.png" />
     <Resource Include="Resources\Cut.png" />
     <Resource Include="Resources\Paste.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Lib\Cinchoo.Core.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -83,14 +83,14 @@
 
         #region Instance Members (Public)
 
-        public void Process()
+        public void Process(string sourceDirectory = null, string destDirectory = null)
         {
             AppStatus.Raise(this, new ChoFileProcessEventArgs("Starting RoboCopy operation..."));
 
             try
             {
                 // Setup the process start info
-                var processStartInfo = new ProcessStartInfo(_appSettings.RoboCopyFilePath, _appSettings.GetCmdLineParams())
+                var processStartInfo = new ProcessStartInfo(_appSettings.RoboCopyFilePath, _appSettings.GetCmdLineParams(sourceDirectory, destDirectory))
                 {
                     UseShellExecute = false,
                     RedirectStandardOutput = true,

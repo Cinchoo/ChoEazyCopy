@@ -24,13 +24,7 @@ namespace ChoEazyCopy
         [STAThread]
         public static void Main(string[] args)
         {
-            ChoApplication.ApplyAppFrxSettingsOverrides += new EventHandler<ChoEventArgs<ChoAppFrxSettings>>(ChoApplication_ApplyAppFrxSettingsOverrides);
             ChoApplication.Run(args);
-        }
-
-        static void ChoApplication_ApplyAppFrxSettingsOverrides(object sender, ChoEventArgs<ChoAppFrxSettings> e)
-        {
-            e.Value.AppFrxFilePath = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config"), Process.GetCurrentProcess().Id.ToString());
         }
 
         protected override void ApplyGlobalApplicationSettingsOverrides(ChoGlobalApplicationSettings obj)
@@ -98,7 +92,7 @@ namespace ChoEazyCopy
         {
             ni.Text = "Eazy Copy - Cinchoo";
 
-            ni.ContextMenuStrip.Items.Insert(1, new System.Windows.Forms.ToolStripMenuItem("Open New Instance",
+            ni.ContextMenuStrip.Items.Insert(1, new System.Windows.Forms.ToolStripMenuItem("Launch New Instance",
                 System.Drawing.Image.FromStream(this.GetType().Assembly.GetManifestResourceStream("ChoEazyCopy.Resources.OpenNewWindow.png")),
                 ((o, e) =>
                 {

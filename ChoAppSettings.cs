@@ -121,7 +121,17 @@
             get;
             set;
         }
-        
+
+        [Category("Common Options")]
+        [Description("Additional command line parameters (Optional).")]
+        [DisplayName("AdditionalParams")]
+        [ChoPropertyInfo("additionalParams")]
+        public string AdditionalParams
+        {
+            get;
+            set;
+        }
+
         #endregion Instance Data Members (Common Options)
 
         #region Instance Data Members (Copy Options)

@@ -35,10 +35,8 @@ namespace ChoEazyCopy
         private DispatcherTimer _dispatcherTimer;
         private Thread _mainUIThread;
         private Thread _fileNameProcessThread;
-        private Thread _undoProcessThread;
         private ChoAppSettings _appSettings;
         private bool _isRunning = false;
-        private bool _isUndoRunning = false;
         private bool _wndLoaded = false;
         private bool _isDirty = false;
         private bool IsDirty

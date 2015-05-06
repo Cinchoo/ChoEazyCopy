@@ -351,7 +351,7 @@
                 <GroupBox
                 Margin="5,0,5,5"
                 Grid.Row="2"
-                Header="Status"
+                Header="Output"
                 VerticalAlignment="Stretch">
                     <ListBox
                     Margin="0,3,0,2"
@@ -364,7 +364,7 @@
         </DockPanel>
         <GridSplitter Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment" IsTabStop="False" ResizeDirection="Columns" />
         <DockPanel Grid.Column="1" Grid.RowSpan="2" Margin="1,0,0,0" LastChildFill="True">
-            <xctk:PropertyGrid VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding}" />
+            <xctk:PropertyGrid VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding}" SelectedObjectName="" ShowTitle="False" />
         </DockPanel>
         <StatusBar Grid.Row="2" Grid.ColumnSpan="2"
             Margin="5,0,1,5"

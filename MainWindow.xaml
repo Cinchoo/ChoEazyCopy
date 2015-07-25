@@ -1,6 +1,7 @@
-﻿<Window
+﻿<Controls:MetroWindow
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:local="clr-namespace:ChoEazyCopy"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     x:Class="ChoEazyCopy.MainWindow"
@@ -12,6 +13,10 @@
     AllowDrop="True"
     Closed="Window_Closed"
     x:Name="MyWindow"
+                      EnableDWMDropShadow="True"
+                      ResizeMode="CanResizeWithGrip"
+                      WindowTransitionsEnabled="False"
+    TitleCaps="False"
     Loaded="MyWindow_Loaded" Icon="App.ico" Closing="Window_Closing" ContentRendered="MyWindow_ContentRendered">
     <Window.Resources>
         <ContextMenu x:Key="TextBoxContextMenu" Background="White">
@@ -225,7 +230,6 @@
         FocusManager.FocusedElement="{Binding ElementName=txtFolder}">
             <Grid
             Width="Auto"
-            Height="75"
             DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -379,4 +383,4 @@
             </StatusBarItem>
         </StatusBar>
     </Grid>
-</Window>
+</Controls:MetroWindow>

@@ -3,6 +3,7 @@ using Cinchoo.Core.Configuration;
 using Cinchoo.Core.Diagnostics;
 using Cinchoo.Core.Win32.Dialogs;
 using Cinchoo.Core.WPF;
+using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace ChoEazyCopy
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         #region Instance Members (Private)
 
@@ -58,8 +59,13 @@ namespace ChoEazyCopy
         ChoWPFBindableConfigObject<ChoAppSettings> _bindObj;
 
         #endregion Instance Members (Private)
+        
+        public MainWindow() :
+            this(null)
+        {
+        }
 
-        public MainWindow(string settingsFilePath = null)
+        public MainWindow(string settingsFilePath)
         {
             SettingsFilePath = settingsFilePath;
             InitializeComponent();

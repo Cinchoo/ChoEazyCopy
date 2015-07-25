@@ -88,6 +88,16 @@ namespace ChoEazyCopy
             }
         }
 
+        public override object ApplicationObject
+        {
+            get
+            {
+                //var x = App.Default;
+                new App();
+                return Application.Current;
+            }
+        }
+
         protected override void AfterNotifyIconConstructed(ChoNotifyIcon ni)
         {
             ni.Text = "Eazy Copy - Cinchoo";
@@ -118,5 +128,11 @@ namespace ChoEazyCopy
     /// </summary>
     public partial class App : Application
     {
+        //public static readonly App Default = new App();
+
+        public App()
+        {
+            InitializeComponent();
+        }
     }
 }

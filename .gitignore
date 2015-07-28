@@ -5,3 +5,4 @@ Lib/Cinchoo.Core.pdb
 *.suo
 *.user
 packages/*
+publish/*

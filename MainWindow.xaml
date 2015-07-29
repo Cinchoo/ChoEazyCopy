@@ -13,10 +13,8 @@
     AllowDrop="True"
     Closed="Window_Closed"
     x:Name="MyWindow"
-                      EnableDWMDropShadow="True"
-                      ResizeMode="CanResizeWithGrip"
-                      WindowTransitionsEnabled="False"
-    TitleCaps="False"
+    BorderBrush="{DynamicResource AccentColorBrush}"
+    BorderThickness="1"
     Loaded="MyWindow_Loaded" Icon="App.ico" Closing="Window_Closing" ContentRendered="MyWindow_ContentRendered">
     <Window.Resources>
         <ContextMenu x:Key="TextBoxContextMenu" Background="White">
@@ -357,12 +355,12 @@
                 Grid.Row="2"
                 Header="Output"
                 VerticalAlignment="Stretch">
-                    <ListBox
+                    <TextBox
                     Margin="0,3,0,2"
                     VerticalAlignment="Stretch"
                     x:Name="txtStatus"
                     Focusable="False"
-                    TabIndex="25" />
+                    TabIndex="25" FontFamily="Courier New" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
                 </GroupBox>
             </Grid>
         </DockPanel>

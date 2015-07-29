@@ -30,6 +30,7 @@ namespace ChoEazyCopy
         protected override void ApplyGlobalApplicationSettingsOverrides(ChoGlobalApplicationSettings obj)
         {
             obj.TrayApplicationBehaviourSettings.TurnOn = true;
+            obj.TrayApplicationBehaviourSettings.TurnOnMode = ChoTrayAppTurnOnMode.OnMinimize;
             obj.TrayApplicationBehaviourSettings.HideTrayIconWhenMainWindowShown = false;
             obj.TrayApplicationBehaviourSettings.ContextMenuSettings.DisplayHelpMenuItem = false;
             obj.TrayApplicationBehaviourSettings.ContextMenuSettings.DisplayAboutMenuItem = false;
@@ -80,11 +81,18 @@ namespace ChoEazyCopy
         {
             get
             {
+                var z = ApplicationObject;
+                MainWindow x = null;
                 ChoFileAssociationCmdLineArgs cmd = new ChoFileAssociationCmdLineArgs();
                 if (cmd.IsAppFile)
-                    return new MainWindow(cmd.SettingsFilePath);
+                    x = new MainWindow(cmd.SettingsFilePath);
                 else
-                    return new MainWindow();
+                    x = new MainWindow();
+
+                foreach (var y in Application.Current.Resources.MergedDictionaries)
+                    x.Resources.MergedDictionaries.Add(y);
+
+                return x;
             }
         }
 
@@ -92,8 +100,8 @@ namespace ChoEazyCopy
         {
             get
             {
-                //var x = App.Default;
-                new App();
+                if (Application.Current == null)
+                    new App();
                 return Application.Current;
             }
         }
@@ -128,8 +136,6 @@ namespace ChoEazyCopy
     /// </summary>
     public partial class App : Application
     {
-        //public static readonly App Default = new App();
-
         public App()
         {
             InitializeComponent();

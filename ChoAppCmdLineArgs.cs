@@ -102,14 +102,15 @@ namespace ChoEazyCopy
                     ChoConsole.WriteLine(e.Message, ConsoleColor.Yellow);
                 };
 
-                _roboCopyManager.Process(sourceDirectory, destDirectory);
+                _roboCopyManager.Process(appSettings.RoboCopyFilePath, appSettings.GetCmdLineParams(sourceDirectory, destDirectory));
             }
             catch (ThreadAbortException)
             {
+                Console.WriteLine("RoboCopy operation cancelled by user.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ChoApplicationException.ToString(ex));
+                Console.WriteLine("RoboCopy operation failed." + Environment.NewLine + ChoApplicationException.ToString(ex));
             }
         }
     }

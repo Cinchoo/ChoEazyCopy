@@ -108,7 +108,7 @@ namespace ChoEazyCopy
                     if (_wndLoaded)
                     {
                         IsDirty = true;
-                        this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                        this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
                              new Action(() =>
                              {
                                  txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
@@ -228,7 +228,7 @@ namespace ChoEazyCopy
                 this.ToolTip = SettingsFilePath;
                 tbSettingsName.Text = Path.GetFileNameWithoutExtension(SettingsFilePath);
             }
-            btnClear.IsEnabled = !_isRunning && txtStatus.Items.Count > 0;
+            btnClear.IsEnabled = !_isRunning && txtStatus.Text.Length > 0;
 
             if (_fileNameProcessThread != null && _fileNameProcessThread.IsAlive)
             {
@@ -295,8 +295,12 @@ namespace ChoEazyCopy
             ChoFramework.Shutdown();
         }
 
-        private void ProcessFiles()
+        private void ProcessFiles(object cmd)
         {
+            string cmdText = cmd.ToString();
+            if (cmdText.IsNullOrWhiteSpace())
+                return;
+
             try
             {
                 _isRunning = true;
@@ -304,7 +308,9 @@ namespace ChoEazyCopy
                 _roboCopyManager = new ChoRoboCopyManager();
                 _roboCopyManager.Status += (sender, e) => SetStatusMsg(e.Message);
                 _roboCopyManager.AppStatus += (sender, e) => UpdateStatus(e.Message, e.Tag.ToNString());
-                _roboCopyManager.Process();
+
+                if (cmdText.IndexOf(' ') >= 0)
+                    _roboCopyManager.Process(cmdText.Substring(0, cmdText.IndexOf(' ')), cmdText.Substring(cmdText.IndexOf(' ') + 1));
             }
             catch (ThreadAbortException)
             {
@@ -331,12 +337,14 @@ namespace ChoEazyCopy
             else
             {
                 ChoTrace.Debug(msg);
-                txtStatus.Items.Insert(0, msg);
 
-                while (txtStatus.Items.Count > _appSettings.MaxStatusMsgSize)
-                {
-                    txtStatus.Items.RemoveAt(txtStatus.Items.Count - 1);
-                }
+                //while (txtStatus.Items.Count > _appSettings.MaxStatusMsgSize)
+                //{
+                //    txtStatus.Items.RemoveAt(0);
+                //}
+
+                txtStatus.AppendText(msg);
+                txtStatus.ScrollToEnd();
             }
         }
 
@@ -376,9 +384,9 @@ namespace ChoEazyCopy
 
         private void btnRun_Click(object sender, RoutedEventArgs e)
         {
-            _fileNameProcessThread = new Thread(new ThreadStart(ProcessFiles));
+            _fileNameProcessThread = new Thread(new ParameterizedThreadStart(ProcessFiles));
             _fileNameProcessThread.IsBackground = true;
-            _fileNameProcessThread.Start();
+            _fileNameProcessThread.Start(txtRoboCopyCmd.Text);
         }
 
         private void btnStop_Click(object sender, RoutedEventArgs e)
@@ -511,7 +519,7 @@ namespace ChoEazyCopy
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
-            txtStatus.Items.Clear();
+            txtStatus.Text = String.Empty;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

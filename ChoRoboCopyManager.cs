@@ -12,6 +12,7 @@
     using Cinchoo.Core;
     using System.Threading;
     using System.Diagnostics;
+    using System.Threading.Tasks;
 
     #endregion NameSpaces
 
@@ -83,17 +84,18 @@
 
         #region Instance Members (Public)
 
-        public void Process(string sourceDirectory = null, string destDirectory = null)
+        public void Process(string fileName, string arguments)
         {
             AppStatus.Raise(this, new ChoFileProcessEventArgs("Starting RoboCopy operation..."));
 
             try
             {
                 // Setup the process start info
-                var processStartInfo = new ProcessStartInfo(_appSettings.RoboCopyFilePath, _appSettings.GetCmdLineParams(sourceDirectory, destDirectory))
+                var processStartInfo = new ProcessStartInfo(fileName, arguments) //_appSettings.RoboCopyFilePath, _appSettings.GetCmdLineParams(sourceDirectory, destDirectory))
                 {
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 };
 
@@ -101,23 +103,42 @@
                 Process process = new Process { StartInfo = processStartInfo, EnableRaisingEvents = true };
 
                 // Register event
-                process.OutputDataReceived += OnOutputDataReceived;
-
                 _process = process;
 
                 // Start process
                 process.Start();
-                process.BeginOutputReadLine();
+                //process.BeginOutputReadLine();
+                Task.Factory.StartNew(new Action<object>(ReadFromStreamReader), process.StandardOutput);
+                //Task.Factory.StartNew(new Action<object>(ReadFromStreamReader), process.StandardError);
                 process.WaitForExit();
 
                 _process = null;
                 AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation completed successfully.", "RoboCopy operation completed successfully"));
             }
+            catch (ThreadAbortException)
+            {
+                Status.Raise(this, new ChoFileProcessEventArgs(Environment.NewLine + "RoboCopy operation cancelled by user." + Environment.NewLine, "RoboCopy operation failed."));
+                AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation cancelled by user.", "RoboCopy operation failed."));
+            }
             catch (Exception ex)
             {
-                Status.Raise(this, new ChoFileProcessEventArgs(ex.ToString()));
+                Status.Raise(this, new ChoFileProcessEventArgs(Environment.NewLine + ex.ToString() + Environment.NewLine));
                 AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation failed.", "RoboCopy operation failed."));
             }
+        }
+
+        void ReadFromStreamReader(object state)
+        {
+            StreamReader reader = state as StreamReader;
+            char[] buffer = new char[1024];
+            int chars;
+            while ((chars = reader.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                string data = new string(buffer, 0, chars);
+                Status.Raise(this, new ChoFileProcessEventArgs(data));
+            }
+
+            // You arrive here when process is terminated.
         }
 
         internal void Cancel()
@@ -132,11 +153,6 @@
                 _process = null;
             }
             catch { }
-        }
-
-        void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            Status.Raise(this, new ChoFileProcessEventArgs(e.Data));
         }
 
         #endregion Instance Members (Public)

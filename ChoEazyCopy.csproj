@@ -27,7 +27,12 @@
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>https://choeazycopy.codeplex.com/releases/clickonce/</InstallUrl>
     <UpdateUrl>https://choeazycopy.codeplex.com/releases/clickonce/</UpdateUrl>
-    <ApplicationRevision>8</ApplicationRevision>
+    <SupportUrl>http://www.cinchoo.com</SupportUrl>
+    <ErrorReportUrl>http://www.cinchoo.com</ErrorReportUrl>
+    <ProductName>ChoEasyCopy</ProductName>
+    <PublisherName>Cinchoo Inc</PublisherName>
+    <SuiteName>ChoEazyCopy</SuiteName>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>

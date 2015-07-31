@@ -81,18 +81,11 @@ namespace ChoEazyCopy
         {
             get
             {
-                var z = ApplicationObject;
-                MainWindow x = null;
                 ChoFileAssociationCmdLineArgs cmd = new ChoFileAssociationCmdLineArgs();
                 if (cmd.IsAppFile)
-                    x = new MainWindow(cmd.SettingsFilePath);
+                    return new MainWindow(cmd.SettingsFilePath);
                 else
-                    x = new MainWindow();
-
-                foreach (var y in Application.Current.Resources.MergedDictionaries)
-                    x.Resources.MergedDictionaries.Add(y);
-
-                return x;
+                    return new MainWindow();
             }
         }
 

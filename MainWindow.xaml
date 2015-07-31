@@ -15,6 +15,8 @@
     x:Name="MyWindow"
     BorderBrush="{DynamicResource AccentColorBrush}"
     BorderThickness="1"
+    TitleCaps="False"
+    ResizeMode="CanResizeWithGrip"
     Loaded="MyWindow_Loaded" Icon="App.ico" Closing="Window_Closing" ContentRendered="MyWindow_ContentRendered">
     <Window.Resources>
         <ContextMenu x:Key="TextBoxContextMenu" Background="White">
@@ -359,7 +361,7 @@
                     Margin="0,3,0,2"
                     VerticalAlignment="Stretch"
                     x:Name="txtStatus"
-                    Focusable="False"
+                    IsReadOnly="True"
                     TabIndex="25" FontFamily="Courier New" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
                 </GroupBox>
             </Grid>

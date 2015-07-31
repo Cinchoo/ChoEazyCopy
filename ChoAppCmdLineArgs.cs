@@ -93,13 +93,13 @@ namespace ChoEazyCopy
                 ChoRoboCopyManager _roboCopyManager = new ChoRoboCopyManager(SettingsFilePath);
                 _roboCopyManager.Status += (sender, e) =>
                 {
-                    ChoTrace.Debug(e.Message);
-                    ChoConsole.WriteLine(e.Message, ConsoleColor.Yellow);
+                    ChoTrace.Write(e.Message);
+                    ChoConsole.Write(e.Message, ConsoleColor.Yellow);
                 };
                 _roboCopyManager.AppStatus += (sender, e) =>
                 {
-                    ChoTrace.Debug(e.Message);
-                    ChoConsole.WriteLine(e.Message, ConsoleColor.Yellow);
+                    ChoTrace.Write(e.Message);
+                    ChoConsole.Write(e.Message, ConsoleColor.Yellow);
                 };
 
                 _roboCopyManager.Process(appSettings.RoboCopyFilePath, appSettings.GetCmdLineParams(sourceDirectory, destDirectory));

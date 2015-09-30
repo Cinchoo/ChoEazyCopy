@@ -148,22 +148,10 @@ namespace ChoEazyCopy
             _dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000);
             _dispatcherTimer.Start();
 
-            //_plugInsFolder = _appSettings.PlugInsFolders;
-            ////Load plug-ins
-            //if (!_appSettings.PlugInsFolders.IsNullOrWhiteSpace())
-            //{
-            //    foreach (string plugInFolder in _appSettings.PlugInsFolders.SplitNTrim())
-            //    {
-            //        if (plugInFolder.IsNullOrWhiteSpace() || !Directory.Exists(plugInFolder)) continue;
-            //        ChoGlobalAssemblyFactory.Me.LoadAssemblies(plugInFolder);
-            //    }
-            //}
-            ////((INotifyCollectionChanged)lstFolders.Items).CollectionChanged += FoldersCollectionChanged;
-            //ChoShellExtCmdLineArgs cmdLineArgs = new ChoShellExtCmdLineArgs();
-            //if (!cmdLineArgs.Directory.IsNullOrWhiteSpace())
-            //    AddToFilesListBox(cmdLineArgs.Directory);
-            //else if (!_appSettings.Directories.IsNullOrWhiteSpace())
-            //    AddToFilesListBox(_appSettings.Directories);
+            ChoShellExtCmdLineArgs cmdLineArgs = new ChoShellExtCmdLineArgs();
+            if (!cmdLineArgs.Directory.IsNullOrWhiteSpace())
+                _appSettings.SourceDirectory = cmdLineArgs.Directory;
+            
             IsDirty = false;
         }
 

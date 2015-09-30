@@ -111,6 +111,17 @@ namespace ChoEazyCopy
                     System.Diagnostics.Process.Start(info);
                 })));
         }
+
+        public void ShowMainWindow()
+        {
+            var a = ApplicationObject;
+            var wnd = MainWindowObject;
+            if (wnd is Window)
+            {
+                ChoWindowsManager.HideConsoleWindow();
+                ((Window)wnd).ShowDialog();
+            }
+        }
     }
 
     [ChoShellExtension]
@@ -119,8 +130,7 @@ namespace ChoEazyCopy
         [ChoShellExtensionContextMenu("Folder", MenuText = "Eazy copy...", DefaultArgPrefix = "/d:")]
         public static void EazyCopyFiles(string[] args)
         {
-            ChoApplication.ApplicationMode = ChoApplicationMode.Windows;
-            ChoApplication.Run(args);
+            new AppHost().ShowMainWindow();
         }
     }
 

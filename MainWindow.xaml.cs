@@ -7,6 +7,7 @@ using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -108,12 +109,12 @@ namespace ChoEazyCopy
                     if (_wndLoaded)
                     {
                         IsDirty = true;
-                        this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
-                             new Action(() =>
-                             {
-                                 txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
-                             }));
                     }
+                    this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
+                         new Action(() =>
+                         {
+                             txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
+                         }));
                 });
 
             _appSettings.ConfigurationObjectMemberLoadError += _appSettings_ConfigurationObjectMemberLoadError;
@@ -148,6 +149,7 @@ namespace ChoEazyCopy
             _dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000);
             _dispatcherTimer.Start();
 
+            string x = _appSettings.SourceDirectory;
             ChoShellExtCmdLineArgs cmdLineArgs = new ChoShellExtCmdLineArgs();
             if (!cmdLineArgs.Directory.IsNullOrWhiteSpace())
                 _appSettings.SourceDirectory = cmdLineArgs.Directory;

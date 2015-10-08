@@ -148,9 +148,9 @@
 
         [Category("Copy Options")]
         [Description("Copy subdirectories, including Empty ones. (/E).")]
-        [DisplayName("CopyEmptySubDirectories")]
-        [ChoPropertyInfo("copyEmptySubDirectories")]
-        public bool CopyEmptySubDirectories
+        [DisplayName("CopySubDirectories")]
+        [ChoPropertyInfo("copySubDirectories", DefaultValue = "true")]
+        public bool CopySubDirectories
         {
             get;
             set;
@@ -756,7 +756,7 @@
 
             if (CopyNoEmptySubDirectories)
                 cmdText.Append(" /S");
-            if (CopyEmptySubDirectories)
+            if (CopySubDirectories)
                 cmdText.Append(" /E");
             if (OnlyCopyNLevels > 0)
                 cmdText.AppendFormat(" /LEV:{0}", OnlyCopyNLevels);

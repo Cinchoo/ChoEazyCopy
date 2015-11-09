@@ -32,7 +32,7 @@
     <ProductName>ChoEasyCopy</ProductName>
     <PublisherName>Cinchoo Inc</PublisherName>
     <SuiteName>ChoEazyCopy</SuiteName>
-    <ApplicationRevision>11</ApplicationRevision>
+    <ApplicationRevision>13</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>

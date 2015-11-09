@@ -102,22 +102,23 @@
         <local:BoolInverterConverter x:Key="BoolInverterConverter1"/>
         <local:BoolInverterConverter x:Key="BoolInverterConverter2"/>
     </Window.Resources>
-    <Grid Margin="0,0,0,-1">
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="400" />
-            <ColumnDefinition Width="250" MinWidth="200" MaxWidth="550"/>
+            <ColumnDefinition Width="70*" MinWidth="400" />
+            <ColumnDefinition Width="3" />
+            <ColumnDefinition Width="30*" MinWidth="250" />
         </Grid.ColumnDefinitions>
 
-        <ToolBarTray Grid.Row="0" Width="Auto">
+        <ToolBarTray Grid.Row="0" Grid.Column="0" Width="Auto">
             <ToolBarTray.Background>
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
             </ToolBarTray.Background>
-            <ToolBar x:Name="tbrMain" ToolBarTray.IsLocked="True" ToolBar.OverflowMode="Never" Margin="0,0,-13,0" Loaded="tbrMain_Loaded" HorizontalAlignment="Left" 
+            <ToolBar x:Name="tbrMain" ToolBarTray.IsLocked="True" ToolBar.OverflowMode="Never" Loaded="tbrMain_Loaded" HorizontalAlignment="Left" 
                      Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToolBarTray}}}">
                 <ToolBar.Background>
                     <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
@@ -222,11 +223,10 @@
             </ToolBar>
         </ToolBarTray>
         <DockPanel Grid.Row="1" Grid.Column="0"
-        Margin="0,0,0,21"
         HorizontalAlignment="Stretch"
         x:Name="dockPanel1"
         VerticalAlignment="Stretch"
-        LastChildFill="True" Grid.RowSpan="2"
+        LastChildFill="True"
         FocusManager.FocusedElement="{Binding ElementName=txtFolder}">
             <Grid
             Width="Auto"
@@ -236,7 +236,7 @@
                 </Grid.ColumnDefinitions>
                 <GroupBox
                     x:Name="grpFolders"
-                Margin="5,5,5,5"
+                Margin="5"
                 Height="Auto"
                 Grid.Column="0"
                 Header="Choose Folders">
@@ -366,12 +366,10 @@
                 </GroupBox>
             </Grid>
         </DockPanel>
-        <GridSplitter Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment" IsTabStop="False" ResizeDirection="Columns" />
-        <DockPanel Grid.Column="1" Grid.RowSpan="2" Margin="1,0,0,0" LastChildFill="True">
-            <xctk:PropertyGrid VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding}" SelectedObjectName="" ShowTitle="False" />
-        </DockPanel>
-        <StatusBar Grid.Row="2" Grid.ColumnSpan="2"
-            Margin="5,0,1,5"
+        <GridSplitter Grid.Column="1" Grid.RowSpan="2" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" ResizeDirection="Columns" />
+        <xctk:PropertyGrid Grid.Column="2" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding}" SelectedObjectName="" ShowTitle="False" />
+        <StatusBar Grid.Row="2" Grid.ColumnSpan="3"
+            Margin="5,0,5,5"
             Width="Auto">
             <StatusBarItem
                 VerticalContentAlignment="Top"

@@ -197,7 +197,7 @@
         }
 
         [Category("Copy Options")]
-        [Description("Copy using unbuffered I/O (recommended for large files).")]
+        [Description("Copy using unbuffered I/O (recommended for large files). (/J)")]
         [DisplayName("UnbufferredIOCopy")]
         [ChoPropertyInfo("unbufferredIOCopy")]
         public bool UnbufferredIOCopy
@@ -484,7 +484,271 @@
             }
         }
 
+        [Category("Copy Options")]
+        [Description("COPY NO directory info (by default /DCOPY:DA is done). (/NODCOPY).")]
+        [DisplayName("CopyNODirInfo")]
+        [ChoPropertyInfo("copyNODirInfo")]
+        public bool CopyNODirInfo
+        {
+            get;
+            set;
+        }
+
+        [Category("Copy Options")]
+        [Description("Copy files without using the Windows Copy Offload mechanism. (/NOOFFLOAD).")]
+        [DisplayName("CopyWithoutWindowsCopyOffload")]
+        [ChoPropertyInfo("copyWithoutWindowsCopyOffload")]
+        public bool CopyWithoutWindowsCopyOffload
+        {
+            get;
+            set;
+        }
+
         #endregion Instance Data Members (Copy Options)
+
+        #region Instance Data Members (File Selection Options)
+
+        [Category("File Selection Options")]
+        [Description("Copy only files with the Archive attribute set. (/A).")]
+        [DisplayName("CopyOnlyFilesWithArchiveAttributes")]
+        [ChoPropertyInfo("copyOnlyFilesWithArchiveAttributes")]
+        public bool CopyOnlyFilesWithArchiveAttributes
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("Copy only files with the Archive attribute and reset it. (/M).")]
+        [DisplayName("CopyOnlyFilesWithArchiveAttributesAndReset")]
+        [ChoPropertyInfo("copyOnlyFilesWithArchiveAttributesAndReset")]
+        public bool CopyOnlyFilesWithArchiveAttributesAndReset
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("Include only files with any of the given Attributes set. (/IA:[RASHCNETO]).")]
+        [DisplayName("IncludeFilesWithGivenAttributes")]
+        [ChoPropertyInfo("includeFilesWithGivenAttributes")]
+        public string IncludeFilesWithGivenAttributes
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude files with any of the given Attributes set. (/XA:[RASHCNETO]).")]
+        [DisplayName("ExcludeFilesWithGivenAttributes")]
+        [ChoPropertyInfo("excludeFilesWithGivenAttributes")]
+        public string ExcludeFilesWithGivenAttributes
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude Files matching given names/paths/wildcards. Separate names with ;. (/XF).")]
+        [DisplayName("ExcludeFilesWithGivenNames")]
+        [ChoPropertyInfo("excludeFilesWithGivenNames")]
+        public string ExcludeFilesWithGivenNames
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude Directories matching given names/paths. Separate names with ;. (/XD).")]
+        [DisplayName("ExcludeDirsWithGivenNames")]
+        [ChoPropertyInfo("excludeDirsWithGivenNames")]
+        public string ExcludeDirsWithGivenNames
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude Changed files. (/XC).")]
+        [DisplayName("ExcludeChangedFiles")]
+        [ChoPropertyInfo("excludeChangedFiles")]
+        public bool ExcludeChangedFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude Newer files. (/XN).")]
+        [DisplayName("ExcludeNewerFiles")]
+        [ChoPropertyInfo("excludeNewerFiles")]
+        public bool ExcludeNewerFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude Older files. (/XO).")]
+        [DisplayName("ExcludeOlderFiles")]
+        [ChoPropertyInfo("excludeOlderFiles")]
+        public bool ExcludeOlderFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude eXtra files and directories. (/XX).")]
+        [DisplayName("ExcludeExtraFilesAndDirs")]
+        [ChoPropertyInfo("excludeExtraFilesAndDirs")]
+        public bool ExcludeExtraFilesAndDirs
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude Lonely files and directories. (/XL).")]
+        [DisplayName("ExcludeLonelyFilesAndDirs")]
+        [ChoPropertyInfo("excludeLonelyFilesAndDirs")]
+        public bool ExcludeLonelyFilesAndDirs
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("Include Same files. (/IS).")]
+        [DisplayName("IncludeSameFiles")]
+        [ChoPropertyInfo("includeSameFiles")]
+        public bool IncludeSameFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("Include Tweaked files. (/IT).")]
+        [DisplayName("IncludeTweakedFiles")]
+        [ChoPropertyInfo("includeTweakedFiles")]
+        public bool IncludeTweakedFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("MAXimum file size - exclude files bigger than n bytes. (/MAX:n).")]
+        [DisplayName("ExcludeFilesBiggerThanNBytes")]
+        [ChoPropertyInfo("excludeFilesBiggerThanNBytes")]
+        public uint ExcludeFilesBiggerThanNBytes
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("MINimum file size - exclude files smaller than n bytes. (/MIN:n).")]
+        [DisplayName("ExcludeFilesSmallerThanNBytes")]
+        [ChoPropertyInfo("excludeFilesSmallerThanNBytes")]
+        public uint ExcludeFilesSmallerThanNBytes
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("MAXimum file AGE - exclude files older than n days/date. (/MAXAGE:n).")]
+        [DisplayName("ExcludeFilesOlderThanNDays")]
+        [ChoPropertyInfo("excludeFilesOlderThanNDays")]
+        public uint ExcludeFilesOlderThanNDays
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("MINimum file AGE - exclude files newer than n days/date. (/MINAGE:n).")]
+        [DisplayName("ExcludeFilesNewerThanNDays")]
+        [ChoPropertyInfo("excludeFilesNewerThanNDays")]
+        public uint ExcludeFilesNewerThanNDays
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("MAXimum Last Access Date - exclude files unused since n. (/MAXLAD:n).")]
+        [DisplayName("ExcludeFilesUnusedSinceNDays")]
+        [ChoPropertyInfo("excludeFilesUnusedSinceNDays")]
+        public uint ExcludeFilesUnusedSinceNDays
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("MINimum Last Access Date - exclude files used since n. (If n < 1900 then n = n days, else n = YYYYMMDD date). (/MINLAD:n).")]
+        [DisplayName("ExcludeFilesUsedSinceNDays")]
+        [ChoPropertyInfo("excludeFilesUsedSinceNDays")]
+        public uint ExcludeFilesUsedSinceNDays
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude Junction points. (normally included by default). (/XJ).")]
+        [DisplayName("ExcludeJunctionPoints")]
+        [ChoPropertyInfo("excludeJunctionPoints")]
+        public bool ExcludeJunctionPoints
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("assume FAT File Times (2-second granularity). (/FFT).")]
+        [DisplayName("AssumeFATFileTimes")]
+        [ChoPropertyInfo("assumeFATFileTimes")]
+        public bool AssumeFATFileTimes
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("Compensate for one-hour DST time differences. (/DST).")]
+        [DisplayName("CompensateOneHourDSTTimeDiff")]
+        [ChoPropertyInfo("compensateOneHourDSTTimeDiff")]
+        public bool CompensateOneHourDSTTimeDiff
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude Junction points for Directories. (/XJD).")]
+        [DisplayName("ExcludeJunctionPointsForDirs")]
+        [ChoPropertyInfo("excludeJunctionPointsForDirs")]
+        public bool ExcludeJunctionPointsForDirs
+        {
+            get;
+            set;
+        }
+
+        [Category("File Selection Options")]
+        [Description("eXclude Junction points for Files. (/XJF).")]
+        [DisplayName("ExcludeJunctionPointsForFiles")]
+        [ChoPropertyInfo("excludeJunctionPointsForFiles")]
+        public bool ExcludeJunctionPointsForFiles
+        {
+            get;
+            set;
+        }
+
+        #endregion Instance Data Members (Retry Options)
 
         #region Instance Data Members (Retry Options)
 
@@ -754,6 +1018,7 @@
             else
                 cmdText.Append("*.*");
 
+            //Copy Options
             if (CopyNoEmptySubDirectories)
                 cmdText.Append(" /S");
             if (CopySubDirectories)
@@ -766,9 +1031,8 @@
                 cmdText.Append(" /B");
             if (FallbackCopyFilesMode)
                 cmdText.Append(" /ZB");
-
-            //if (UnbufferredIOCopy)
-            //    cmdText.Append(" /E");
+            if (UnbufferredIOCopy)
+                cmdText.Append(" /J");
 
             if (EncrptFileEFSRawMode)
                 cmdText.Append(" /EFSRAW");
@@ -831,9 +1095,69 @@
                 cmdText.Append(" /PF");
             if (InterPacketGapInMS > 0)
                 cmdText.AppendFormat(" /IPG:{0}", InterPacketGapInMS);
+            if (CopySymbolicLinks)
+                cmdText.Append(" /SL");
             if (MultithreadCopy > 0)
                 cmdText.AppendFormat(" /MT:{0}", MultithreadCopy);
+            if (CopyNODirInfo)
+                cmdText.Append(" /NODCOPY");
+            if (CopyWithoutWindowsCopyOffload)
+                cmdText.Append(" /NOOFFLOAD");
 
+            //File Selection Options
+            if (CopyOnlyFilesWithArchiveAttributes)
+                cmdText.Append(" /A");
+            if (CopyOnlyFilesWithArchiveAttributesAndReset)
+                cmdText.Append(" /M");
+            if (!IncludeFilesWithGivenAttributes.IsNullOrWhiteSpace())
+                cmdText.AppendFormat(" /IA:{0}", IncludeFilesWithGivenAttributes);
+            if (!ExcludeFilesWithGivenAttributes.IsNullOrWhiteSpace())
+                cmdText.AppendFormat(" /XA:{0}", ExcludeFilesWithGivenAttributes);
+            if (!ExcludeFilesWithGivenNames.IsNullOrWhiteSpace())
+                cmdText.AppendFormat(" /XF {0}", ExcludeFilesWithGivenNames.Replace(";", " "));
+            if (!ExcludeDirsWithGivenNames.IsNullOrWhiteSpace())
+                cmdText.AppendFormat(" /XD {0}", ExcludeDirsWithGivenNames.Replace(";", " "));
+            if (ExcludeChangedFiles)
+                cmdText.Append(" /XC");
+            if (ExcludeNewerFiles)
+                cmdText.Append(" /XN");
+            if (ExcludeOlderFiles)
+                cmdText.Append(" /XO");
+            if (ExcludeExtraFilesAndDirs)
+                cmdText.Append(" /XX");
+            if (ExcludeLonelyFilesAndDirs)
+                cmdText.Append(" /XL");
+            if (IncludeSameFiles)
+                cmdText.Append(" /IS");
+            if (IncludeTweakedFiles)
+                cmdText.Append(" /IT");
+
+            if (ExcludeFilesBiggerThanNBytes > 0)
+                cmdText.AppendFormat(" /MAX:{0}", ExcludeFilesBiggerThanNBytes);
+            if (ExcludeFilesSmallerThanNBytes > 0)
+                cmdText.AppendFormat(" /MIN:{0}", ExcludeFilesSmallerThanNBytes);
+
+            if (ExcludeFilesOlderThanNDays > 0)
+                cmdText.AppendFormat(" /MAXAGE:{0}", ExcludeFilesOlderThanNDays);
+            if (ExcludeFilesNewerThanNDays > 0)
+                cmdText.AppendFormat(" /MINAGE:{0}", ExcludeFilesNewerThanNDays);
+            if (ExcludeFilesUnusedSinceNDays > 0)
+                cmdText.AppendFormat(" /MAXLAD:{0}", ExcludeFilesUnusedSinceNDays);
+            if (ExcludeFilesUsedSinceNDays > 0)
+                cmdText.AppendFormat(" /MINLAD:{0}", ExcludeFilesUsedSinceNDays);
+
+            if (ExcludeJunctionPoints)
+                cmdText.Append(" /XJ");
+            if (AssumeFATFileTimes)
+                cmdText.Append(" /FFT");
+            if (CompensateOneHourDSTTimeDiff)
+                cmdText.Append(" /DST");
+            if (ExcludeJunctionPointsForDirs)
+                cmdText.Append(" /XJD");
+            if (ExcludeJunctionPointsForFiles)
+                cmdText.Append(" /XJF");
+
+            //Retry Options
             if (NoOfRetries > 0)
                 cmdText.AppendFormat(" /R:{0}", NoOfRetries);
             if (WaitTimeBetweenRetries > 0)
@@ -843,6 +1167,7 @@
             if (WaitForSharenames)
                 cmdText.Append(" /TBD");
 
+            //Logging Options
             if (ListOnly)
                 cmdText.Append(" /L");
             if (ReportExtraFiles)

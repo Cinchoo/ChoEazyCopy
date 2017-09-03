@@ -87,6 +87,7 @@
         public void Process(string fileName, string arguments)
         {
             AppStatus.Raise(this, new ChoFileProcessEventArgs("Starting RoboCopy operation..."));
+            Status.Raise(this, new ChoFileProcessEventArgs(Environment.NewLine));
 
             try
             {
@@ -117,8 +118,8 @@
             }
             catch (ThreadAbortException)
             {
-                Status.Raise(this, new ChoFileProcessEventArgs(Environment.NewLine + "RoboCopy operation cancelled by user." + Environment.NewLine, "RoboCopy operation failed."));
-                AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation cancelled by user.", "RoboCopy operation failed."));
+                Status.Raise(this, new ChoFileProcessEventArgs(Environment.NewLine + "RoboCopy operation canceled by user." + Environment.NewLine, "RoboCopy operation failed."));
+                AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation canceled by user.", "RoboCopy operation failed."));
             }
             catch (Exception ex)
             {
@@ -132,10 +133,18 @@
             StreamReader reader = state as StreamReader;
             char[] buffer = new char[1024];
             int chars;
+            StringBuilder txt = new StringBuilder();
             while ((chars = reader.Read(buffer, 0, buffer.Length)) > 0)
             {
                 string data = new string(buffer, 0, chars);
-                Status.Raise(this, new ChoFileProcessEventArgs(data));
+                if (data.EndsWith("\r"))
+                    txt.Append(data);
+                else
+                {
+                    txt.Append(data);
+                    Status.Raise(this, new ChoFileProcessEventArgs(txt.ToString()));
+                    txt.Clear();
+                }
             }
 
             // You arrive here when process is terminated.

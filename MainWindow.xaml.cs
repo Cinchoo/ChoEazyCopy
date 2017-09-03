@@ -318,7 +318,7 @@ namespace ChoEazyCopy
 
         private void SetStatusMsg(string msg)
         {
-            if (msg.IsNullOrWhiteSpace()) return;
+            if (msg != Environment.NewLine && msg.IsNullOrWhiteSpace()) return;
 
             if (Thread.CurrentThread != _mainUIThread)
             {
@@ -326,7 +326,7 @@ namespace ChoEazyCopy
             }
             else
             {
-                ChoTrace.Debug(msg);
+                Debug.WriteLine(msg);
 
                 //while (txtStatus.Items.Count > _appSettings.MaxStatusMsgSize)
                 //{
@@ -522,6 +522,11 @@ namespace ChoEazyCopy
             }
 
             e.Cancel = SaveSettings();
+        }
+
+        private void txtRoboCopyCmd_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            IsDirty = true;
         }
     }
 

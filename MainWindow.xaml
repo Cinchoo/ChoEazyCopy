@@ -348,7 +348,7 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Name="txtRoboCopyCmd"
-                    TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsEnabled="True" />
+                    TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" TextChanged="txtRoboCopyCmd_TextChanged" />
                 </GroupBox>
                 <GridSplitter
                 Margin="5,5,5,0"

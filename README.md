@@ -16,16 +16,16 @@ Features:
 * Display immediate hints to an option highlighted in the property grid or in the text editor.
 * Able to run the RoboCopy within the GUI.
  
-To read more about this tool, please refer below CodeProject article
+#### To read more about this tool, please refer below CodeProject article
 
 Cinchoo - EazyCopy, yet another RoboCopy GUI 
 
 http://www.codeproject.com/Articles/988605/Cinchoo-EazyCopy-yet-another-RoboCopy-GU
 
-Binaries can be downloaded from 
+## Binaries can be downloaded from 
 
 https://github.com/Cinchoo/ChoEazyCopy/releases
 
-This software requires .NET Framework 4
+### This software requires .NET Framework 4
 
 https://www.microsoft.com/en-us/download/confirmation.aspx?id=17718

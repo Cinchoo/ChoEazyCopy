@@ -15,17 +15,17 @@ Features:
 * Provides text box with RoboCopy commands associated with the changes to the properties.
 * Display immediate hints to an option highlighted in the property grid or in the text editor.
 * Able to run the RoboCopy within the GUI.
+
+![alt text](https://user-images.githubusercontent.com/9448455/30031384-1be22e90-915f-11e7-9601-fb009244d19b.png)
  
 #### To read more about this tool, please refer below CodeProject article
 
-Cinchoo - EazyCopy, yet another RoboCopy GUI 
-
-http://www.codeproject.com/Articles/988605/Cinchoo-EazyCopy-yet-another-RoboCopy-GU
+![Cinchoo - EazyCopy, yet another RoboCopy GUI](http://www.codeproject.com/Articles/988605/Cinchoo-EazyCopy-yet-another-RoboCopy-GU)
 
 ## Binaries can be downloaded from 
 
-https://github.com/Cinchoo/ChoEazyCopy/releases
+![Download Binaries](https://github.com/Cinchoo/ChoEazyCopy/releases)
 
 ### This software requires .NET Framework 4
 
-https://www.microsoft.com/en-us/download/confirmation.aspx?id=17718
+![.NET Framework 4](https://www.microsoft.com/en-us/download/confirmation.aspx?id=17718)

@@ -752,20 +752,24 @@
 
         #region Instance Data Members (Retry Options)
 
+        const string DefaultNoOfRetries = "1000000";
+
         [Category("Retry Options")]
         [Description("Number of Retries on failed copies: default 1 million. (/R:n).")]
         [DisplayName("NoOfRetries")]
-        [ChoPropertyInfo("noOfRetries")]
+        [ChoPropertyInfo("noOfRetries", DefaultValue = DefaultNoOfRetries)]
         public uint NoOfRetries
         {
             get;
             set;
         }
 
+        const string DefaultWaitTimeBetweenRetries = "30";
+
         [Category("Retry Options")]
         [Description("Wait time between retries: default is 30 seconds. (/W:n).")]
         [DisplayName("WaitTimeBetweenRetries")]
-        [ChoPropertyInfo("waitTimeBetweenRetries")]
+        [ChoPropertyInfo("waitTimeBetweenRetries", DefaultValue = DefaultWaitTimeBetweenRetries)]
         public uint WaitTimeBetweenRetries
         {
             get;
@@ -1158,9 +1162,9 @@
                 cmdText.Append(" /XJF");
 
             //Retry Options
-            if (NoOfRetries > 0)
+            if (NoOfRetries.ToString() != DefaultNoOfRetries && NoOfRetries >= 0)
                 cmdText.AppendFormat(" /R:{0}", NoOfRetries);
-            if (WaitTimeBetweenRetries > 0)
+            if (WaitTimeBetweenRetries.ToString() != DefaultWaitTimeBetweenRetries && WaitTimeBetweenRetries >= 0)
                 cmdText.AppendFormat(" /W:{0}", WaitTimeBetweenRetries);
             if (SaveRetrySettingsToRegistry)
                 cmdText.Append(" /REG");

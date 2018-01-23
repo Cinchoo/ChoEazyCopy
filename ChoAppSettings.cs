@@ -1193,13 +1193,13 @@
             if (ShowEstTimeOfArrival)
                 cmdText.Append(" /ETA");
             if (!OutputLogFilePath.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /LOG:{0}", OutputLogFilePath);
+                cmdText.AppendFormat(" /LOG:\"{0}\"", OutputLogFilePath);
             if (!AppendOutputLogFilePath.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /LOG+:{0}", AppendOutputLogFilePath);
+                cmdText.AppendFormat(" /LOG+:\"{0}\"", AppendOutputLogFilePath);
             if (!UnicodeOutputLogFilePath.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /UNILOG:{0}", UnicodeOutputLogFilePath);
+                cmdText.AppendFormat(" /UNILOG:\"{0}\"", UnicodeOutputLogFilePath);
             if (!AppendUnicodeOutputLogFilePath.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /UNILOG+:{0}", AppendUnicodeOutputLogFilePath);
+                cmdText.AppendFormat(" /UNILOG+:\"{0}\"", AppendUnicodeOutputLogFilePath);
             if (NoJobHeader)
                 cmdText.Append(" /NJH");
             if (NoJobSummary)

@@ -1003,19 +1003,27 @@
             return "{0} {1}".FormatString(RoboCopyFilePath, GetCmdLineParams());
         }
 
+        string DirSafeguard(string path)
+        {
+            // Escape the last '\' from the path if it is not escaped yet.
+            if (path.Last() == '\\' && (path[path.Length - 2] != '\\'))
+                path += '\\';
+            return path;
+        }
+
         internal string GetCmdLineParams(string sourceDirectory = null, string destDirectory = null)
         {
             StringBuilder cmdText = new StringBuilder();
             
             if (!sourceDirectory.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" \"{0}\"", sourceDirectory);
+                cmdText.AppendFormat(" \"{0}\"", DirSafeguard(sourceDirectory));
             else if (!SourceDirectory.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" \"{0}\"", SourceDirectory);
+                cmdText.AppendFormat(" \"{0}\"", DirSafeguard(SourceDirectory));
 
             if (!destDirectory.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" \"{0}\"", destDirectory);
+                cmdText.AppendFormat(" \"{0}\"", DirSafeguard(destDirectory));
             else if (!DestDirectory.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" \"{0}\"", DestDirectory);
+                cmdText.AppendFormat(" \"{0}\"", DirSafeguard(DestDirectory));
 
             if (!Files.IsNullOrWhiteSpace())
                 cmdText.AppendFormat(" {0}", Files);

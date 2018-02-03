@@ -5,7 +5,7 @@
     xmlns:local="clr-namespace:ChoEazyCopy"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     x:Class="ChoEazyCopy.MainWindow"
-    Title="Eazy Copy - Cinchoo Inc."
+    Title="ChoEazyCopy - Cinchoo Inc."
     Height="505"
     Width="798"
     MinHeight="505"

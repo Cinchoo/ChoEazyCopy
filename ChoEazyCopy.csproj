@@ -79,9 +79,7 @@
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="Cinchoo.Core, Version=1.0.9.5, Culture=neutral, PublicKeyToken=b7dacd80ff3e33de, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -169,7 +167,6 @@
     </EmbeddedResource>
     <None Include="ChoEazyCopy_TemporaryKey.pfx" />
     <None Include="packages.config" />
-    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

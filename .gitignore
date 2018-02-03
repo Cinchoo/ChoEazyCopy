@@ -6,3 +6,4 @@ Lib/Cinchoo.Core.pdb
 *.user
 packages/*
 publish/*
+/.vs/ChoEazyCopy/v15/Server/sqlite3

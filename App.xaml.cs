@@ -101,7 +101,7 @@ namespace ChoEazyCopy
 
         protected override void AfterNotifyIconConstructed(ChoNotifyIcon ni)
         {
-            ni.Text = "Eazy Copy - Cinchoo";
+            ni.Text = "ChoEazyCopy - Cinchoo";
 
             ni.ContextMenuStrip.Items.Insert(1, new System.Windows.Forms.ToolStripMenuItem("Launch New Instance",
                 System.Drawing.Image.FromStream(this.GetType().Assembly.GetManifestResourceStream("ChoEazyCopy.Resources.OpenNewWindow.png")),
@@ -127,7 +127,7 @@ namespace ChoEazyCopy
     [ChoShellExtension]
     public class ShellExt
     {
-        [ChoShellExtensionContextMenu("Folder", MenuText = "Eazy copy...", DefaultArgPrefix = "/d:")]
+        [ChoShellExtensionContextMenu("Folder", MenuText = "ChoEazyCopy...", DefaultArgPrefix = "/d:")]
         public static void EazyCopyFiles(string[] args)
         {
             new AppHost().ShowMainWindow();

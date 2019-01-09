@@ -20,12 +20,12 @@ Features:
  
 #### To read more about this tool, please refer below CodeProject article
 
-![Cinchoo - EazyCopy, yet another RoboCopy GUI](http://www.codeproject.com/Articles/988605/Cinchoo-EazyCopy-yet-another-RoboCopy-GU)
+[Cinchoo - EazyCopy, yet another RoboCopy GUI](http://www.codeproject.com/Articles/988605/Cinchoo-EazyCopy-yet-another-RoboCopy-GU)
 
 ## Binaries can be downloaded from 
 
-![Download Binaries](https://github.com/Cinchoo/ChoEazyCopy/releases)
+[Download Binaries](https://github.com/Cinchoo/ChoEazyCopy/releases)
 
 ### This software requires .NET Framework 4
 
-![.NET Framework 4](https://www.microsoft.com/en-us/download/confirmation.aspx?id=17718)
+[.NET Framework 4](https://www.microsoft.com/en-us/download/confirmation.aspx?id=17718)

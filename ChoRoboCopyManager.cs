@@ -137,14 +137,19 @@
             while ((chars = reader.Read(buffer, 0, buffer.Length)) > 0)
             {
                 string data = new string(buffer, 0, chars);
-                if (data.EndsWith("\r"))
-                    txt.Append(data);
-                else
-                {
-                    txt.Append(data);
+                txt.Append(data);
+
+                if (txt.Length > 1024 * 10)
+                { 
                     Status.Raise(this, new ChoFileProcessEventArgs(txt.ToString()));
                     txt.Clear();
                 }
+                Thread.Sleep(300);
+            }
+            if (txt.Length > 0)
+            {
+                Status.Raise(this, new ChoFileProcessEventArgs(txt.ToString()));
+                txt.Clear();
             }
 
             // You arrive here when process is terminated.

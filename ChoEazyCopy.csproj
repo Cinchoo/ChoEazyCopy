@@ -128,6 +128,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ChoPropertyGridFilePicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ChoPropertyGridFolderPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -140,6 +148,12 @@
     <Compile Include="ChoAppSettings.cs" />
     <Compile Include="ChoDonateButton.xaml.cs">
       <DependentUpon>ChoDonateButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ChoPropertyGridFilePicker.xaml.cs">
+      <DependentUpon>ChoPropertyGridFilePicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ChoPropertyGridFolderPicker.xaml.cs">
+      <DependentUpon>ChoPropertyGridFolderPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="ChoRoboCopyManager.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -165,6 +179,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Registry.png" />
     <None Include="ChoEazyCopy_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -201,6 +216,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\Cinchoo.Core.dll" />
+    <EmbeddedResource Include="Resources\RemoveRegistry.png" />
+    <EmbeddedResource Include="Resources\Security.png" />
+    <Resource Include="Resources\Scroll.png" />
     <Resource Include="Resources\Donate.gif" />
     <EmbeddedResource Include="Lib\System.Windows.Interactivity.dll" />
     <EmbeddedResource Include="Lib\MahApps.Metro.dll" />

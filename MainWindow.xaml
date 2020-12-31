@@ -215,6 +215,19 @@
                         </Image.Style>
                     </Image>
                 </Button>
+                <CheckBox x:Name="btnScrollOutput" Click="btnScrollOutput_Click" ToolTip="Turn on / off output scrolling..." IsTabStop="False" >
+                    <Image Source="Resources/Scroll.png" Height="16" Width="16" >
+                        <Image.Style>
+                            <Style TargetType="{x:Type Image}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </CheckBox>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" IsTabStop="False" />
                 <local:ChoDonateButton x:Name="btnDonate" 
                                        PaypalAccountEmail="cinchoofrx@gmail.com">

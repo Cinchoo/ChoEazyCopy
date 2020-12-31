@@ -7,6 +7,7 @@ using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace ChoEazyCopy
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class MainWindow : MetroWindow, INotifyPropertyChanged
     {
         #region Instance Members (Private)
 
@@ -59,8 +60,24 @@ namespace ChoEazyCopy
         ChoRoboCopyManager _roboCopyManager = null;
         ChoWPFBindableConfigObject<ChoAppSettings> _bindObj;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void RaisePropertyChanged(string propName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
         #endregion Instance Members (Private)
-        
+
+        private bool _scrollOutput = true;
+        public bool ScrollOutput
+        {
+            get { return _scrollOutput; }
+            set
+            {
+                _scrollOutput = value;
+                RaisePropertyChanged(nameof(ScrollOutput));
+            }
+        }
+
         public MainWindow() :
             this(null)
         {
@@ -77,6 +94,8 @@ namespace ChoEazyCopy
 
         private void MyWindow_Loaded(object sender1, RoutedEventArgs e1)
         {
+            DataContext = this;
+            ScrollOutput = false;
             _bindObj = new ChoWPFBindableConfigObject<ChoAppSettings>();
             _appSettings = _bindObj.UnderlyingSource;
             _appSettings.Init();
@@ -334,7 +353,8 @@ namespace ChoEazyCopy
                 //}
 
                 txtStatus.AppendText(msg);
-                txtStatus.ScrollToEnd();
+                if (ScrollOutput)
+                    txtStatus.ScrollToEnd();
             }
         }
 
@@ -527,6 +547,11 @@ namespace ChoEazyCopy
         private void txtRoboCopyCmd_TextChanged(object sender, TextChangedEventArgs e)
         {
             IsDirty = true;
+        }
+
+        private void btnScrollOutput_Click(object sender, RoutedEventArgs e)
+        {
+            ScrollOutput = btnScrollOutput.IsChecked.Value;
         }
     }
 

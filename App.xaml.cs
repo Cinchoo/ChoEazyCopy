@@ -12,6 +12,8 @@ using System.Windows;
 using System.IO;
 using System.Diagnostics;
 using ChoEazyCopy.Properties;
+using System.Reflection;
+using System.Security.Principal;
 
 namespace ChoEazyCopy
 {
@@ -50,6 +52,18 @@ namespace ChoEazyCopy
         {
             _defaultBalloonTipText = "{0} is running...".FormatString(ChoGlobalApplicationSettings.Me.ApplicationName);
 
+            UnregisterShellExtensions();
+
+            if (ChoApplication.ApplicationMode == ChoApplicationMode.Console)
+            {
+                ChoAppCmdLineArgs cmdLineArgs = new ChoAppCmdLineArgs();
+                cmdLineArgs.StartFileCopy();
+            }
+            base.OnStart(args);
+        }
+
+        public static void RegisterShellExtensions()
+        {
             try
             {
                 ChoShellExtension.Register();
@@ -68,13 +82,64 @@ namespace ChoEazyCopy
             {
                 ChoTrace.WriteLine("Failed to register File Associations. {0}".FormatString(ex.Message));
             }
+        }
 
-            if (ChoApplication.ApplicationMode == ChoApplicationMode.Console)
+        public static void UnregisterShellExtensions()
+        {
+            try
             {
-                ChoAppCmdLineArgs cmdLineArgs = new ChoAppCmdLineArgs();
-                cmdLineArgs.StartFileCopy();
+                ChoShellExtension.Unregister();
+                ChoTrace.WriteLine("Shell Extensions unregistered successfully.");
             }
-            base.OnStart(args);
+            catch (Exception ex)
+            {
+                ChoTrace.WriteLine("Failed to unregister Shell Extensions. {0}".FormatString(ex.Message));
+            }
+            try
+            {
+                ChoShellFileAssociation.Unregister();
+                ChoTrace.WriteLine("File Associations unregistered successfully.");
+            }
+            catch (Exception ex)
+            {
+                ChoTrace.WriteLine("Failed to unregister File Associations. {0}".FormatString(ex.Message));
+            }
+        }
+
+        public static void RunAsAdmin()
+        {
+            if (!IsRunAsAdmin())
+            {
+                ProcessStartInfo proc = new ProcessStartInfo();
+                proc.UseShellExecute = true;
+                proc.WorkingDirectory = Environment.CurrentDirectory;
+                proc.FileName = Assembly.GetEntryAssembly().CodeBase;
+
+                foreach (string arg in Environment.GetCommandLineArgs())
+                {
+                    proc.Arguments += String.Format("\"{0}\" ", arg);
+                }
+
+                proc.Verb = "runas";
+
+                try
+                {
+                    Process.Start(proc);
+                    Environment.Exit(0);
+                }
+                catch (Exception ex)
+                {
+                    ChoTrace.WriteLine("This application requires elevated credentials in order to operate correctly! {0}".FormatString(ex.Message));
+                }
+            }
+        }
+
+        private static bool IsRunAsAdmin()
+        {
+            WindowsIdentity id = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(id);
+
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
 
         public override object MainWindowObject
@@ -110,6 +175,31 @@ namespace ChoEazyCopy
                     var info = new System.Diagnostics.ProcessStartInfo(ChoApplication.EntryAssemblyLocation);
                     System.Diagnostics.Process.Start(info);
                 })));
+            if (!IsRunAsAdmin())
+            {
+                ni.ContextMenuStrip.Items.Insert(2, new System.Windows.Forms.ToolStripMenuItem("Run as Administrator",
+                  System.Drawing.Image.FromStream(this.GetType().Assembly.GetManifestResourceStream("ChoEazyCopy.Resources.Security.png")),
+                    ((o, e) =>
+                    {
+                        AppHost.RunAsAdmin();
+                    })));
+            }
+            else
+            {
+                ni.ContextMenuStrip.Items.Insert(2, new System.Windows.Forms.ToolStripMenuItem("Register Shell Extensions",
+                  System.Drawing.Image.FromStream(this.GetType().Assembly.GetManifestResourceStream("ChoEazyCopy.Resources.Registry.png")),
+                  ((o, e) =>
+                  {
+                      AppHost.RegisterShellExtensions();
+                  })));
+                ni.ContextMenuStrip.Items.Insert(3, new System.Windows.Forms.ToolStripMenuItem("Unregister Shell Extensions",
+                  System.Drawing.Image.FromStream(this.GetType().Assembly.GetManifestResourceStream("ChoEazyCopy.Resources.RemoveRegistry.png")),
+                   ((o, e) =>
+                   {
+                       AppHost.UnregisterShellExtensions();
+                   })));
+
+            }
         }
 
         public void ShowMainWindow()

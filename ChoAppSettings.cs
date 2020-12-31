@@ -57,11 +57,33 @@
         [Description("C")]
         Compressed,
         [Description("N")]
-        Normal,
+        NotContentIndexed,
         [Description("E")]
         Encrypted,
         [Description("T")]
         Temporary
+    }
+
+    public enum ChoFileSelectionAttributes
+    {
+        [Description("R")]
+        ReadOnly,
+        [Description("A")]
+        Archive,
+        [Description("S")]
+        System,
+        [Description("H")]
+        Hidden,
+        [Description("C")]
+        Compressed,
+        [Description("N")]
+        NotContentIndexed,
+        [Description("E")]
+        Encrypted,
+        [Description("T")]
+        Temporary,
+        [Description("O")]
+        Offline
     }
 
     [ChoNameValueConfigurationSection("applicationSettings" /*, BindingMode = ChoConfigurationBindingMode.OneWayToSource */, Silent = false)]
@@ -532,6 +554,7 @@
         [Description("Include only files with any of the given Attributes set. (/IA:[RASHCNETO]).")]
         [DisplayName("IncludeFilesWithGivenAttributes")]
         [ChoPropertyInfo("includeFilesWithGivenAttributes")]
+        [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
         public string IncludeFilesWithGivenAttributes
         {
             get;
@@ -542,6 +565,7 @@
         [Description("eXclude files with any of the given Attributes set. (/XA:[RASHCNETO]).")]
         [DisplayName("ExcludeFilesWithGivenAttributes")]
         [ChoPropertyInfo("excludeFilesWithGivenAttributes")]
+        [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
         public string ExcludeFilesWithGivenAttributes
         {
             get;
@@ -552,6 +576,7 @@
         [Description("eXclude Files matching given names/paths/wildcards. Separate names with ;. (/XF).")]
         [DisplayName("ExcludeFilesWithGivenNames")]
         [ChoPropertyInfo("excludeFilesWithGivenNames")]
+        [Editor(typeof(ChoPropertyGridFilePicker), typeof(ChoPropertyGridFilePicker))]
         public string ExcludeFilesWithGivenNames
         {
             get;
@@ -562,6 +587,7 @@
         [Description("eXclude Directories matching given names/paths. Separate names with ;. (/XD).")]
         [DisplayName("ExcludeDirsWithGivenNames")]
         [ChoPropertyInfo("excludeDirsWithGivenNames")]
+        [Editor(typeof(ChoPropertyGridFolderPicker), typeof(ChoPropertyGridFolderPicker))]
         public string ExcludeDirsWithGivenNames
         {
             get;
@@ -1122,13 +1148,21 @@
             if (CopyOnlyFilesWithArchiveAttributesAndReset)
                 cmdText.Append(" /M");
             if (!IncludeFilesWithGivenAttributes.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /IA:{0}", IncludeFilesWithGivenAttributes);
+            {
+                cmdText.AppendFormat(" /IA:{0}", (from f in IncludeFilesWithGivenAttributes.SplitNTrim()
+                                                  where !f.IsNullOrWhiteSpace()
+                                                  select ((ChoFileSelectionAttributes)Enum.Parse(typeof(ChoFileSelectionAttributes), f)).ToDescription()).Join(""));
+            }
             if (!ExcludeFilesWithGivenAttributes.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /XA:{0}", ExcludeFilesWithGivenAttributes);
+            {
+                cmdText.AppendFormat(" /XA:{0}", (from f in ExcludeFilesWithGivenAttributes.SplitNTrim()
+                                                  where !f.IsNullOrWhiteSpace()
+                                                  select ((ChoFileSelectionAttributes)Enum.Parse(typeof(ChoFileSelectionAttributes), f)).ToDescription()).Join(""));
+            }
             if (!ExcludeFilesWithGivenNames.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /XF {0}", ExcludeFilesWithGivenNames.Replace(";", " "));
+                cmdText.AppendFormat(@" /XF {0}", String.Join(" ", ExcludeFilesWithGivenNames.Split(";").Select(f => f).Select(f => f.Contains(" ") ? String.Format(@"""{0}""", f) : f)));
             if (!ExcludeDirsWithGivenNames.IsNullOrWhiteSpace())
-                cmdText.AppendFormat(" /XD {0}", ExcludeDirsWithGivenNames.Replace(";", " "));
+                cmdText.AppendFormat(@" /XD {0}", String.Join(" ", ExcludeDirsWithGivenNames.Split(";").Select(f => f).Select(f => f.Contains(" ") ? String.Format(@"""{0}""", f) : f)));
             if (ExcludeChangedFiles)
                 cmdText.Append(" /XC");
             if (ExcludeNewerFiles)
@@ -1266,6 +1300,28 @@
             BindingOperations.SetBinding(cmb, ChoMultiSelectComboBox.TextProperty, _binding);
 
             cmb.ItemsSource = ChoEnum.AsNodeList<ChoFileAttributes>(propertyItem.Value.ToNString());
+
+            return cmb;
+        }
+    }
+
+    //Custom editors that are used as attributes MUST implement the ITypeEditor interface.
+    public class FileSelectionAttributesEditor : Xceed.Wpf.Toolkit.PropertyGrid.Editors.ITypeEditor
+    {
+        public FrameworkElement ResolveEditor(Xceed.Wpf.Toolkit.PropertyGrid.PropertyItem propertyItem)
+        {
+            ChoMultiSelectComboBox cmb = new ChoMultiSelectComboBox();
+            cmb.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            //create the binding from the bound property item to the editor
+            var _binding = new Binding("Value"); //bind to the Value property of the PropertyItem
+            _binding.Source = propertyItem;
+            _binding.ValidatesOnExceptions = true;
+            _binding.ValidatesOnDataErrors = true;
+            _binding.Mode = propertyItem.IsReadOnly ? BindingMode.OneWay : BindingMode.TwoWay;
+            BindingOperations.SetBinding(cmb, ChoMultiSelectComboBox.TextProperty, _binding);
+
+            cmb.ItemsSource = ChoEnum.AsNodeList<ChoFileSelectionAttributes>(propertyItem.Value.ToNString());
 
             return cmb;
         }

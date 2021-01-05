@@ -102,176 +102,219 @@
         <local:BoolInverterConverter x:Key="BoolInverterConverter1"/>
         <local:BoolInverterConverter x:Key="BoolInverterConverter2"/>
     </Window.Resources>
-    <Grid >
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="25"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="70*" MinWidth="400" />
-            <ColumnDefinition Width="3" />
-            <ColumnDefinition Width="30*" MinWidth="250" />
-        </Grid.ColumnDefinitions>
+    <DockPanel>
+        <StatusBar DockPanel.Dock="Bottom" Margin="5,0,5,5" Width="Auto">
+            <StatusBarItem
+                VerticalContentAlignment="Top"
+                Focusable="False"
+                Padding="0">
+                <TextBlock
+                    Style="{StaticResource StatusBarTextBlock}"
+                    x:Name="sbAppStatus"><Run Text="Ready"/></TextBlock>
+            </StatusBarItem>
+        </StatusBar>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="Auto" >
+                    <ColumnDefinition.Style>
+                        <Style TargetType="{x:Type ColumnDefinition}">
+                            <Setter Property="MinWidth" Value="150" />
+                            <!-- Default MinHeight -->
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=MyExpander, Path=IsExpanded}" Value="False">
+                                    <Setter Property="MinWidth" Value="24" />
+                                    <!-- MinHeight when Collapsed -->
+                                    <Setter Property="MaxWidth" Value="40" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ColumnDefinition.Style>
+                </ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Column="0" LastChildFill="true">
+                <Ribbon DockPanel.Dock="Top" x:Name="RibbonWin" SelectedIndex="0" Loaded="RibbonWin_Loaded" >
+                    <Ribbon.ApplicationMenu>
+                        <RibbonApplicationMenu Visibility="Collapsed"></RibbonApplicationMenu>
+                    </Ribbon.ApplicationMenu>
+                    <RibbonTab Header="Home" KeyTip="H" >
+                        <RibbonGroup x:Name="HomeGroup" Header="Action">
+                            <RibbonButton x:Name="btnRun" LargeImageSource="Resources\Run.png" Label="Run" KeyTip="R" Click="btnRun_Click" />
+                            <RibbonButton x:Name="btnStop" SmallImageSource="Resources\Stop.png" Label="Stop" KeyTip="T" Click="btnStop_Click" />
+                            <RibbonButton x:Name="btnClear" SmallImageSource="Resources\Erase.png" Label="Clear Output" KeyTip="E" Click="btnClear_Click" />
+                            <RibbonCheckBox x:Name="btnScrollOutput" SmallImageSource="Resources\Scroll.png" Label="Scroll Output" KeyTip="L" Click="btnScrollOutput_Click" />
+                        </RibbonGroup>
+                        <RibbonGroup x:Name="FileGroup" Header="File">
+                            <RibbonButton x:Name="btnNewFile" LargeImageSource="Resources\NewFile.png" Label="New" KeyTip="N" Click="btnNewFile_Click" />
+                            <RibbonButton x:Name="btnOpenFile" SmallImageSource="Resources\OpenFile.png" Label="Open" KeyTip="O" Click="btnOpenFile_Click" />
+                            <RibbonButton x:Name="btnSaveFile" SmallImageSource="Resources\SaveFile.png" Label="Save" KeyTip="S" Click="btnSaveFile_Click" />
+                            <RibbonButton x:Name="btnSaveAsFile" SmallImageSource="Resources\SaveAsFile.png" Label="Save As" KeyTip="A" Click="btnSaveAsFile_Click" />
+                        </RibbonGroup>
+                        <RibbonGroup x:Name="DonateGroup" >
+                            <RibbonButton x:Name="btnDomate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDomate_Click" />
+                        </RibbonGroup>
+                    </RibbonTab>
+                </Ribbon>
 
-        <ToolBarTray Grid.Row="0" Grid.Column="0" Width="Auto">
-            <ToolBarTray.Background>
-                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
-            </ToolBarTray.Background>
-            <ToolBar x:Name="tbrMain" ToolBarTray.IsLocked="True" ToolBar.OverflowMode="Never" Loaded="tbrMain_Loaded" HorizontalAlignment="Left" 
+                <ToolBarTray DockPanel.Dock="Top" Width="Auto" Visibility="Collapsed">
+                    <ToolBarTray.Background>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
+                    </ToolBarTray.Background>
+                    <ToolBar x:Name="tbrMain" ToolBarTray.IsLocked="True" ToolBar.OverflowMode="Never" Loaded="tbrMain_Loaded" HorizontalAlignment="Left" 
                      Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToolBarTray}}}">
-                <ToolBar.Background>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
-                </ToolBar.Background>
-                <Button x:Name="btnNewFile" Click="btnNewFile_Click" ToolTip="New settings file" IsTabStop="False">
-                    <Image Source="Resources/NewFile.png" >
-                        <Image.Style>
-                            <Style TargetType="{x:Type Image}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Opacity" Value="0.5" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <Button x:Name="btnOpenFile" Click="btnOpenFile_Click" ToolTip="Open settings file" IsTabStop="False">
-                    <Image Source="Resources/OpenFile.png" >
-                        <Image.Style>
-                            <Style TargetType="{x:Type Image}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Opacity" Value="0.5" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <Button x:Name="btnSaveFile" Click="btnSaveFile_Click" ToolTip="Save settings file" IsTabStop="False">
-                    <Image Source="Resources/SaveFile.png" >
-                        <Image.Style>
-                            <Style TargetType="{x:Type Image}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Opacity" Value="0.5" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <Button x:Name="btnSaveAsFile" Click="btnSaveAsFile_Click" ToolTip="Save settings to new file" IsTabStop="False">
-                    <Image Source="Resources/SaveAsFile.png" >
-                        <Image.Style>
-                            <Style TargetType="{x:Type Image}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Opacity" Value="0.5" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" IsTabStop="False" />
-                <Button x:Name="btnRun" Click="btnRun_Click" ToolTip="Start processing files" IsTabStop="False">
-                    <Image Source="Resources/Run.png" >
-                        <Image.Style>
-                            <Style TargetType="{x:Type Image}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Opacity" Value="0.5" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <Button x:Name="btnStop" IsEnabled="False" Click="btnStop_Click" ToolTip="Stop the processing files" IsTabStop="False">
-                    <Image Source="Resources/Stop.png" >
-                        <Image.Style>
-                            <Style TargetType="{x:Type Image}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Opacity" Value="0.5" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <Button x:Name="btnClear" IsEnabled="False" Click="btnClear_Click" ToolTip="Clear the status window" IsTabStop="False">
-                    <Image Source="Resources/Erase.png" >
-                        <Image.Style>
-                            <Style TargetType="{x:Type Image}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Opacity" Value="0.5" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <CheckBox x:Name="btnScrollOutput" Click="btnScrollOutput_Click" ToolTip="Turn on / off output scrolling..." IsTabStop="False" >
-                    <Image Source="Resources/Scroll.png" Height="16" Width="16" >
-                        <Image.Style>
-                            <Style TargetType="{x:Type Image}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Opacity" Value="0.5" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </CheckBox>
-                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" IsTabStop="False" />
-                <local:ChoDonateButton x:Name="btnDonate" 
+                        <ToolBar.Background>
+                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
+                        </ToolBar.Background>
+                        <Button x:Name="btnNewFile1" Click="btnNewFile_Click" ToolTip="New settings file" IsTabStop="False">
+                            <Image Source="Resources/NewFile.png" >
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                        <Button x:Name="btnOpenFile1" Click="btnOpenFile_Click" ToolTip="Open settings file" IsTabStop="False">
+                            <Image Source="Resources/OpenFile.png" >
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                        <Button x:Name="btnSaveFile1" Click="btnSaveFile_Click" ToolTip="Save settings file" IsTabStop="False">
+                            <Image Source="Resources/SaveFile.png" >
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                        <Button x:Name="btnSaveAsFile1" Click="btnSaveAsFile_Click" ToolTip="Save settings to new file" IsTabStop="False">
+                            <Image Source="Resources/SaveAsFile.png" >
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" IsTabStop="False" />
+                        <Button x:Name="btnRun1" Click="btnRun_Click" ToolTip="Start processing files" IsTabStop="False">
+                            <Image Source="Resources/Run.png" >
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                        <Button x:Name="btnStop1" IsEnabled="False" Click="btnStop_Click" ToolTip="Stop the processing files" IsTabStop="False">
+                            <Image Source="Resources/Stop.png" >
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                        <Button x:Name="btnClear1" IsEnabled="False" Click="btnClear_Click" ToolTip="Clear the status window" IsTabStop="False">
+                            <Image Source="Resources/Erase.png" >
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                        <CheckBox x:Name="btnScrollOutput1" Click="btnScrollOutput_Click" ToolTip="Turn on / off output scrolling..." IsTabStop="False" >
+                            <Image Source="Resources/Scroll.png" Height="16" Width="16" >
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </CheckBox>
+                        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" IsTabStop="False" />
+                        <local:ChoDonateButton x:Name="btnDonate1" 
                                        PaypalAccountEmail="cinchoofrx@gmail.com">
-                </local:ChoDonateButton>
-                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" IsTabStop="False" />
-                <TextBlock x:Name="tbSpace" xml:space="preserve" FontSize="16" FontWeight="Bold" Foreground="DarkBlue"
+                        </local:ChoDonateButton>
+                        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" IsTabStop="False" />
+                        <TextBlock x:Name="tbSpace" xml:space="preserve" FontSize="16" FontWeight="Bold" Foreground="DarkBlue"
                            Width="Auto" TextAlignment="Right"/>
-                <TextBlock x:Name="tbSettingsName" FontSize="16" FontWeight="Bold" Foreground="DarkBlue"
+                        <TextBlock x:Name="tbSettingsName" FontSize="16" FontWeight="Bold" Foreground="DarkBlue"
                            Width="Auto" VerticalAlignment="Center" FontFamily="Verdana"/>
-            </ToolBar>
-        </ToolBarTray>
-        <DockPanel Grid.Row="1" Grid.Column="0"
+                    </ToolBar>
+                </ToolBarTray>
+                <DockPanel
         HorizontalAlignment="Stretch"
         x:Name="dockPanel1"
         VerticalAlignment="Stretch"
         LastChildFill="True"
         FocusManager.FocusedElement="{Binding ElementName=txtFolder}">
-            <Grid
+                    <Grid
             Width="Auto"
             DockPanel.Dock="Top">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <GroupBox
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <GroupBox
                     x:Name="grpFolders"
                 Margin="5"
                 Height="Auto"
                 Grid.Column="0"
                 Header="Choose Folders">
-                    <Grid
+                            <Grid
                     Width="Auto"
                     Height="Auto"
                         >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35*" />
-                            <ColumnDefinition Width="145*"/>
-                            <ColumnDefinition Width="368*"/>
-                            <ColumnDefinition Width="20" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <TextBox 
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="35*" />
+                                    <ColumnDefinition Width="145*"/>
+                                    <ColumnDefinition Width="368*"/>
+                                    <ColumnDefinition Width="20" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBox 
                         x:Name="txtSourceDirectory"
                         VerticalAlignment="Stretch"
                         Grid.Row="0"
@@ -283,26 +326,26 @@
                         ToolTip="Choose source directory..."
                             Text="{Binding Path=SourceDirectory, UpdateSourceTrigger=PropertyChanged}"
                         />
-                        <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                         Grid.Row="0"
                         Grid.Column="3"
                         Margin="1,0,1,2"
                         x:Name="btnSourceDirBrowse"
                         Click="btnSourceDirBrowse_Click"
                         TabIndex="1" ToolTip="Choose source directory..." VerticalAlignment="Bottom">
-                            <Image Source="Resources/OpenFolder.png" >
-                                <Image.Style>
-                                    <Style TargetType="{x:Type Image}">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter Property="Opacity" Value="0.5" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-                        </Button>
-                        <TextBox
+                                    <Image Source="Resources/OpenFolder.png" >
+                                        <Image.Style>
+                                            <Style TargetType="{x:Type Image}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Opacity" Value="0.5" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                </Button>
+                                <TextBox
                         x:Name="txtDestDirectory" 
                         Grid.Row="1" 
                         Grid.Column="0"
@@ -313,89 +356,89 @@
                         ToolTip="Choose destination directory..."
                             Text="{Binding Path=DestDirectory, UpdateSourceTrigger=PropertyChanged}"
                             />
-                        <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                         Grid.Row="1"
                         Grid.Column="3"
                         Margin="1,2,1,1"
                         x:Name="btnDestDirBrowse"
                         TabIndex="3" ToolTip="Choose destination directory..."
                                 Click="btnDestDirBrowse_Click" >
-                            <Image Source="Resources/OpenFolder.png" >
-                                <Image.Style>
-                                    <Style TargetType="{x:Type Image}">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter Property="Opacity" Value="0.5" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-                        </Button>
+                                    <Image Source="Resources/OpenFolder.png" >
+                                        <Image.Style>
+                                            <Style TargetType="{x:Type Image}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Opacity" Value="0.5" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                </Button>
+                            </Grid>
+                        </GroupBox>
                     </Grid>
-                </GroupBox>
-            </Grid>
-            <Grid
+                    <Grid
             Width="Auto">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition
                     Height="100"
                     MinHeight="100" />
-                    <RowDefinition
+                            <RowDefinition
                     Height="Auto" />
-                    <RowDefinition
+                            <RowDefinition
                     Height="*"
                     MinHeight="100" />
-                </Grid.RowDefinitions>
-                <GroupBox
+                        </Grid.RowDefinitions>
+                        <GroupBox
                 Margin="5,0,5,0"
                 Grid.Row="0"
                 Header="RoboCopy Command"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch">
-                    <TextBox
+                            <TextBox
                     Margin="0,3,0,2"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Name="txtRoboCopyCmd"
                     TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" TextChanged="txtRoboCopyCmd_TextChanged" />
-                </GroupBox>
-                <GridSplitter
+                        </GroupBox>
+                        <GridSplitter
                 Margin="5,5,5,0"
                 ResizeDirection="Rows"
                 Grid.Row="1"
                 Height="1"
                 HorizontalAlignment="Stretch" IsTabStop="False" />
-                <GroupBox
+                        <GroupBox
                 Margin="5,0,5,5"
                 Grid.Row="2"
                 Header="Output"
                 VerticalAlignment="Stretch">
-                    <TextBox
+                            <TextBox
                     Margin="0,3,0,2"
                     VerticalAlignment="Stretch"
                     x:Name="txtStatus"
                     IsReadOnly="True"
                     TabIndex="25" FontFamily="Courier New" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
-                </GroupBox>
-            </Grid>
-        </DockPanel>
-        <GridSplitter Grid.Column="1" Grid.RowSpan="2" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" ResizeDirection="Columns" />
-        <xctk:PropertyGrid Grid.Column="2" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding}" SelectedObjectName="" ShowTitle="False" />
-        <StatusBar Grid.Row="2" Grid.ColumnSpan="3"
-            Margin="5,0,5,5"
-            Width="Auto">
-            <StatusBarItem
-                VerticalContentAlignment="Top"
-                Focusable="False"
-                Padding="0">
-                <TextBlock
-                    Style="{StaticResource StatusBarTextBlock}"
-                    x:Name="sbAppStatus"><Run Text="Ready"/></TextBlock>
-            </StatusBarItem>
-        </StatusBar>
-    </Grid>
+                        </GroupBox>
+                    </Grid>
+                </DockPanel>
+
+            </DockPanel>
+            <Expander Grid.Column="2" ExpandDirection="Left" IsExpanded="True" x:Name="MyExpander">
+                <Expander.Header>
+                    <TextBlock Text="RoboCopy Options" Foreground="White" FontWeight="Bold">
+                        <TextBlock.LayoutTransform>
+                            <RotateTransform Angle="90"/>
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                </Expander.Header>
+                <xctk:PropertyGrid VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding}" SelectedObjectName="" ShowTitle="False" />
+            </Expander>
+            <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" ResizeDirection="Columns" />
+        </Grid>
+    </DockPanel>
 </Controls:MetroWindow>

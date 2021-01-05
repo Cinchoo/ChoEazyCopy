@@ -1251,6 +1251,9 @@
             if (NoJobSummary)
                 cmdText.Append(" /NJS");
 
+            if (!AdditionalParams.IsNullOrWhiteSpace())
+                cmdText.AppendFormat(" {0}", AdditionalParams);
+
             return cmdText.ToString();
         }
 

@@ -40,7 +40,18 @@ namespace ChoEazyCopy
         private Thread _fileNameProcessThread;
         private ChoAppSettings _appSettings;
         private bool _isRunning = false;
+        public bool IsRunning
+        {
+            get { return _isRunning; }
+            set
+            {
+                _isRunning = value;
+                RaisePropertyChanged(nameof(IsRunning));
+            }
+        }
+
         private bool _wndLoaded = false;
+        private bool _isNewFileOp = false;
         private bool _isDirty = false;
         private bool IsDirty
         {
@@ -127,7 +138,8 @@ namespace ChoEazyCopy
                 {
                     if (_wndLoaded)
                     {
-                        IsDirty = true;
+                        if (!_isNewFileOp)
+                            IsDirty = true;
                     }
                     this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
                          new Action(() =>
@@ -142,6 +154,7 @@ namespace ChoEazyCopy
             {
                 if (_wndLoaded)
                 {
+                    _isNewFileOp = false;
                     this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
                          new Action(() =>
                          {
@@ -208,8 +221,8 @@ namespace ChoEazyCopy
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            grpFolders.IsEnabled = !_isRunning;
-            if (_isRunning)
+            grpFolders.IsEnabled = !IsRunning;
+            if (IsRunning)
                 btnRun.IsEnabled = false;
             else
             {
@@ -222,11 +235,11 @@ namespace ChoEazyCopy
                     btnRun.IsEnabled = false;
             }
 
-            btnStop.IsEnabled = _isRunning;
-            btnNewFile.IsEnabled = !_isRunning;
-            btnOpenFile.IsEnabled = !_isRunning;
-            btnSaveFile.IsEnabled = !_isRunning && IsDirty;
-            btnSaveAsFile.IsEnabled = !_isRunning;
+            btnStop.IsEnabled = IsRunning;
+            btnNewFile.IsEnabled = !IsRunning;
+            btnOpenFile.IsEnabled = !IsRunning;
+            btnSaveFile.IsEnabled = !IsRunning && IsDirty;
+            btnSaveAsFile.IsEnabled = !IsRunning;
             if (SettingsFilePath.IsNullOrWhiteSpace())
             {
                 this.ToolTip = null;
@@ -237,7 +250,7 @@ namespace ChoEazyCopy
                 this.ToolTip = SettingsFilePath;
                 tbSettingsName.Text = Path.GetFileNameWithoutExtension(SettingsFilePath);
             }
-            btnClear.IsEnabled = !_isRunning && txtStatus.Text.Length > 0;
+            btnClear.IsEnabled = !IsRunning && txtStatus.Text.Length > 0;
 
             if (_fileNameProcessThread != null && _fileNameProcessThread.IsAlive)
             {
@@ -312,7 +325,7 @@ namespace ChoEazyCopy
 
             try
             {
-                _isRunning = true;
+                IsRunning = true;
 
                 _roboCopyManager = new ChoRoboCopyManager();
                 _roboCopyManager.Status += (sender, e) => SetStatusMsg(e.Message);
@@ -330,7 +343,7 @@ namespace ChoEazyCopy
             }
             finally
             {
-                _isRunning = false;
+                IsRunning = false;
                 _roboCopyManager = null;
             }
         }
@@ -507,11 +520,14 @@ namespace ChoEazyCopy
 
             if (result == true)
             {
-                SettingsFilePath = dlg.FileName;
-                _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
-                this.DataContext = null;
-                this.DataContext = _appSettings;
-                IsDirty = false;
+                using (var x = new ChoWPFWaitCursor())
+                {
+                    SettingsFilePath = dlg.FileName;
+                    _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
+                    this.DataContext = null;
+                    this.DataContext = _appSettings;
+                    IsDirty = false;
+                }
             }
         }
 
@@ -520,11 +536,17 @@ namespace ChoEazyCopy
             if (SaveSettings())
                 return;
 
-            SettingsFilePath = null;
-            _appSettings.Reset();
-            this.DataContext = null;
-            this.DataContext = _appSettings;
-            IsDirty = false;
+            using (var x = new ChoWPFWaitCursor())
+            {
+                _isNewFileOp = true;
+                SettingsFilePath = null;
+                txtSourceDirectory.Text = String.Empty;
+                txtDestDirectory.Text = String.Empty;
+                _appSettings.Reset();
+                this.DataContext = null;
+                this.DataContext = _appSettings;
+                IsDirty = false;
+            }
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
@@ -535,7 +557,7 @@ namespace ChoEazyCopy
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             //_wndClosing = true;
-            if (_isRunning)
+            if (IsRunning)
             {
                 if (MessageBox.Show("File operation is in progress. Are you sure want to close the application?", Caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     return;
@@ -552,6 +574,29 @@ namespace ChoEazyCopy
         private void btnScrollOutput_Click(object sender, RoutedEventArgs e)
         {
             ScrollOutput = btnScrollOutput.IsChecked.Value;
+        }
+
+        private void RibbonWin_Loaded(object sender, RoutedEventArgs e)
+        {
+            Grid child = VisualTreeHelper.GetChild((DependencyObject)sender, 0) as Grid;
+            if (child != null)
+            {
+                child.RowDefinitions[0].Height = new GridLength(0);
+                child.RowDefinitions[1].Height = new GridLength(0);
+            }
+        }
+
+        private void BtnDomate_Click(object sender, RoutedEventArgs e)
+        {
+            string url = "https://www.paypal.com/cgi-bin/webscr" +
+    "?cmd=" + "_donations" +
+    "&business=" + "cinchoofrx@gmail.com" +
+    "&lc=" + "US" +
+    "&item_name=" + "ChoEazyCopy Donation" +
+    "&currency_code=" + "USD" +
+    "&bn=" + "PP%2dDonationsBF";
+
+            System.Diagnostics.Process.Start(url);
         }
     }
 

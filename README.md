@@ -26,7 +26,7 @@ Features:
 
 [Download Binaries](https://github.com/Cinchoo/ChoEazyCopy/releases)
 
-### This software requires .NET Framework 4
+### This software requires .NET Framework 4 / .NET Framework 4.5.2
 
 [.NET Framework 4](https://www.microsoft.com/en-us/download/confirmation.aspx?id=17718)
 

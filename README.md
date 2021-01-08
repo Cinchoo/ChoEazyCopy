@@ -1,4 +1,4 @@
-# EazyCopy, a RoboCopy GUI
+# ChoEazyCopy, a RoboCopy GUI
 Simple and powerful GUI to Microsoft RoboCopy tool
 RoboCopy is a powerful tool included in the Microsoft Windows Server that is used to perform more advanced file replication tasks. The biggest benefit you'll find is the ability to create full mirror duplicates of two file structures (including all subdirectories and files, if you choose). RoboCopy also allows you to preserve all of the associated file information, including date and time stamps, security access control lists (ACLs) and more which is missing from normal file copy operations.
 

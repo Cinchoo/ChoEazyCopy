@@ -116,65 +116,9 @@ namespace ChoEazyCopy
                 _appSettings.Reset();
 
             this.DataContext = _appSettings;
-            _appSettings.BeforeConfigurationObjectLoaded += ((o, e) =>
-            {
-                e.Cancel = (bool)this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
-                     new Func<bool>(() =>
-                     {
-                         if (IsDirty)
-                         {
-                             if (MessageBox.Show("Configuration settings has been modified outside of the tool. {0}Do you want to reload it and lose the changes made in the tool?".FormatString(Environment.NewLine),
-                                 Title, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                                 return false;
-                             else
-                                 return true;
-                         }
-
-                         return false;
-                     }));
-            });
-
-            _appSettings.AfterConfigurationObjectMemberSet += ((o, e) =>
-                {
-                    if (_wndLoaded)
-                    {
-                        if (!_isNewFileOp)
-                            IsDirty = true;
-                    }
-                    this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
-                         new Action(() =>
-                         {
-                             txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
-                         }));
-                });
-
-            _appSettings.ConfigurationObjectMemberLoadError += _appSettings_ConfigurationObjectMemberLoadError;
-            _appSettings.AfterConfigurationObjectPersisted += _appSettings_AfterConfigurationObjectPersisted;
-            _appSettings.AfterConfigurationObjectLoaded += ((o, e) =>
-            {
-                if (_wndLoaded)
-                {
-                    _isNewFileOp = false;
-                    this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
-                         new Action(() =>
-                         {
-                             this.DataContext = null;
-                             this.DataContext = _appSettings;
-                             txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
-                             IsDirty = false;
-                         }));
-                }
-                else
-                {
-                    this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
-                         new Action(() =>
-                         {
-                             txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
-                         }));
-                }
-            });
-
             _mainUIThread = Thread.CurrentThread;
+
+            btnNewFile_Click(null, null);
 
             _dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             _dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
@@ -185,8 +129,81 @@ namespace ChoEazyCopy
             ChoShellExtCmdLineArgs cmdLineArgs = new ChoShellExtCmdLineArgs();
             if (!cmdLineArgs.Directory.IsNullOrWhiteSpace())
                 _appSettings.SourceDirectory = cmdLineArgs.Directory;
-            
+
             IsDirty = false;
+        }
+
+        private void RegisterEvents()
+        {
+            _appSettings.BeforeConfigurationObjectLoaded += _appSettings_BeforeConfigurationObjectLoaded;
+            _appSettings.AfterConfigurationObjectMemberSet += _appSettings_AfterConfigurationObjectMemberSet;
+            _appSettings.ConfigurationObjectMemberLoadError += _appSettings_ConfigurationObjectMemberLoadError;
+            _appSettings.AfterConfigurationObjectPersisted += _appSettings_AfterConfigurationObjectPersisted;
+            _appSettings.AfterConfigurationObjectLoaded += _appSettings_AfterConfigurationObjectLoaded;
+        }
+
+        private void UnregisterEvents()
+        {
+            _appSettings.BeforeConfigurationObjectLoaded -= _appSettings_BeforeConfigurationObjectLoaded;
+            _appSettings.AfterConfigurationObjectMemberSet -= _appSettings_AfterConfigurationObjectMemberSet;
+            _appSettings.ConfigurationObjectMemberLoadError -= _appSettings_ConfigurationObjectMemberLoadError;
+            _appSettings.AfterConfigurationObjectPersisted -= _appSettings_AfterConfigurationObjectPersisted;
+            _appSettings.AfterConfigurationObjectLoaded -= _appSettings_AfterConfigurationObjectLoaded;
+        }
+
+        private void _appSettings_BeforeConfigurationObjectLoaded(object sender, ChoPreviewConfigurationObjectEventArgs e)
+        {
+            e.Cancel = (bool)this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                 new Func<bool>(() =>
+                 {
+                     if (IsDirty)
+                     {
+                         if (MessageBox.Show("Configuration settings has been modified outside of the tool. {0}Do you want to reload it and lose the changes made in the tool?".FormatString(Environment.NewLine),
+                             Title, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                             return false;
+                         else
+                             return true;
+                     }
+
+                     return false;
+                 }));
+        }
+
+        private void _appSettings_AfterConfigurationObjectMemberSet(object sender, ChoConfigurationObjectMemberEventArgs e)
+        {
+            if (_wndLoaded)
+            {
+                //IsDirty = true;
+            }
+            this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
+                 new Action(() =>
+                 {
+                     txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
+                 }));
+        }
+
+        private void _appSettings_AfterConfigurationObjectLoaded(object sender, ChoConfigurationObjectEventArgs e)
+        {
+            if (_wndLoaded)
+            {
+                this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                     new Action(() =>
+                     {
+                         this.DataContext = null;
+                         this.DataContext = _appSettings;
+                         txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
+                         IsDirty = false;
+                     }));
+            }
+            else
+            {
+                this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                     new Action(() =>
+                     {
+                         txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
+                         IsDirty = false;
+                     }));
+            }
         }
 
         private void MyWindow_ContentRendered(object sender, EventArgs e)
@@ -243,12 +260,14 @@ namespace ChoEazyCopy
             if (SettingsFilePath.IsNullOrWhiteSpace())
             {
                 this.ToolTip = null;
-                tbSettingsName.Text = null;
+                tbSettingsName.Text = "<NEW>";
+                tbSettingsName.ToolTip = "New File";
             }
             else
             {
                 this.ToolTip = SettingsFilePath;
                 tbSettingsName.Text = Path.GetFileNameWithoutExtension(SettingsFilePath);
+                tbSettingsName.ToolTip = SettingsFilePath;
             }
             btnClear.IsEnabled = !IsRunning && txtStatus.Text.Length > 0;
 
@@ -522,11 +541,15 @@ namespace ChoEazyCopy
             {
                 using (var x = new ChoWPFWaitCursor())
                 {
+                    _isNewFileOp = true;
                     SettingsFilePath = dlg.FileName;
+                    UnregisterEvents();
                     _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
+                    RegisterEvents();
                     this.DataContext = null;
                     this.DataContext = _appSettings;
                     IsDirty = false;
+                    _isNewFileOp = false;
                 }
             }
         }
@@ -542,10 +565,13 @@ namespace ChoEazyCopy
                 SettingsFilePath = null;
                 txtSourceDirectory.Text = String.Empty;
                 txtDestDirectory.Text = String.Empty;
+                UnregisterEvents();
                 _appSettings.Reset();
+                RegisterEvents();
                 this.DataContext = null;
                 this.DataContext = _appSettings;
                 IsDirty = false;
+                _isNewFileOp = false;
             }
         }
 
@@ -568,7 +594,8 @@ namespace ChoEazyCopy
 
         private void txtRoboCopyCmd_TextChanged(object sender, TextChangedEventArgs e)
         {
-            IsDirty = true;
+            if (!_isNewFileOp)
+                IsDirty = true;
         }
 
         private void btnScrollOutput_Click(object sender, RoutedEventArgs e)

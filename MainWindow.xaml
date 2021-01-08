@@ -134,25 +134,32 @@
                 </ColumnDefinition>
             </Grid.ColumnDefinitions>
             <DockPanel Grid.Column="0" LastChildFill="true">
-                <Ribbon DockPanel.Dock="Top" x:Name="RibbonWin" SelectedIndex="0" Loaded="RibbonWin_Loaded" >
+                <Ribbon DockPanel.Dock="Top" x:Name="RibbonWin" SelectedIndex="0" Loaded="RibbonWin_Loaded" MinWidth="500" ContextMenu="{x:Null}">
                     <Ribbon.ApplicationMenu>
                         <RibbonApplicationMenu Visibility="Collapsed"></RibbonApplicationMenu>
                     </Ribbon.ApplicationMenu>
-                    <RibbonTab Header="Home" KeyTip="H" >
-                        <RibbonGroup x:Name="HomeGroup" Header="Action">
-                            <RibbonButton x:Name="btnRun" LargeImageSource="Resources\Run.png" Label="Run" KeyTip="R" Click="btnRun_Click" />
-                            <RibbonButton x:Name="btnStop" SmallImageSource="Resources\Stop.png" Label="Stop" KeyTip="T" Click="btnStop_Click" />
-                            <RibbonButton x:Name="btnClear" SmallImageSource="Resources\Erase.png" Label="Clear Output" KeyTip="E" Click="btnClear_Click" />
-                            <RibbonCheckBox x:Name="btnScrollOutput" SmallImageSource="Resources\Scroll.png" Label="Scroll Output" KeyTip="L" Click="btnScrollOutput_Click" />
+                    <RibbonTab Header="Home" KeyTip="H" ContextMenu="{x:Null}">
+                        <RibbonGroup x:Name="HomeGroup" Header="Action" ContextMenu="{x:Null}">
+                            <RibbonButton x:Name="btnRun" LargeImageSource="Resources\Run.png" Label="Run" KeyTip="R" Click="btnRun_Click"  ContextMenu="{x:Null}"/>
+                            <RibbonButton x:Name="btnStop" SmallImageSource="Resources\Stop.png" Label="Stop" KeyTip="T" Click="btnStop_Click"  ContextMenu="{x:Null}"/>
+                            <RibbonButton x:Name="btnClear" SmallImageSource="Resources\Erase.png" Label="Clear Output" KeyTip="E" Click="btnClear_Click"  ContextMenu="{x:Null}"/>
+                            <RibbonCheckBox x:Name="btnScrollOutput" SmallImageSource="Resources\Scroll.png" Label="Scroll Output" KeyTip="L" Click="btnScrollOutput_Click"  ContextMenu="{x:Null}"/>
                         </RibbonGroup>
-                        <RibbonGroup x:Name="FileGroup" Header="File">
-                            <RibbonButton x:Name="btnNewFile" LargeImageSource="Resources\NewFile.png" Label="New" KeyTip="N" Click="btnNewFile_Click" />
-                            <RibbonButton x:Name="btnOpenFile" SmallImageSource="Resources\OpenFile.png" Label="Open" KeyTip="O" Click="btnOpenFile_Click" />
-                            <RibbonButton x:Name="btnSaveFile" SmallImageSource="Resources\SaveFile.png" Label="Save" KeyTip="S" Click="btnSaveFile_Click" />
-                            <RibbonButton x:Name="btnSaveAsFile" SmallImageSource="Resources\SaveAsFile.png" Label="Save As" KeyTip="A" Click="btnSaveAsFile_Click" />
+                        <RibbonGroup x:Name="FileGroup" Header="File" ContextMenu="{x:Null}">
+                            <RibbonButton x:Name="btnNewFile" LargeImageSource="Resources\NewFile.png" Label="New" KeyTip="N" Click="btnNewFile_Click"  ContextMenu="{x:Null}"/>
+                            <RibbonButton x:Name="btnOpenFile" SmallImageSource="Resources\OpenFile.png" Label="Open" KeyTip="O" Click="btnOpenFile_Click"  ContextMenu="{x:Null}"/>
+                            <RibbonButton x:Name="btnSaveFile" SmallImageSource="Resources\SaveFile.png" Label="Save" KeyTip="S" Click="btnSaveFile_Click"  ContextMenu="{x:Null}"/>
+                            <RibbonButton x:Name="btnSaveAsFile" SmallImageSource="Resources\SaveAsFile.png" Label="Save As" KeyTip="A" Click="btnSaveAsFile_Click"  ContextMenu="{x:Null}"/>
                         </RibbonGroup>
-                        <RibbonGroup x:Name="DonateGroup" >
-                            <RibbonButton x:Name="btnDomate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDomate_Click" />
+                        <RibbonGroup x:Name="DonateGroup" ContextMenu="{x:Null}">
+                            <RibbonButton x:Name="btnDomate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDomate_Click"  ContextMenu="{x:Null}"/>
+                        </RibbonGroup>
+                        <RibbonGroup VerticalAlignment="Center" ContextMenu="{x:Null}">
+                            <DockPanel LastChildFill="True">
+                                <TextBlock DockPanel.Dock="Bottom">Settings File</TextBlock>
+                                <TextBlock x:Name="tbSettingsName" FontSize="24" FontWeight="Bold" Foreground="DarkBlue" 
+                                           Width="Auto" VerticalAlignment="Stretch" FontFamily="Verdana"/>
+                            </DockPanel>
                         </RibbonGroup>
                     </RibbonTab>
                 </Ribbon>
@@ -278,7 +285,7 @@
                         <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" IsTabStop="False" />
                         <TextBlock x:Name="tbSpace" xml:space="preserve" FontSize="16" FontWeight="Bold" Foreground="DarkBlue"
                            Width="Auto" TextAlignment="Right"/>
-                        <TextBlock x:Name="tbSettingsName" FontSize="16" FontWeight="Bold" Foreground="DarkBlue"
+                        <TextBlock x:Name="tbSettingsName1" FontSize="16" FontWeight="Bold" Foreground="DarkBlue"
                            Width="Auto" VerticalAlignment="Center" FontFamily="Verdana"/>
                     </ToolBar>
                 </ToolBarTray>

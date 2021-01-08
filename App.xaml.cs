@@ -217,7 +217,7 @@ namespace ChoEazyCopy
     [ChoShellExtension]
     public class ShellExt
     {
-        [ChoShellExtensionContextMenu("Folder", MenuText = "ChoEazyCopy...", DefaultArgPrefix = "/d:")]
+        [ChoShellExtensionContextMenu("Folder", MenuText = "Open with ChoEazyCopy...", DefaultArgPrefix = "/d:")]
         public static void EazyCopyFiles(string[] args)
         {
             new AppHost().ShowMainWindow();

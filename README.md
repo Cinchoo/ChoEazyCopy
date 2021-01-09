@@ -16,7 +16,7 @@ Features:
 * Display immediate hints to an option highlighted in the property grid or in the text editor.
 * Able to run the RoboCopy within the GUI.
 
-![alt text](https://user-images.githubusercontent.com/9448455/30031384-1be22e90-915f-11e7-9601-fb009244d19b.png)
+![alt text](Images/EazyCopyMain.PNG)
  
 #### To read more about this tool, please refer below CodeProject article
 

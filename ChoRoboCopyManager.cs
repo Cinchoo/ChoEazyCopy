@@ -139,11 +139,13 @@
                 string data = new string(buffer, 0, chars);
                 txt.Append(data);
 
-                if (txt.Length > 1024 * 10)
+                if (txt.Length > 0)
                 { 
                     Status.Raise(this, new ChoFileProcessEventArgs(txt.ToString()));
                     txt.Clear();
                 }
+
+                Thread.Sleep(30);
             }
             if (txt.Length > 0)
             {

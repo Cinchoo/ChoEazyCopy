@@ -152,7 +152,7 @@
                             <RibbonButton x:Name="btnSaveAsFile" SmallImageSource="Resources\SaveAsFile.png" Label="Save As" KeyTip="A" Click="btnSaveAsFile_Click"  ContextMenu="{x:Null}"/>
                         </RibbonGroup>
                         <RibbonGroup x:Name="DonateGroup" ContextMenu="{x:Null}">
-                            <RibbonButton x:Name="btnDomate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDomate_Click"  ContextMenu="{x:Null}"/>
+                            <RibbonButton x:Name="btnDomate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDomate_Click" ToolTip="Your supoort is much appreciated." ContextMenu="{x:Null}"/>
                         </RibbonGroup>
                         <RibbonGroup VerticalAlignment="Center" ContextMenu="{x:Null}">
                             <DockPanel LastChildFill="True">

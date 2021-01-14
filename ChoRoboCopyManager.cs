@@ -144,7 +144,6 @@
                     Status.Raise(this, new ChoFileProcessEventArgs(txt.ToString()));
                     txt.Clear();
                 }
-                Thread.Sleep(300);
             }
             if (txt.Length > 0)
             {

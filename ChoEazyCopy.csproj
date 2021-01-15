@@ -200,7 +200,6 @@
     <Resource Include="Resources\OpenFile.png" />
     <Resource Include="Resources\OpenFolder.png" />
     <EmbeddedResource Include="Resources\OpenNewWindow.png" />
-    <Resource Include="Resources\Run.png" />
     <Resource Include="Resources\SaveAsFile.png" />
     <Resource Include="Resources\SaveFile.png" />
     <Resource Include="Resources\Stop.png" />
@@ -212,6 +211,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\Cinchoo.Core.dll" />
+    <Resource Include="Resources\Run.png" />
     <Resource Include="Resources\Donate.png" />
     <EmbeddedResource Include="Resources\RemoveRegistry.png" />
     <EmbeddedResource Include="Resources\Security.png" />

@@ -500,7 +500,7 @@
             set
             {
                 if (value < 1 || value > 128)
-                    _multithreadCopy = 8;
+                    _multithreadCopy = 0;
                 else
                     _multithreadCopy = value;
             }
@@ -1022,6 +1022,7 @@
         {
             ChoObject.ResetObject(this);
             Persist();
+            MultithreadCopy = 8;
         }
         
         internal string GetCmdLineText()

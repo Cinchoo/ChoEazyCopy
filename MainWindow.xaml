@@ -115,9 +115,9 @@
         </StatusBar>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="Auto" >
+                <ColumnDefinition Width="300" >
                     <ColumnDefinition.Style>
                         <Style TargetType="{x:Type ColumnDefinition}">
                             <Setter Property="MinWidth" Value="150" />
@@ -318,7 +318,7 @@
                         </TextBlock.LayoutTransform>
                     </TextBlock>
                 </Expander.Header>
-                <xctk:PropertyGrid VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding}" SelectedObjectName="" ShowTitle="False" />
+                <xctk:PropertyGrid VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding}" SelectedObjectName="" ShowTitle="False" ShowDescriptionByTooltip="True" />
             </Expander>
             <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" ResizeDirection="Columns" />
         </Grid>

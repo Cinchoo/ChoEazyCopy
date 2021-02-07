@@ -34,7 +34,7 @@ namespace ChoEazyCopy
     {
         #region Instance Members (Private)
 
-        private readonly string Caption;
+        internal static string Caption;
         private DispatcherTimer _dispatcherTimer;
         private Thread _mainUIThread;
         private Thread _fileNameProcessThread;
@@ -426,6 +426,24 @@ namespace ChoEazyCopy
 
         private void btnRun_Click(object sender, RoutedEventArgs e)
         {
+            ChoFileMoveAttributes value = ChoFileMoveAttributes.None;
+            if (Enum.TryParse<ChoFileMoveAttributes>(_appSettings.MoveFilesAndDirectories.ToNString(), out value))
+            {
+                switch (value)
+                {
+                    case ChoFileMoveAttributes.MoveFilesOnly:
+                        if (MessageBox.Show("Are you sure you wish to remove original file{s}? This CANNOT be undone!", Caption, MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.No)
+                            return;
+                        break;
+                    case ChoFileMoveAttributes.MoveDirectoriesAndFiles:
+                        if (MessageBox.Show("Are you sure you wish to remove original file{s} / folder(s)? This CANNOT be undone!", Caption, MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.No)
+                            return;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             _fileNameProcessThread = new Thread(new ParameterizedThreadStart(ProcessFiles));
             _fileNameProcessThread.IsBackground = true;
             _fileNameProcessThread.Start(txtRoboCopyCmd.Text);
@@ -521,7 +539,7 @@ namespace ChoEazyCopy
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed saving settings to file. {0}".FormatString(ex.Message), this.Caption, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Failed saving settings to file. {0}".FormatString(ex.Message), Caption, MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
         }
@@ -613,7 +631,7 @@ namespace ChoEazyCopy
             }
         }
 
-        private void BtnDomate_Click(object sender, RoutedEventArgs e)
+        private void BtnDonate_Click(object sender, RoutedEventArgs e)
         {
             string url = "https://www.paypal.com/cgi-bin/webscr" +
     "?cmd=" + "_donations" +

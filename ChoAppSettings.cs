@@ -24,6 +24,8 @@
     using System.Windows.Data;
     using System.Linq;
     using System.Collections.ObjectModel;
+    using System.Windows.Controls;
+    using System.Windows.Threading;
 
     #endregion NameSpaces
 
@@ -84,6 +86,16 @@
         Temporary,
         [Description("O")]
         Offline
+    }
+
+    public enum ChoFileMoveAttributes
+    {
+        [Description("")]
+        None,
+        [Description("/MOV")]
+        MoveFilesOnly,
+        [Description("/MOVE")]
+        MoveDirectoriesAndFiles,
     }
 
     [ChoNameValueConfigurationSection("applicationSettings" /*, BindingMode = ChoConfigurationBindingMode.OneWayToSource */, Silent = false)]
@@ -330,24 +342,35 @@
         }
 
         [Category("Copy Options")]
-        [Description("Move files (delete from source after copying). (/MOV).")]
-        [DisplayName("MoveFiles")]
-        [ChoPropertyInfo("moveFiles")]
-        public bool MoveFiles
+        [Description("Move files and dirs (delete from source after copying). (/MOV or /MOVE).")]
+        [DisplayName("MoveFilesAndDirectories")]
+        [ChoPropertyInfo("moveFilesAndDirectories", DefaultValue = "None")]
+        [Editor(typeof(FileMoveSelectionAttributesEditor), typeof(FileMoveSelectionAttributesEditor))]
+        public string MoveFilesAndDirectories
         {
             get;
             set;
         }
 
-        [Category("Copy Options")]
-        [Description("Move files and dirs (delete from source after copying). (/MOVE).")]
-        [DisplayName("MoveFilesNDirs")]
-        [ChoPropertyInfo("moveFilesNDirs")]
-        public bool MoveFilesNDirs
-        {
-            get;
-            set;
-        }
+        //[Category("Copy Options")]
+        //[Description("Move files (delete from source after copying). (/MOV).")]
+        //[DisplayName("MoveFiles")]
+        //[ChoPropertyInfo("moveFiles")]
+        //public bool MoveFiles
+        //{
+        //    get;
+        //    set;
+        //}
+
+        //[Category("Copy Options")]
+        //[Description("Move files and dirs (delete from source after copying). (/MOVE).")]
+        //[DisplayName("MoveFilesNDirs")]
+        //[ChoPropertyInfo("moveFilesNDirs")]
+        //public bool MoveFilesNDirs
+        //{
+        //    get;
+        //    set;
+        //}
 
         [Category("Copy Options")]
         [Description("Add the given attributes to copied files. (/A+:[RASHCNET]).")]
@@ -1099,10 +1122,28 @@
                 cmdText.Append(" /PURGE");
             if (MirrorDirTree)
                 cmdText.Append(" /MIR");
-            if (MoveFiles)
-                cmdText.Append(" /MOV");
-            if (MoveFilesNDirs)
-                cmdText.Append(" /MOVE");
+            //if (MoveFiles)
+            //    cmdText.Append(" /MOV");
+            //if (MoveFilesNDirs)
+            //    cmdText.Append(" /MOVE");
+            if (!MoveFilesAndDirectories.IsNullOrWhiteSpace())
+            {
+                ChoFileMoveAttributes value = ChoFileMoveAttributes.None;
+                if (Enum.TryParse<ChoFileMoveAttributes>(MoveFilesAndDirectories, out value))
+                {
+                    switch (value)
+                    {
+                        case ChoFileMoveAttributes.MoveFilesOnly:
+                            cmdText.Append(" /MOV");
+                            break;
+                        case ChoFileMoveAttributes.MoveDirectoriesAndFiles:
+                            cmdText.Append(" /MOVE");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
             if (!AddFileAttributes.IsNullOrWhiteSpace())
             {
                 cmdText.AppendFormat(" /A+:{0}", (from f in AddFileAttributes.SplitNTrim()
@@ -1328,6 +1369,58 @@
             cmb.ItemsSource = ChoEnum.AsNodeList<ChoFileSelectionAttributes>(propertyItem.Value.ToNString());
 
             return cmb;
+        }
+    }
+
+    public class FileMoveSelectionAttributesEditor : Xceed.Wpf.Toolkit.PropertyGrid.Editors.ITypeEditor
+    {
+        public FrameworkElement ResolveEditor(Xceed.Wpf.Toolkit.PropertyGrid.PropertyItem propertyItem)
+        {
+            ChoFileMoveComboBox cmb = new ChoFileMoveComboBox();
+            cmb.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            //create the binding from the bound property item to the editor
+            var _binding = new Binding("Value"); //bind to the Value property of the PropertyItem
+            _binding.Source = propertyItem;
+            _binding.ValidatesOnExceptions = true;
+            _binding.ValidatesOnDataErrors = true;
+            _binding.Mode = propertyItem.IsReadOnly ? BindingMode.OneWay : BindingMode.TwoWay;
+            BindingOperations.SetBinding(cmb, ChoFileMoveComboBox.TextProperty, _binding);
+
+            cmb.ItemsSource = ChoEnum.AsNodeList<ChoFileMoveAttributes>(propertyItem.Value.ToNString()).Select(c => c.Title);
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => cmb.SelectedItem = propertyItem.Value.ToNString()));
+            return cmb;
+        }
+    }
+
+    public class ChoFileMoveComboBox : ComboBox
+    {
+        protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+        {
+            if (e.RemovedItems.Count > 0)
+            {
+                if (e.AddedItems != null && e.AddedItems.Count > 0)
+                {
+                    var value = (ChoFileMoveAttributes)Enum.Parse(typeof(ChoFileMoveAttributes), e.AddedItems.OfType<string>().FirstOrDefault());
+                    if (value == ChoFileMoveAttributes.MoveFilesOnly)
+                    {
+                        if (MessageBox.Show("Would like to delete the original file(s) after transferring the copies to the new location?", MainWindow.Caption, MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.No)
+                        {
+                            e.Handled = true;
+                            return;
+                        }
+                    }
+                    else if (value == ChoFileMoveAttributes.MoveDirectoriesAndFiles)
+                    {
+                        if (MessageBox.Show("Would like to delete the original file(s) / folder(s) after transferring the copies to the new location?", MainWindow.Caption, MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.No)
+                        {
+                            e.Handled = true;
+                            return;
+                        }
+                    }
+                }
+            }
+            base.OnSelectionChanged(e);
         }
     }
 }

@@ -136,7 +136,7 @@
 
         #region Instance Data Members (Common Options)
 
-        [Category("Common Options")]
+        [Category("1. Common Options")]
         [Description("RoboCopy file path.")]
         [DisplayName("RoboCopyFilePath")]
         [ChoPropertyInfo("roboCopyFilePath", DefaultValue = "RoboCopy.exe")]
@@ -146,7 +146,7 @@
             set;
         }
 
-        [Category("Common Options")]
+        [Category("1. Common Options")]
         [Description("File(s) to copy (names/wildcards: default is \"*.*\").")]
         [DisplayName("Files")]
         [ChoPropertyInfo("files", DefaultValue = "*.*")]
@@ -156,7 +156,7 @@
             set;
         }
 
-        [Category("Common Options")]
+        [Category("1. Common Options")]
         [Description("Additional command line parameters (Optional).")]
         [DisplayName("AdditionalParams")]
         [ChoPropertyInfo("additionalParams")]
@@ -168,9 +168,9 @@
 
         #endregion Instance Data Members (Common Options)
 
-        #region Instance Data Members (Copy Options)
+        #region Instance Data Members (Source Options)
 
-        [Category("Copy Options")]
+        [Category("2. Source Options")]
         [Description("Copy subdirectories, but not empty ones. (/S).")]
         [DisplayName("CopyNoEmptySubDirectories")]
         [ChoPropertyInfo("copyNoEmptySubDirectories")]
@@ -180,7 +180,7 @@
             set;
         }
 
-        [Category("Copy Options")]
+        [Category("2. Source Options")]
         [Description("Copy subdirectories, including Empty ones. (/E).")]
         [DisplayName("CopySubDirectories")]
         [ChoPropertyInfo("copySubDirectories", DefaultValue = "true")]
@@ -190,70 +190,10 @@
             set;
         }
 
-        [Category("Copy Options")]
-        [Description("Only copy the top n levels of the source directory tree. 0 - all levels. (/LEV:n).")]
-        [DisplayName("OnlyCopyNLevels")]
-        [ChoPropertyInfo("onlyCopyNLevels")]
-        public uint OnlyCopyNLevels
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Copy files in restartable mode. (/Z).")]
-        [DisplayName("CopyFilesRestartableMode")]
-        [ChoPropertyInfo("copyFilesRestartableMode")]
-        public bool CopyFilesRestartableMode
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Copy files in Backup mode. (/B).")]
-        [DisplayName("CopyFilesBackupMode")]
-        [ChoPropertyInfo("copyFilesBackupMode")]
-        public bool CopyFilesBackupMode
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Use restartable mode; if access denied use Backup mode. (/ZB).")]
-        [DisplayName("FallbackCopyFilesMode")]
-        [ChoPropertyInfo("fallbackCopyFilesMode")]
-        public bool FallbackCopyFilesMode
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Copy using unbuffered I/O (recommended for large files). (/J)")]
-        [DisplayName("UnbufferredIOCopy")]
-        [ChoPropertyInfo("unbufferredIOCopy")]
-        public bool UnbufferredIOCopy
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Copy all encrypted files in EFS RAW mode. (/EFSRAW).")]
-        [DisplayName("EncrptFileEFSRawMode")]
-        [ChoPropertyInfo("encrptFileEFSRawMode")]
-        public bool EncrptFileEFSRawMode
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
+        [Category("2. Source Options")]
         [Description("What to copy for files (default is /COPY:DAT). (copyflags : D=Data, A=Attributes, T=Timestamps, S=Security=NTFS ACLs, O=Owner info, U=aUditing info). (/COPY:flags).")]
         [DisplayName("CopyFlags")]
-        [ChoPropertyInfo("copyFlags")]
+        [ChoPropertyInfo("copyFlags", DefaultValue = "Data,Attributes,Timestamps")]
         [Editor(typeof(CopyFlagsEditor), typeof(CopyFlagsEditor))]
         public string CopyFlags
         {
@@ -261,17 +201,7 @@
             set;
         }
 
-        [Category("Copy Options")]
-        [Description("Copy Directory Timestamps. (/DCOPY:T).")]
-        [DisplayName("CopyDirTimestamp")]
-        [ChoPropertyInfo("copyDirTimestamp")]
-        public bool CopyDirTimestamp
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
+        [Category("2. Source Options")]
         [Description("Copy files with security (equivalent to /COPY:DATS). (/SEC).")]
         [DisplayName("CopyFilesWithSecurity")]
         [ChoPropertyInfo("copyFilesWithSecurity")]
@@ -281,7 +211,17 @@
             set;
         }
 
-        [Category("Copy Options")]
+        [Category("2. Source Options")]
+        [Description("Copy Directory Timestamps. (/DCOPY:T).")]
+        [DisplayName("CopyDirTimestamp")]
+        [ChoPropertyInfo("copyDirTimestamp")]
+        public bool CopyDirTimestamp
+        {
+            get;
+            set;
+        }
+
+        [Category("2. Source Options")]
         [Description("Copy all file info (equivalent to /COPY:DATSOU). (/COPYALL).")]
         [DisplayName("CopyFilesWithFileInfo")]
         [ChoPropertyInfo("copyFilesWithFileInfo")]
@@ -291,7 +231,7 @@
             set;
         }
 
-        [Category("Copy Options")]
+        [Category("2. Source Options")]
         [Description("Copy no file info (useful with /PURGE). (/NOCOPY).")]
         [DisplayName("CopyFilesWithNoFileInfo")]
         [ChoPropertyInfo("copyFilesWithNoFileInfo")]
@@ -301,47 +241,147 @@
             set;
         }
 
-        [Category("Copy Options")]
-        [Description("Fix file security on all files, even skipped files. (/SECFIX).")]
-        [DisplayName("FixFileSecurityOnFiles")]
-        [ChoPropertyInfo("fixFileSecurityOnFiles")]
-        public bool FixFileSecurityOnFiles
+        [Category("2. Source Options")]
+        [Description("Copy only files with the Archive attribute set. (/A).")]
+        [DisplayName("CopyOnlyFilesWithArchiveAttributes")]
+        [ChoPropertyInfo("copyOnlyFilesWithArchiveAttributes")]
+        public bool CopyOnlyFilesWithArchiveAttributes
         {
             get;
             set;
         }
 
-        [Category("Copy Options")]
-        [Description("Fix file times on all files, even skipped files. (/TIMFIX).")]
-        [DisplayName("FixFileTimeOnFiles")]
-        [ChoPropertyInfo("fixFileTimeOnFiles")]
-        public bool FixFileTimeOnFiles
+        [Category("2. Source Options")]
+        [Description("Copy only files with the Archive attribute and reset it. (/M).")]
+        [DisplayName("CopyOnlyFilesWithArchiveAttributesAndReset")]
+        [ChoPropertyInfo("copyOnlyFilesWithArchiveAttributesAndReset")]
+        public bool CopyOnlyFilesWithArchiveAttributesAndReset
         {
             get;
             set;
         }
 
-        [Category("Copy Options")]
-        [Description("Delete dest files/dirs that no longer exist in source. (/PURGE).")]
-        [DisplayName("DelDestFileDirIfNotExistsInSource")]
-        [ChoPropertyInfo("delDestFileDirIfNotExistsInSource")]
-        public bool DelDestFileDirIfNotExistsInSource
+        [Category("2. Source Options")]
+        [Description("Only copy the top n levels of the source directory tree. 0 - all levels. (/LEV:n).")]
+        [DisplayName("OnlyCopyNLevels")]
+        [ChoPropertyInfo("onlyCopyNLevels")]
+        public uint OnlyCopyNLevels
         {
             get;
             set;
         }
 
-        [Category("Copy Options")]
-        [Description("Mirror a directory tree (equivalent to /E plus /PURGE). (/MIR).")]
-        [DisplayName("MirrorDirTree")]
-        [ChoPropertyInfo("mirrorDirTree")]
-        public bool MirrorDirTree
+        [Category("2. Source Options")]
+        [Description("MAXimum file AGE - exclude files older than n days/date. (/MAXAGE:n).")]
+        [DisplayName("ExcludeFilesOlderThanNDays")]
+        [ChoPropertyInfo("excludeFilesOlderThanNDays")]
+        public uint ExcludeFilesOlderThanNDays
         {
             get;
             set;
         }
 
-        [Category("Copy Options")]
+        [Category("2. Source Options")]
+        [Description("MINimum file AGE - exclude files newer than n days/date. (/MINAGE:n).")]
+        [DisplayName("ExcludeFilesNewerThanNDays")]
+        [ChoPropertyInfo("excludeFilesNewerThanNDays")]
+        public uint ExcludeFilesNewerThanNDays
+        {
+            get;
+            set;
+        }
+
+        [Category("2. Source Options")]
+        [Description("assume FAT File Times (2-second granularity). (/FFT).")]
+        [DisplayName("AssumeFATFileTimes")]
+        [ChoPropertyInfo("assumeFATFileTimes")]
+        public bool AssumeFATFileTimes
+        {
+            get;
+            set;
+        }
+
+        [Category("2. Source Options")]
+        [Description("Turn off very long path (> 256 characters) support. (/256).")]
+        [DisplayName("TurnOffLongPath")]
+        [ChoPropertyInfo("turnOffLongPath")]
+        public bool TurnOffLongPath
+        {
+            get;
+            set;
+        }
+
+        #endregion Instance Data Members (Source Options)
+
+        #region Instance Data Members (Destination Options)
+
+        [Category("3. Destination Options")]
+        [Description("Add the given attributes to copied files. (/A+:[RASHCNET]).")]
+        [DisplayName("AddFileAttributes")]
+        [ChoPropertyInfo("addFileAttributes")]
+        [Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
+        public string AddFileAttributes
+        {
+            get;
+            set;
+        }
+
+        [Category("3. Destination Options")]
+        [Description("Remove the given Attributes from copied files. (/A-:[RASHCNET]).")]
+        [DisplayName("RemoveFileAttributes")]
+        [ChoPropertyInfo("removeFileAttributes")]
+        [Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
+        public string RemoveFileAttributes
+        {
+            get;
+            set;
+        }
+
+        [Category("3. Destination Options")]
+        [Description("Create destination files using 8.3 FAT file names only. (/FAT).")]
+        [DisplayName("CreateFATFileNames")]
+        [ChoPropertyInfo("createFATFileNames")]
+        public bool CreateFATFileNames
+        {
+            get;
+            set;
+        }
+
+        [Category("3. Destination Options")]
+        [Description("Create directory tree and zero-length files only. (/CREATE).")]
+        [DisplayName("CreateDirTree")]
+        [ChoPropertyInfo("createDirTree")]
+        public bool CreateDirTree
+        {
+            get;
+            set;
+        }
+
+        [Category("3. Destination Options")]
+        [Description("Compensate for one-hour DST time differences. (/DST).")]
+        [DisplayName("CompensateOneHourDSTTimeDiff")]
+        [ChoPropertyInfo("compensateOneHourDSTTimeDiff")]
+        public bool CompensateOneHourDSTTimeDiff
+        {
+            get;
+            set;
+        }
+
+        #endregion Instance Data Members (Destination Options)
+
+        #region Instance Data Members (Copy Options)
+
+        [Category("4. Copy Options")]
+        [Description("List only - don't copy, timestamp or delete any files. (/L).")]
+        [DisplayName("ListOnly")]
+        [ChoPropertyInfo("listOnly")]
+        public bool ListOnly
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
         [Description("Move files and dirs (delete from source after copying). (/MOV or /MOVE).")]
         [DisplayName("MoveFilesAndDirectories")]
         [ChoPropertyInfo("moveFilesAndDirectories", DefaultValue = "None")]
@@ -351,6 +391,673 @@
             get;
             set;
         }
+
+        [Category("4. Copy Options")]
+        [Description("Copy symbolic links versus the target. (/SL).")]
+        [DisplayName("CopySymbolicLinks")]
+        [ChoPropertyInfo("copySymbolicLinks")]
+        public bool CopySymbolicLinks
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Copy files in restartable mode. (/Z).")]
+        [DisplayName("CopyFilesRestartableMode")]
+        [ChoPropertyInfo("copyFilesRestartableMode")]
+        public bool CopyFilesRestartableMode
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Copy files in Backup mode. (/B).")]
+        [DisplayName("CopyFilesBackupMode")]
+        [ChoPropertyInfo("copyFilesBackupMode")]
+        public bool CopyFilesBackupMode
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Copy using unbuffered I/O (recommended for large files). (/J)")]
+        [DisplayName("UnbufferredIOCopy")]
+        [ChoPropertyInfo("unbufferredIOCopy")]
+        public bool UnbufferredIOCopy
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Copy files without using the Windows Copy Offload mechanism. (/NOOFFLOAD).")]
+        [DisplayName("CopyWithoutWindowsCopyOffload")]
+        [ChoPropertyInfo("copyWithoutWindowsCopyOffload")]
+        public bool CopyWithoutWindowsCopyOffload
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Copy all encrypted files in EFS RAW mode. (/EFSRAW).")]
+        [DisplayName("EncrptFileEFSRawMode")]
+        [ChoPropertyInfo("encrptFileEFSRawMode")]
+        public bool EncrptFileEFSRawMode
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Fix file times on all files, even skipped files. (/TIMFIX).")]
+        [DisplayName("FixFileTimeOnFiles")]
+        [ChoPropertyInfo("fixFileTimeOnFiles")]
+        public bool FixFileTimeOnFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude Older files. (/XO).")]
+        [DisplayName("ExcludeOlderFiles")]
+        [ChoPropertyInfo("excludeOlderFiles")]
+        public bool ExcludeOlderFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude Changed files. (/XC).")]
+        [DisplayName("ExcludeChangedFiles")]
+        [ChoPropertyInfo("excludeChangedFiles")]
+        public bool ExcludeChangedFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude Newer files. (/XN).")]
+        [DisplayName("ExcludeNewerFiles")]
+        [ChoPropertyInfo("excludeNewerFiles")]
+        public bool ExcludeNewerFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude eXtra files and directories. (/XX).")]
+        [DisplayName("ExcludeExtraFilesAndDirs")]
+        [ChoPropertyInfo("excludeExtraFilesAndDirs")]
+        public bool ExcludeExtraFilesAndDirs
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude Files matching given names/paths/wildcards. Separate names with ;. (/XF).")]
+        [DisplayName("ExcludeFilesWithGivenNames")]
+        [ChoPropertyInfo("excludeFilesWithGivenNames")]
+        [Editor(typeof(ChoPropertyGridFilePicker), typeof(ChoPropertyGridFilePicker))]
+        public string ExcludeFilesWithGivenNames
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude Directories matching given names/paths. Separate names with ;. (/XD).")]
+        [DisplayName("ExcludeDirsWithGivenNames")]
+        [ChoPropertyInfo("excludeDirsWithGivenNames")]
+        [Editor(typeof(ChoPropertyGridFolderPicker), typeof(ChoPropertyGridFolderPicker))]
+        public string ExcludeDirsWithGivenNames
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Include only files with any of the given Attributes set. (/IA:[RASHCNETO]).")]
+        [DisplayName("IncludeFilesWithGivenAttributes")]
+        [ChoPropertyInfo("includeFilesWithGivenAttributes")]
+        [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
+        public string IncludeFilesWithGivenAttributes
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude files with any of the given Attributes set. (/XA:[RASHCNETO]).")]
+        [DisplayName("ExcludeFilesWithGivenAttributes")]
+        [ChoPropertyInfo("excludeFilesWithGivenAttributes")]
+        [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
+        public string ExcludeFilesWithGivenAttributes
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Include Modified files (differing change times). Otherwise the same. These files are not copied by default;. (/IM).")]
+        [DisplayName("OverrideModifiedFiles")]
+        [ChoPropertyInfo("overrideModifiedFiles")]
+        public bool OverrideModifiedFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Include Same files. Overwrite files even if they are already the same. (/IS).")]
+        [DisplayName("IncludeSameFiles")]
+        [ChoPropertyInfo("includeSameFiles")]
+        public bool IncludeSameFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Include Tweaked files. (/IT).")]
+        [DisplayName("IncludeTweakedFiles")]
+        [ChoPropertyInfo("includeTweakedFiles")]
+        public bool IncludeTweakedFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude Junction points and symbolic links. (normally included by default). (/XJ).")]
+        [DisplayName("ExcludeJunctionPoints")]
+        [ChoPropertyInfo("excludeJunctionPoints")]
+        public bool ExcludeJunctionPoints
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude Junction points and symbolic links for source directories. (/XJD).")]
+        [DisplayName("ExcludeJunctionPointsForDirs")]
+        [ChoPropertyInfo("excludeJunctionPointsForDirs")]
+        public bool ExcludeJunctionPointsForDirs
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude symbolic links for source files. (/XJF).")]
+        [DisplayName("ExcludeJunctionPointsForFiles")]
+        [ChoPropertyInfo("excludeJunctionPointsForFiles")]
+        public bool ExcludeJunctionPointsForFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("MAXimum file size - exclude files bigger than n bytes. (/MAX:n).")]
+        [DisplayName("ExcludeFilesBiggerThanNBytes")]
+        [ChoPropertyInfo("excludeFilesBiggerThanNBytes")]
+        public uint ExcludeFilesBiggerThanNBytes
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("MINimum file size - exclude files smaller than n bytes. (/MIN:n).")]
+        [DisplayName("ExcludeFilesSmallerThanNBytes")]
+        [ChoPropertyInfo("excludeFilesSmallerThanNBytes")]
+        public uint ExcludeFilesSmallerThanNBytes
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("MAXimum Last Access Date - exclude files unused since n. (/MAXLAD:n).")]
+        [DisplayName("ExcludeFilesUnusedSinceNDays")]
+        [ChoPropertyInfo("excludeFilesUnusedSinceNDays")]
+        public uint ExcludeFilesUnusedSinceNDays
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("MINimum Last Access Date - exclude files used since n. (If n < 1900 then n = n days, else n = YYYYMMDD date). (/MINLAD:n).")]
+        [DisplayName("ExcludeFilesUsedSinceNDays")]
+        [ChoPropertyInfo("excludeFilesUsedSinceNDays")]
+        public uint ExcludeFilesUsedSinceNDays
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Mirror a directory tree (equivalent to /E plus /PURGE). (/MIR).")]
+        [DisplayName("MirrorDirTree")]
+        [ChoPropertyInfo("mirrorDirTree")]
+        public bool MirrorDirTree
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Delete dest files/dirs that no longer exist in source. (/PURGE).")]
+        [DisplayName("DelDestFileDirIfNotExistsInSource")]
+        [ChoPropertyInfo("delDestFileDirIfNotExistsInSource")]
+        public bool DelDestFileDirIfNotExistsInSource
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("eXclude Lonely files and directories. (/XL).")]
+        [DisplayName("ExcludeLonelyFilesAndDirs")]
+        [ChoPropertyInfo("excludeLonelyFilesAndDirs")]
+        public bool ExcludeLonelyFilesAndDirs
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Fix file security on all files, even skipped files. (/SECFIX).")]
+        [DisplayName("FixFileSecurityOnFiles")]
+        [ChoPropertyInfo("fixFileSecurityOnFiles")]
+        public bool FixFileSecurityOnFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Use restartable mode; if access denied use Backup mode. (/ZB).")]
+        [DisplayName("FallbackCopyFilesMode")]
+        [ChoPropertyInfo("fallbackCopyFilesMode")]
+        public bool FallbackCopyFilesMode
+        {
+            get;
+            set;
+        }
+
+        [Category("4. Copy Options")]
+        [Description("Inter-Packet Gap (ms), to free bandwidth on slow lines. (/IPG:n).")]
+        [DisplayName("InterPacketGapInMS")]
+        [ChoPropertyInfo("interPacketGapInMS")]
+        public uint InterPacketGapInMS
+        {
+            get;
+            set;
+        }
+
+        private uint _multithreadCopy;
+        [Category("4. Copy Options")]
+        [Description("Do multi-threaded copies with n threads (default 8). n must be at least 1 and not greater than 128. This option is incompatible with the /IPG and /EFSRAW options. Redirect output using /LOG option for better performance. (/MT[:n]).")]
+        [DisplayName("MultithreadCopy")]
+        [ChoPropertyInfo("multithreadCopy")]
+        public uint MultithreadCopy
+        {
+            get { return _multithreadCopy; }
+            set
+            {
+                if (value < 1 || value > 128)
+                    _multithreadCopy = 0;
+                else
+                    _multithreadCopy = value;
+            }
+        }
+
+        [Category("4. Copy Options")]
+        [Description("COPY NO directory info (by default /DCOPY:DA is done). (/NODCOPY).")]
+        [DisplayName("CopyNODirInfo")]
+        [ChoPropertyInfo("copyNODirInfo")]
+        public bool CopyNODirInfo
+        {
+            get;
+            set;
+        }
+        #endregion Instance Data Members (Copy Options)
+
+        #region Instance Data Members (Monitoring Options)
+
+        const string DefaultNoOfRetries = "1000000";
+
+        [Category("5. Monitoring Options")]
+        [Description("Number of Retries on failed copies: default 1 million. (/R:n).")]
+        [DisplayName("NoOfRetries")]
+        [ChoPropertyInfo("noOfRetries", DefaultValue = DefaultNoOfRetries)]
+        public uint NoOfRetries
+        {
+            get;
+            set;
+        }
+
+        const string DefaultWaitTimeBetweenRetries = "30";
+
+        [Category("5. Monitoring Options")]
+        [Description("Wait time between retries: default is 30 seconds. (/W:n).")]
+        [DisplayName("WaitTimeBetweenRetries")]
+        [ChoPropertyInfo("waitTimeBetweenRetries", DefaultValue = DefaultWaitTimeBetweenRetries)]
+        public uint WaitTimeBetweenRetries
+        {
+            get;
+            set;
+        }
+
+        [Category("5. Monitoring Options")]
+        [Description("Save /R:n and /W:n in the Registry as default settings. (/REG).")]
+        [DisplayName("SaveRetrySettingsToRegistry")]
+        [ChoPropertyInfo("saveRetrySettingsToRegistry")]
+        public bool SaveRetrySettingsToRegistry
+        {
+            get;
+            set;
+        }
+
+        [Category("5. Monitoring Options")]
+        [Description("Wait for sharenames to be defined (retry error 67). (/TBD).")]
+        [DisplayName("WaitForSharenames")]
+        [ChoPropertyInfo("waitForSharenames")]
+        public bool WaitForSharenames
+        {
+            get;
+            set;
+        }
+
+        [Category("5. Monitoring Options")]
+        [Description("Monitor source; run again when more than n changes seen. (/MON:n).")]
+        [DisplayName("RunAgainWithNoChangesSeen")]
+        [ChoPropertyInfo("runAgainWithNoChangesSeen")]
+        public uint RunAgainWithNoChangesSeen
+        {
+            get;
+            set;
+        }
+
+        [Category("5. Monitoring Options")]
+        [Description("Monitor source; run again in m minutes time, if changed. (/MOT:m).")]
+        [DisplayName("RunAgainWithChangesSeenInMin")]
+        [ChoPropertyInfo("runAgainWithChangesSeenInMin")]
+        public uint RunAgainWithChangesSeenInMin
+        {
+            get;
+            set;
+        }
+
+        [Category("5. Monitoring Options")]
+        [Description("Check run hours on a Per File (not per pass) basis. (/PF).")]
+        [DisplayName("CheckRunHourPerFileBasis")]
+        [ChoPropertyInfo("checkRunHourPerFileBasis")]
+        public bool CheckRunHourPerFileBasis
+        {
+            get;
+            set;
+        }
+
+        #endregion Instance Data Members (Monitoring Options)
+
+        #region Instance Data Members (Scheduling Options)
+
+        private TimeSpan _runHourStartTime;
+        [Category("6. Scheduling Options")]
+        [Description("Run Hours StartTime, when new copies may be started after then. (/RH:hhmm-hhmm).")]
+        [DisplayName("RunHourStartTime")]
+        [ChoPropertyInfo("runHourStartTime")]
+        [XmlIgnore]
+        public TimeSpan RunHourStartTime
+        {
+            get { return _runHourStartTime; }
+            set { _runHourStartTime = value; }
+        }
+
+        [Browsable(false)]
+        public long RunHourStartTimeTicks
+        {
+            get { return _runHourStartTime.Ticks; }
+            set { _runHourStartTime = new TimeSpan(value); }
+        }
+
+        private TimeSpan _runHourEndTime;
+        [Category("6. Scheduling Options")]
+        [Description("Run Hours EndTime, when new copies may be Ended before then. (/RH:hhmm-hhmm).")]
+        [DisplayName("RunHourEndTime")]
+        [ChoPropertyInfo("runHourEndTime")]
+        [XmlIgnore]
+        public TimeSpan RunHourEndTime
+        {
+            get { return _runHourEndTime; }
+            set { _runHourEndTime = value; }
+        }
+
+        [Browsable(false)]
+        public long RunHourEndTimeTicks
+        {
+            get { return _runHourEndTime.Ticks; }
+            set { _runHourEndTime = new TimeSpan(value); }
+        }
+
+
+        #endregion Instance Data Members (Scheduling Options)
+
+        #region Instance Data Members (Logging Options)
+
+        [Category("7. Logging Options")]
+        [Description("No Progress - don't display percentage copied. Suppresses the display of progress information. This can be useful when output is redirected to a file. (/NP).")]
+        [DisplayName("NoProgress")]
+        [ChoPropertyInfo("noProgress")]
+        public bool NoProgress
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Display the status output as unicode text. (/unicode).")]
+        [DisplayName("Unicode")]
+        [ChoPropertyInfo("unicode")]
+        public bool Unicode
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Output status to LOG file (overwrite existing log). (/LOG:file).")]
+        [DisplayName("OutputLogFilePath")]
+        [ChoPropertyInfo("outputLogFilePath")]
+        public string OutputLogFilePath
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Output status to LOG file as UNICODE (overwrite existing log). (/UNILOG:file).")]
+        [DisplayName("UnicodeOutputLogFilePath")]
+        [ChoPropertyInfo("unicodeOutputLogFilePath")]
+        public string UnicodeOutputLogFilePath
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Output status to LOG file (append to existing log). (/LOG+:file).")]
+        [DisplayName("AppendOutputLogFilePath")]
+        [ChoPropertyInfo("appendOutputLogFilePath")]
+        public string AppendOutputLogFilePath
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Output status to LOG file as UNICODE (append to existing log). (/UNILOG+:file).")]
+        [DisplayName("AppendUnicodeOutputLogFilePath")]
+        [ChoPropertyInfo("appendUnicodeOutputLogFilePath")]
+        public string AppendUnicodeOutputLogFilePath
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Include source file timestamps in the output. (/TS).")]
+        [DisplayName("IncludeSourceFileTimestamp")]
+        [ChoPropertyInfo("includeSourceFileTimestamp")]
+        public bool IncludeSourceFileTimestamp
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Include Full Pathname of files in the output. (/FP).")]
+        [DisplayName("IncludeFullPathName")]
+        [ChoPropertyInfo("includeFullPathName")]
+        public bool IncludeFullPathName
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("No Size - don't log file sizes. (/NS).")]
+        [DisplayName("NoFileSizeLog")]
+        [ChoPropertyInfo("noFileSizeLog")]
+        public bool NoFileSizeLog
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("No Class - don't log file classes. (/NC).")]
+        [DisplayName("NoFileClassLog")]
+        [ChoPropertyInfo("noFileClassLog")]
+        public bool NoFileClassLog
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("No File List - don't log file names. Hides file names. Failures are still logged though. Any files files deleted or would be deleted if /L was omitted are always logged. (/NFL).")]
+        [DisplayName("NoFileNameLog")]
+        [ChoPropertyInfo("noFileNameLog")]
+        public bool NoFileNameLog
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("No Directory List - don't log directory names. Hides output of the directory listing. Full file pathnames are output to more easily track down problematic files. (/NDL).")]
+        [DisplayName("NoDirListLog")]
+        [ChoPropertyInfo("noDirListLog")]
+        public bool NoDirListLog
+        {
+            get;
+            set;
+        }
+
+        //[Category("Logging Options")]
+        //[Description("Output to console window, as well as the log file. (/TEE).")]
+        //[DisplayName("NoDirListLog")]
+        //[ChoPropertyInfo("noDirListLog")]
+        //public bool NoDirListLog
+        //{
+        //    get;
+        //    set;
+        //}
+
+        [Category("7. Logging Options")]
+        [Description("No Job Header. (/NJH).")]
+        [DisplayName("NoJobHeader")]
+        [ChoPropertyInfo("noJobHeader")]
+        public bool NoJobHeader
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("No Job Summary. (/NJS).")]
+        [DisplayName("NoJobSummary")]
+        [ChoPropertyInfo("noJobSummary")]
+        public bool NoJobSummary
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Print sizes as bytes. (/BYTES).")]
+        [DisplayName("PrintByteSizes")]
+        [ChoPropertyInfo("printByteSizes")]
+        public bool PrintByteSizes
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Report all eXtra files, not just those selected. (/X).")]
+        [DisplayName("ReportExtraFiles")]
+        [ChoPropertyInfo("reportExtraFiles")]
+        public bool ReportExtraFiles
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Produce Verbose output, showing skipped files. (/V).")]
+        [DisplayName("VerboseOutput")]
+        [ChoPropertyInfo("verboseOutput")]
+        public bool VerboseOutput
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Show Estimated Time of Arrival of copied files. (/ETA).")]
+        [DisplayName("ShowEstTimeOfArrival")]
+        [ChoPropertyInfo("showEstTimeOfArrival")]
+        public bool ShowEstTimeOfArrival
+        {
+            get;
+            set;
+        }
+
+        [Category("7. Logging Options")]
+        [Description("Show debug volume information. (/DEBUG).")]
+        [DisplayName("ShowDebugVolumeInfo")]
+        [ChoPropertyInfo("showDebugVolumeInfo")]
+        public bool ShowDebugVolumeInfo
+        {
+            get;
+            set;
+        }
+
+        #endregion Instance Data Members (Logging Options)
 
         //[Category("Copy Options")]
         //[Description("Move files (delete from source after copying). (/MOV).")]
@@ -371,675 +1078,6 @@
         //    get;
         //    set;
         //}
-
-        [Category("Copy Options")]
-        [Description("Add the given attributes to copied files. (/A+:[RASHCNET]).")]
-        [DisplayName("AddFileAttributes")]
-        [ChoPropertyInfo("addFileAttributes")]
-        [Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
-        public string AddFileAttributes
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Remove the given Attributes from copied files. (/A-:[RASHCNET]).")]
-        [DisplayName("RemoveFileAttributes")]
-        [ChoPropertyInfo("removeFileAttributes")]
-        [Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
-        public string RemoveFileAttributes
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Create directory tree and zero-length files only. (/CREATE).")]
-        [DisplayName("CreateDirTree")]
-        [ChoPropertyInfo("createDirTree")]
-        public bool CreateDirTree
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Create destination files using 8.3 FAT file names only. (/FAT).")]
-        [DisplayName("CreateFATFileNames")]
-        [ChoPropertyInfo("createFATFileNames")]
-        public bool CreateFATFileNames
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Turn off very long path (> 256 characters) support. (/256).")]
-        [DisplayName("TurnOffLongPath")]
-        [ChoPropertyInfo("turnOffLongPath")]
-        public bool TurnOffLongPath
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Monitor source; run again when more than n changes seen. (/MON:n).")]
-        [DisplayName("RunAgainWithNoChangesSeen")]
-        [ChoPropertyInfo("runAgainWithNoChangesSeen")]
-        public uint RunAgainWithNoChangesSeen
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Monitor source; run again in m minutes time, if changed. (/MOT:m).")]
-        [DisplayName("RunAgainWithChangesSeenInMin")]
-        [ChoPropertyInfo("runAgainWithChangesSeenInMin")]
-        public uint RunAgainWithChangesSeenInMin
-        {
-            get;
-            set;
-        }
-
-        private TimeSpan _runHourStartTime;
-        [Category("Copy Options")]
-        [Description("Run Hours StartTime, when new copies may be started after then. (/RH:hhmm-hhmm).")]
-        [DisplayName("RunHourStartTime")]
-        [ChoPropertyInfo("runHourStartTime")]
-        [XmlIgnore]
-        public TimeSpan RunHourStartTime
-        {
-            get { return _runHourStartTime; }
-            set { _runHourStartTime = value; }
-        }
-
-        [Browsable(false)]
-        public long RunHourStartTimeTicks
-        {
-            get { return _runHourStartTime.Ticks; }
-            set { _runHourStartTime = new TimeSpan(value); }
-        }
-
-        private TimeSpan _runHourEndTime;
-        [Category("Copy Options")]
-        [Description("Run Hours EndTime, when new copies may be Ended before then. (/RH:hhmm-hhmm).")]
-        [DisplayName("RunHourEndTime")]
-        [ChoPropertyInfo("runHourEndTime")]
-        [XmlIgnore]
-        public TimeSpan RunHourEndTime
-        {
-            get { return _runHourEndTime; }
-            set { _runHourEndTime = value; }
-        }
-
-        [Browsable(false)]
-        public long RunHourEndTimeTicks
-        {
-            get { return _runHourEndTime.Ticks; }
-            set { _runHourEndTime = new TimeSpan(value); }
-        }
-
-        [Category("Copy Options")]
-        [Description("Check run hours on a Per File (not per pass) basis. (/PF).")]
-        [DisplayName("CheckRunHourPerFileBasis")]
-        [ChoPropertyInfo("checkRunHourPerFileBasis")]
-        public bool CheckRunHourPerFileBasis
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Inter-Packet Gap (ms), to free bandwidth on slow lines. (/IPG:n).")]
-        [DisplayName("InterPacketGapInMS")]
-        [ChoPropertyInfo("interPacketGapInMS")]
-        public uint InterPacketGapInMS
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Copy symbolic links versus the target. (/SL).")]
-        [DisplayName("CopySymbolicLinks")]
-        [ChoPropertyInfo("copySymbolicLinks")]
-        public bool CopySymbolicLinks
-        {
-            get;
-            set;
-        }
-
-        private uint _multithreadCopy;
-        [Category("Copy Options")]
-        [Description("Do multi-threaded copies with n threads (default 8). n must be at least 1 and not greater than 128. This option is incompatible with the /IPG and /EFSRAW options. Redirect output using /LOG option for better performance. (/MT[:n]).")]
-        [DisplayName("MultithreadCopy")]
-        [ChoPropertyInfo("multithreadCopy")]
-        public uint MultithreadCopy
-        {
-            get { return _multithreadCopy; }
-            set
-            {
-                if (value < 1 || value > 128)
-                    _multithreadCopy = 0;
-                else
-                    _multithreadCopy = value;
-            }
-        }
-
-        [Category("Copy Options")]
-        [Description("COPY NO directory info (by default /DCOPY:DA is done). (/NODCOPY).")]
-        [DisplayName("CopyNODirInfo")]
-        [ChoPropertyInfo("copyNODirInfo")]
-        public bool CopyNODirInfo
-        {
-            get;
-            set;
-        }
-
-        [Category("Copy Options")]
-        [Description("Copy files without using the Windows Copy Offload mechanism. (/NOOFFLOAD).")]
-        [DisplayName("CopyWithoutWindowsCopyOffload")]
-        [ChoPropertyInfo("copyWithoutWindowsCopyOffload")]
-        public bool CopyWithoutWindowsCopyOffload
-        {
-            get;
-            set;
-        }
-
-        #endregion Instance Data Members (Copy Options)
-
-        #region Instance Data Members (File Selection Options)
-
-        [Category("File Selection Options")]
-        [Description("Copy only files with the Archive attribute set. (/A).")]
-        [DisplayName("CopyOnlyFilesWithArchiveAttributes")]
-        [ChoPropertyInfo("copyOnlyFilesWithArchiveAttributes")]
-        public bool CopyOnlyFilesWithArchiveAttributes
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("Copy only files with the Archive attribute and reset it. (/M).")]
-        [DisplayName("CopyOnlyFilesWithArchiveAttributesAndReset")]
-        [ChoPropertyInfo("copyOnlyFilesWithArchiveAttributesAndReset")]
-        public bool CopyOnlyFilesWithArchiveAttributesAndReset
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("Include only files with any of the given Attributes set. (/IA:[RASHCNETO]).")]
-        [DisplayName("IncludeFilesWithGivenAttributes")]
-        [ChoPropertyInfo("includeFilesWithGivenAttributes")]
-        [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
-        public string IncludeFilesWithGivenAttributes
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude files with any of the given Attributes set. (/XA:[RASHCNETO]).")]
-        [DisplayName("ExcludeFilesWithGivenAttributes")]
-        [ChoPropertyInfo("excludeFilesWithGivenAttributes")]
-        [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
-        public string ExcludeFilesWithGivenAttributes
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude Files matching given names/paths/wildcards. Separate names with ;. (/XF).")]
-        [DisplayName("ExcludeFilesWithGivenNames")]
-        [ChoPropertyInfo("excludeFilesWithGivenNames")]
-        [Editor(typeof(ChoPropertyGridFilePicker), typeof(ChoPropertyGridFilePicker))]
-        public string ExcludeFilesWithGivenNames
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude Directories matching given names/paths. Separate names with ;. (/XD).")]
-        [DisplayName("ExcludeDirsWithGivenNames")]
-        [ChoPropertyInfo("excludeDirsWithGivenNames")]
-        [Editor(typeof(ChoPropertyGridFolderPicker), typeof(ChoPropertyGridFolderPicker))]
-        public string ExcludeDirsWithGivenNames
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude Changed files. (/XC).")]
-        [DisplayName("ExcludeChangedFiles")]
-        [ChoPropertyInfo("excludeChangedFiles")]
-        public bool ExcludeChangedFiles
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude Newer files. (/XN).")]
-        [DisplayName("ExcludeNewerFiles")]
-        [ChoPropertyInfo("excludeNewerFiles")]
-        public bool ExcludeNewerFiles
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude Older files. (/XO).")]
-        [DisplayName("ExcludeOlderFiles")]
-        [ChoPropertyInfo("excludeOlderFiles")]
-        public bool ExcludeOlderFiles
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude eXtra files and directories. (/XX).")]
-        [DisplayName("ExcludeExtraFilesAndDirs")]
-        [ChoPropertyInfo("excludeExtraFilesAndDirs")]
-        public bool ExcludeExtraFilesAndDirs
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude Lonely files and directories. (/XL).")]
-        [DisplayName("ExcludeLonelyFilesAndDirs")]
-        [ChoPropertyInfo("excludeLonelyFilesAndDirs")]
-        public bool ExcludeLonelyFilesAndDirs
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("Include Same files. (/IS).")]
-        [DisplayName("IncludeSameFiles")]
-        [ChoPropertyInfo("includeSameFiles")]
-        public bool IncludeSameFiles
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("Include Tweaked files. (/IT).")]
-        [DisplayName("IncludeTweakedFiles")]
-        [ChoPropertyInfo("includeTweakedFiles")]
-        public bool IncludeTweakedFiles
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("MAXimum file size - exclude files bigger than n bytes. (/MAX:n).")]
-        [DisplayName("ExcludeFilesBiggerThanNBytes")]
-        [ChoPropertyInfo("excludeFilesBiggerThanNBytes")]
-        public uint ExcludeFilesBiggerThanNBytes
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("MINimum file size - exclude files smaller than n bytes. (/MIN:n).")]
-        [DisplayName("ExcludeFilesSmallerThanNBytes")]
-        [ChoPropertyInfo("excludeFilesSmallerThanNBytes")]
-        public uint ExcludeFilesSmallerThanNBytes
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("MAXimum file AGE - exclude files older than n days/date. (/MAXAGE:n).")]
-        [DisplayName("ExcludeFilesOlderThanNDays")]
-        [ChoPropertyInfo("excludeFilesOlderThanNDays")]
-        public uint ExcludeFilesOlderThanNDays
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("MINimum file AGE - exclude files newer than n days/date. (/MINAGE:n).")]
-        [DisplayName("ExcludeFilesNewerThanNDays")]
-        [ChoPropertyInfo("excludeFilesNewerThanNDays")]
-        public uint ExcludeFilesNewerThanNDays
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("MAXimum Last Access Date - exclude files unused since n. (/MAXLAD:n).")]
-        [DisplayName("ExcludeFilesUnusedSinceNDays")]
-        [ChoPropertyInfo("excludeFilesUnusedSinceNDays")]
-        public uint ExcludeFilesUnusedSinceNDays
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("MINimum Last Access Date - exclude files used since n. (If n < 1900 then n = n days, else n = YYYYMMDD date). (/MINLAD:n).")]
-        [DisplayName("ExcludeFilesUsedSinceNDays")]
-        [ChoPropertyInfo("excludeFilesUsedSinceNDays")]
-        public uint ExcludeFilesUsedSinceNDays
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude Junction points. (normally included by default). (/XJ).")]
-        [DisplayName("ExcludeJunctionPoints")]
-        [ChoPropertyInfo("excludeJunctionPoints")]
-        public bool ExcludeJunctionPoints
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("assume FAT File Times (2-second granularity). (/FFT).")]
-        [DisplayName("AssumeFATFileTimes")]
-        [ChoPropertyInfo("assumeFATFileTimes")]
-        public bool AssumeFATFileTimes
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("Compensate for one-hour DST time differences. (/DST).")]
-        [DisplayName("CompensateOneHourDSTTimeDiff")]
-        [ChoPropertyInfo("compensateOneHourDSTTimeDiff")]
-        public bool CompensateOneHourDSTTimeDiff
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude Junction points for Directories. (/XJD).")]
-        [DisplayName("ExcludeJunctionPointsForDirs")]
-        [ChoPropertyInfo("excludeJunctionPointsForDirs")]
-        public bool ExcludeJunctionPointsForDirs
-        {
-            get;
-            set;
-        }
-
-        [Category("File Selection Options")]
-        [Description("eXclude Junction points for Files. (/XJF).")]
-        [DisplayName("ExcludeJunctionPointsForFiles")]
-        [ChoPropertyInfo("excludeJunctionPointsForFiles")]
-        public bool ExcludeJunctionPointsForFiles
-        {
-            get;
-            set;
-        }
-
-        #endregion Instance Data Members (Retry Options)
-
-        #region Instance Data Members (Retry Options)
-
-        const string DefaultNoOfRetries = "1000000";
-
-        [Category("Retry Options")]
-        [Description("Number of Retries on failed copies: default 1 million. (/R:n).")]
-        [DisplayName("NoOfRetries")]
-        [ChoPropertyInfo("noOfRetries", DefaultValue = DefaultNoOfRetries)]
-        public uint NoOfRetries
-        {
-            get;
-            set;
-        }
-
-        const string DefaultWaitTimeBetweenRetries = "30";
-
-        [Category("Retry Options")]
-        [Description("Wait time between retries: default is 30 seconds. (/W:n).")]
-        [DisplayName("WaitTimeBetweenRetries")]
-        [ChoPropertyInfo("waitTimeBetweenRetries", DefaultValue = DefaultWaitTimeBetweenRetries)]
-        public uint WaitTimeBetweenRetries
-        {
-            get;
-            set;
-        }
-
-        [Category("Retry Options")]
-        [Description("Save /R:n and /W:n in the Registry as default settings. (/REG).")]
-        [DisplayName("SaveRetrySettingsToRegistry")]
-        [ChoPropertyInfo("saveRetrySettingsToRegistry")]
-        public bool SaveRetrySettingsToRegistry
-        {
-            get;
-            set;
-        }
-
-        [Category("Retry Options")]
-        [Description("Wait for sharenames to be defined (retry error 67). (/TBD).")]
-        [DisplayName("WaitForSharenames")]
-        [ChoPropertyInfo("waitForSharenames")]
-        public bool WaitForSharenames
-        {
-            get;
-            set;
-        }
-
-        #endregion Instance Data Members (Retry Options)
-
-        #region Instance Data Members (Logging Options)
-
-        [Category("Logging Options")]
-        [Description("List only - don't copy, timestamp or delete any files. (/L).")]
-        [DisplayName("ListOnly")]
-        [ChoPropertyInfo("listOnly")]
-        public bool ListOnly
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("Report all eXtra files, not just those selected. (/X).")]
-        [DisplayName("ReportExtraFiles")]
-        [ChoPropertyInfo("reportExtraFiles")]
-        public bool ReportExtraFiles
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("Produce Verbose output, showing skipped files. (/V).")]
-        [DisplayName("VerboseOutput")]
-        [ChoPropertyInfo("verboseOutput")]
-        public bool VerboseOutput
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("Include source file Time Stamps in the output. (/TS).")]
-        [DisplayName("IncludeSourceFileTimestamp")]
-        [ChoPropertyInfo("includeSourceFileTimestamp")]
-        public bool IncludeSourceFileTimestamp
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("Include Full Pathname of files in the output. (/FP).")]
-        [DisplayName("IncludeFullPathName")]
-        [ChoPropertyInfo("includeFullPathName")]
-        public bool IncludeFullPathName
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("Print sizes as bytes. (/BYTES).")]
-        [DisplayName("PrintByteSizes")]
-        [ChoPropertyInfo("printByteSizes")]
-        public bool PrintByteSizes
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("No Size - don't log file sizes. (/NS).")]
-        [DisplayName("NoFileSizeLog")]
-        [ChoPropertyInfo("noFileSizeLog")]
-        public bool NoFileSizeLog
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("No Class - don't log file classes. (/NC).")]
-        [DisplayName("NoFileClassLog")]
-        [ChoPropertyInfo("noFileClassLog")]
-        public bool NoFileClassLog
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("No File List - don't log file names. (/NFL).")]
-        [DisplayName("NoFileNameLog")]
-        [ChoPropertyInfo("noFileNameLog")]
-        public bool NoFileNameLog
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("No Directory List - don't log directory names. (/NDL).")]
-        [DisplayName("NoDirListLog")]
-        [ChoPropertyInfo("noDirListLog")]
-        public bool NoDirListLog
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("No Progress - don't display percentage copied. (/NP).")]
-        [DisplayName("NoProgress")]
-        [ChoPropertyInfo("noProgress")]
-        public bool NoProgress
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("Show Estimated Time of Arrival of copied files. (/ETA).")]
-        [DisplayName("ShowEstTimeOfArrival")]
-        [ChoPropertyInfo("showEstTimeOfArrival")]
-        public bool ShowEstTimeOfArrival
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("Output status to LOG file (overwrite existing log). (/LOG:file).")]
-        [DisplayName("OutputLogFilePath")]
-        [ChoPropertyInfo("outputLogFilePath")]
-        public string OutputLogFilePath
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("Output status to LOG file (append to existing log). (/LOG+:file).")]
-        [DisplayName("AppendOutputLogFilePath")]
-        [ChoPropertyInfo("appendOutputLogFilePath")]
-        public string AppendOutputLogFilePath
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("Output status to LOG file as UNICODE (overwrite existing log). (/UNILOG:file).")]
-        [DisplayName("UnicodeOutputLogFilePath")]
-        [ChoPropertyInfo("unicodeOutputLogFilePath")]
-        public string UnicodeOutputLogFilePath
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("Output status to LOG file as UNICODE (append to existing log). (/UNILOG+:file).")]
-        [DisplayName("AppendUnicodeOutputLogFilePath")]
-        [ChoPropertyInfo("appendUnicodeOutputLogFilePath")]
-        public string AppendUnicodeOutputLogFilePath
-        {
-            get;
-            set;
-        }
-
-        //[Category("Logging Options")]
-        //[Description("Output to console window, as well as the log file. (/TEE).")]
-        //[DisplayName("NoDirListLog")]
-        //[ChoPropertyInfo("noDirListLog")]
-        //public bool NoDirListLog
-        //{
-        //    get;
-        //    set;
-        //}
-
-        [Category("Logging Options")]
-        [Description("No Job Header. (/NJH).")]
-        [DisplayName("NoJobHeader")]
-        [ChoPropertyInfo("noJobHeader")]
-        public bool NoJobHeader
-        {
-            get;
-            set;
-        }
-
-        [Category("Logging Options")]
-        [Description("No Job Summary. (/NJS).")]
-        [DisplayName("NoJobSummary")]
-        [ChoPropertyInfo("noJobSummary")]
-        public bool NoJobSummary
-        {
-            get;
-            set;
-        }
-
-        #endregion Instance Data Members (Logging Options)
 
         public void Reset()
         {
@@ -1183,7 +1221,8 @@
                 cmdText.Append(" /NODCOPY");
             if (CopyWithoutWindowsCopyOffload)
                 cmdText.Append(" /NOOFFLOAD");
-
+            if (OverrideModifiedFiles)
+                cmdText.Append(" /IM");
             //File Selection Options
             if (CopyOnlyFilesWithArchiveAttributes)
                 cmdText.Append(" /A");
@@ -1278,8 +1317,12 @@
                 cmdText.Append(" /NDL");
             if (NoProgress)
                 cmdText.Append(" /NP");
+            if (Unicode)
+                cmdText.Append(" /unicode");
             if (ShowEstTimeOfArrival)
                 cmdText.Append(" /ETA");
+            if (ShowDebugVolumeInfo)
+                cmdText.Append(" /DEBUG");
             if (!OutputLogFilePath.IsNullOrWhiteSpace())
                 cmdText.AppendFormat(" /LOG:\"{0}\"", OutputLogFilePath);
             if (!AppendOutputLogFilePath.IsNullOrWhiteSpace())

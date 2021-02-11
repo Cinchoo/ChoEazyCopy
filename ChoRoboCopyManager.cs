@@ -3,6 +3,7 @@
     #region NameSpaces
 
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Text;
     using System.IO;
@@ -84,7 +85,7 @@
 
         #region Instance Members (Public)
 
-        public void Process(string fileName, string arguments)
+        public void Process(string fileName, string arguments, string preCommands, string postCommands, bool console = false)
         {
             AppStatus.Raise(this, new ChoFileProcessEventArgs("Starting RoboCopy operation..."));
             Status.Raise(this, new ChoFileProcessEventArgs(Environment.NewLine));
@@ -92,9 +93,10 @@
             try
             {
                 // Setup the process start info
-                var processStartInfo = new ProcessStartInfo(fileName, arguments) //_appSettings.RoboCopyFilePath, _appSettings.GetCmdLineParams(sourceDirectory, destDirectory))
+                var processStartInfo = new ProcessStartInfo("cmd.exe", " /K /E:OFF /F:OFF /V:OFF") // new ProcessStartInfo(fileName, arguments) //_appSettings.RoboCopyFilePath, _appSettings.GetCmdLineParams(sourceDirectory, destDirectory))
                 {
                     UseShellExecute = false,
+                    RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true
@@ -108,9 +110,30 @@
 
                 // Start process
                 process.Start();
+
                 //process.BeginOutputReadLine();
                 Task.Factory.StartNew(new Action<object>(ReadFromStreamReader), process.StandardOutput);
                 //Task.Factory.StartNew(new Action<object>(ReadFromStreamReader), process.StandardError);
+
+                if (!console)
+                    process.StandardInput.WriteLine("prompt $G");
+
+                //Run precommands
+                if (!preCommands.IsNullOrWhiteSpace())
+                {
+                    foreach (var cmd in preCommands.SplitNTrim().Select(c => c.NTrim()).Where(c => !c.IsNullOrWhiteSpace()))
+                        process.StandardInput.WriteLine($"{cmd}");
+                }
+                process.StandardInput.WriteLine($"{fileName} {arguments}");
+
+                //Run postcommands
+                if (!postCommands.IsNullOrWhiteSpace())
+                {
+                    foreach (var cmd in postCommands.SplitNTrim().Select(c => c.NTrim()).Where(c => !c.IsNullOrWhiteSpace()))
+                        process.StandardInput.WriteLine($"{cmd}");
+                }
+                process.StandardInput.WriteLine("exit");
+
                 process.WaitForExit();
 
                 _process = null;
@@ -128,8 +151,25 @@
             }
         }
 
+        bool cleanup = false;
+        private string CleanUp(string txt)
+        {
+            //if (!cleanup)
+            //{
+            //    if (txt.Contains(Environment.NewLine))
+            //        txt = txt.Substring(txt.IndexOf(Environment.NewLine));
+            //    else
+            //        txt = null;
+
+            //    cleanup = true;
+            //}
+
+            return txt;
+        }
+
         void ReadFromStreamReader(object state)
         {
+            cleanup = false;
             StreamReader reader = state as StreamReader;
             char[] buffer = new char[1024];
             int chars;
@@ -141,7 +181,7 @@
 
                 if (txt.Length > 0)
                 { 
-                    Status.Raise(this, new ChoFileProcessEventArgs(txt.ToString()));
+                    Status.Raise(this, new ChoFileProcessEventArgs(CleanUp(txt.ToString())));
                     txt.Clear();
                 }
 
@@ -149,7 +189,7 @@
             }
             if (txt.Length > 0)
             {
-                Status.Raise(this, new ChoFileProcessEventArgs(txt.ToString()));
+                Status.Raise(this, new ChoFileProcessEventArgs(CleanUp(txt.ToString())));
                 txt.Clear();
             }
 

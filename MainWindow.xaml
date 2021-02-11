@@ -281,12 +281,20 @@
                 Header="RoboCopy Command"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch">
-                            <TextBox
+                            <DockPanel LastChildFill="True">
+                            <TextBox Visibility="Collapsed"
+                    Margin="0,3,0,2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Name="txtRoboCopyCmdEx"
+                    TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" TextChanged="txtRoboCopyCmdEx_TextChanged" />
+                                <TextBox
                     Margin="0,3,0,2"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Name="txtRoboCopyCmd"
                     TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" TextChanged="txtRoboCopyCmd_TextChanged" />
+                            </DockPanel>
                         </GroupBox>
                         <GridSplitter
                 Margin="5,5,5,0"

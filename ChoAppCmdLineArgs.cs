@@ -102,7 +102,8 @@ namespace ChoEazyCopy
                     ChoConsole.Write(e.Message, ConsoleColor.Yellow);
                 };
 
-                _roboCopyManager.Process(appSettings.RoboCopyFilePath, appSettings.GetCmdLineParams(sourceDirectory, destDirectory));
+                _roboCopyManager.Process(appSettings.RoboCopyFilePath, appSettings.GetCmdLineParams(), 
+                    appSettings.Precommands, appSettings.Postcommands, true);
             }
             catch (ThreadAbortException)
             {

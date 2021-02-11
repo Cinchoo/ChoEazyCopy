@@ -166,6 +166,26 @@
             set;
         }
 
+        [Category("1. Common Options")]
+        [Description("Specify MS-DOS commands to run before robocopy operations, separated by ; (Optional).")]
+        [DisplayName("PreCommands")]
+        [ChoPropertyInfo("precommands")]
+        public string Precommands
+        {
+            get;
+            set;
+        }
+
+        [Category("1. Common Options")]
+        [Description("Specify MS-DOS commands to run after robocopy operations, separated by ; (Optional).")]
+        [DisplayName("Postcommands")]
+        [ChoPropertyInfo("postcommands")]
+        public string Postcommands
+        {
+            get;
+            set;
+        }
+
         #endregion Instance Data Members (Common Options)
 
         #region Instance Data Members (Source Options)
@@ -1084,11 +1104,18 @@
             ChoObject.ResetObject(this);
             Persist();
             MultithreadCopy = 8;
+            Precommands = null;
+            Postcommands = null;
         }
         
         internal string GetCmdLineText()
         {
             return "{0} {1}".FormatString(RoboCopyFilePath, GetCmdLineParams());
+        }
+
+        internal string GetCmdLineTextEx()
+        {
+            return "{0} {1} {2}".FormatString(RoboCopyFilePath, GetCmdLineParams(), GetExCmdLineParams());
         }
 
         string DirSafeguard(string path)
@@ -1099,6 +1126,17 @@
             return path;
         }
 
+        internal string GetExCmdLineParams()
+        {
+            StringBuilder cmdText = new StringBuilder();
+
+            if (!Postcommands.IsNullOrWhiteSpace())
+                cmdText.Append(Postcommands);
+            if (!Precommands.IsNullOrWhiteSpace())
+                cmdText.Append(Precommands);
+
+            return cmdText.ToString();
+        }
         internal string GetCmdLineParams(string sourceDirectory = null, string destDirectory = null)
         {
             StringBuilder cmdText = new StringBuilder();

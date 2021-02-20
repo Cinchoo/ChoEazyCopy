@@ -103,7 +103,7 @@ namespace ChoEazyCopy
                 };
 
                 _roboCopyManager.Process(appSettings.RoboCopyFilePath, appSettings.GetCmdLineParams(), 
-                    appSettings.Precommands, appSettings.Postcommands, true);
+                    appSettings, true);
             }
             catch (ThreadAbortException)
             {

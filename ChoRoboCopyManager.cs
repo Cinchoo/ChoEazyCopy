@@ -85,10 +85,13 @@
 
         #region Instance Members (Public)
 
-        public void Process(string fileName, string arguments, string preCommands, string postCommands, bool console = false)
+        public void Process(string fileName, string arguments, ChoAppSettings appSettings, bool console = false)
         {
             AppStatus.Raise(this, new ChoFileProcessEventArgs("Starting RoboCopy operation..."));
             Status.Raise(this, new ChoFileProcessEventArgs(Environment.NewLine));
+
+            string preCommands = appSettings.Precommands;
+            string postCommands = appSettings.Postcommands;
 
             try
             {
@@ -121,7 +124,7 @@
                 //Run precommands
                 if (!preCommands.IsNullOrWhiteSpace())
                 {
-                    foreach (var cmd in preCommands.SplitNTrim().Select(c => c.NTrim()).Where(c => !c.IsNullOrWhiteSpace()))
+                    foreach (var cmd in preCommands.SplitNTrim().Select(c => c.NTrim()).Select(c => MarshalCmd(c, appSettings)).Where(c => !c.IsNullOrWhiteSpace()))
                         process.StandardInput.WriteLine($"{cmd}");
                 }
                 process.StandardInput.WriteLine($"{fileName} {arguments}");
@@ -129,7 +132,7 @@
                 //Run postcommands
                 if (!postCommands.IsNullOrWhiteSpace())
                 {
-                    foreach (var cmd in postCommands.SplitNTrim().Select(c => c.NTrim()).Where(c => !c.IsNullOrWhiteSpace()))
+                    foreach (var cmd in postCommands.SplitNTrim().Select(c => c.NTrim()).Select(c => MarshalCmd(c, appSettings)).Where(c => !c.IsNullOrWhiteSpace()))
                         process.StandardInput.WriteLine($"{cmd}");
                 }
                 process.StandardInput.WriteLine("exit");
@@ -149,6 +152,16 @@
                 Status.Raise(this, new ChoFileProcessEventArgs(Environment.NewLine + ex.ToString() + Environment.NewLine));
                 AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation failed.", "RoboCopy operation failed."));
             }
+        }
+
+        private string MarshalCmd(string cmd, ChoAppSettings appSettings)
+        {
+            if (cmd != null)
+            {
+                cmd = cmd.Replace(@"{SRC_DIR}", appSettings.SourceDirectory);
+                cmd = cmd.Replace(@"{DEST_DIR}", appSettings.DestDirectory);
+            }
+            return cmd;
         }
 
         bool cleanup = false;

@@ -353,8 +353,7 @@ namespace ChoEazyCopy
                 _roboCopyManager.Status += (sender, e) => SetStatusMsg(e.Message);
                 _roboCopyManager.AppStatus += (sender, e) => UpdateStatus(e.Message, e.Tag.ToNString());
 
-                _roboCopyManager.Process(appSettings.RoboCopyFilePath, appSettings.GetCmdLineParams(),
-                    appSettings.Precommands, appSettings.Postcommands);
+                _roboCopyManager.Process(appSettings.RoboCopyFilePath, appSettings.GetCmdLineParams(), appSettings);
             }
             catch (ThreadAbortException)
             {

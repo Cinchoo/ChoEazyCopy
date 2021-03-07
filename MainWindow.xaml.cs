@@ -101,6 +101,14 @@ namespace ChoEazyCopy
 
             Caption = Title;
             Title = "{0} (v{1})".FormatString(Title, Assembly.GetEntryAssembly().GetName().Version);
+
+            var up = new ChoUserPreferences();
+
+            this.Height = up.WindowHeight;
+            this.Width = up.WindowWidth;
+            this.Top = up.WindowTop;
+            this.Left = up.WindowLeft;
+            this.WindowState = up.WindowState;
         }
 
         private void MyWindow_Loaded(object sender1, RoutedEventArgs e1)
@@ -610,6 +618,19 @@ namespace ChoEazyCopy
             }
 
             e.Cancel = SaveSettings();
+
+            if (!e.Cancel)
+            {
+                var up = new ChoUserPreferences();
+
+                up.WindowHeight = this.Height;
+                up.WindowWidth = this.Width;
+                up.WindowTop = this.Top;
+                up.WindowLeft = this.Left;
+                up.WindowState = this.WindowState;
+
+                up.Save();
+            }
         }
 
         private void txtRoboCopyCmd_TextChanged(object sender, TextChangedEventArgs e)

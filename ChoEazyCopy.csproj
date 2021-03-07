@@ -152,6 +152,7 @@
       <DependentUpon>ChoPropertyGridFolderPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="ChoRoboCopyManager.cs" />
+    <Compile Include="ChoUserPreferences.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

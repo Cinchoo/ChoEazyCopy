@@ -21,7 +21,11 @@ namespace ChoEazyCopy
 
         public System.Windows.WindowState WindowState { get; set; }
 
-        #endregion 
+        public bool RememberWindowSizeAndPosition { get; set; }
+
+        public bool ScrollOutput { get; set; }
+
+        #endregion
 
         #region Constructor
 
@@ -103,6 +107,8 @@ namespace ChoEazyCopy
             WindowHeight = Properties.Settings.Default.WindowHeight;
             WindowWidth = Properties.Settings.Default.WindowWidth;
             WindowState = Properties.Settings.Default.WindowState;
+            RememberWindowSizeAndPosition = Properties.Settings.Default.RememberWindowSizeAndPosition;
+            ScrollOutput = Properties.Settings.Default.ScrollOutput;
         }
 
         public void Save()
@@ -114,6 +120,8 @@ namespace ChoEazyCopy
                 Properties.Settings.Default.WindowHeight = WindowHeight;
                 Properties.Settings.Default.WindowWidth = WindowWidth;
                 Properties.Settings.Default.WindowState = WindowState;
+                Properties.Settings.Default.RememberWindowSizeAndPosition = RememberWindowSizeAndPosition;
+                Properties.Settings.Default.ScrollOutput = ScrollOutput;
 
                 Properties.Settings.Default.Save();
             }

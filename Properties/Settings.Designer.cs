@@ -82,5 +82,29 @@ namespace ChoEazyCopy.Properties {
                 this["WindowState"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RememberWindowSizeAndPosition {
+            get {
+                return ((bool)(this["RememberWindowSizeAndPosition"]));
+            }
+            set {
+                this["RememberWindowSizeAndPosition"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ScrollOutput {
+            get {
+                return ((bool)(this["ScrollOutput"]));
+            }
+            set {
+                this["ScrollOutput"] = value;
+            }
+        }
     }
 }

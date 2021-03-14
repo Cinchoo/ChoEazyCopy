@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -89,6 +90,27 @@ namespace ChoEazyCopy
             }
         }
 
+        private bool _rememberWindowSizeAndPosition = true;
+        public bool RememberWindowSizeAndPosition
+        {
+            get { return _rememberWindowSizeAndPosition; }
+            set
+            {
+                _rememberWindowSizeAndPosition = value;
+                RaisePropertyChanged(nameof(RememberWindowSizeAndPosition));
+            }
+        }
+
+        public ChoAppSettings AppSettings
+        {
+            get { return _appSettings; }
+            set
+            {
+                _appSettings = value;
+                RaisePropertyChanged(nameof(AppSettings));
+            }
+        }
+
         public MainWindow() :
             this(null)
         {
@@ -103,18 +125,21 @@ namespace ChoEazyCopy
             Title = "{0} (v{1})".FormatString(Title, Assembly.GetEntryAssembly().GetName().Version);
 
             var up = new ChoUserPreferences();
+            RememberWindowSizeAndPosition = up.RememberWindowSizeAndPosition;
+            ScrollOutput = up.ScrollOutput;
 
-            this.Height = up.WindowHeight;
-            this.Width = up.WindowWidth;
-            this.Top = up.WindowTop;
-            this.Left = up.WindowLeft;
-            this.WindowState = up.WindowState;
+            if (up.RememberWindowSizeAndPosition)
+            {
+                this.Height = up.WindowHeight;
+                this.Width = up.WindowWidth;
+                this.Top = up.WindowTop;
+                this.Left = up.WindowLeft;
+                this.WindowState = up.WindowState;
+            }
         }
 
         private void MyWindow_Loaded(object sender1, RoutedEventArgs e1)
         {
-            DataContext = this;
-            ScrollOutput = false;
             _bindObj = new ChoWPFBindableConfigObject<ChoAppSettings>();
             _appSettings = _bindObj.UnderlyingSource;
             _appSettings.Init();
@@ -123,7 +148,7 @@ namespace ChoEazyCopy
             else
                 _appSettings.Reset();
 
-            this.DataContext = _appSettings;
+            DataContext = this;
             _mainUIThread = Thread.CurrentThread;
 
             btnNewFile_Click(null, null);
@@ -199,7 +224,7 @@ namespace ChoEazyCopy
                      new Action(() =>
                      {
                          this.DataContext = null;
-                         this.DataContext = _appSettings;
+                         this.DataContext = this;
                          txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
                          txtRoboCopyCmdEx.Text = _appSettings.GetCmdLineTextEx();
                          IsDirty = false;
@@ -575,7 +600,7 @@ namespace ChoEazyCopy
                     _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
                     RegisterEvents();
                     this.DataContext = null;
-                    this.DataContext = _appSettings;
+                    this.DataContext = this;
                     IsDirty = false;
                     _isNewFileOp = false;
                 }
@@ -597,7 +622,7 @@ namespace ChoEazyCopy
                 _appSettings.Reset();
                 RegisterEvents();
                 this.DataContext = null;
-                this.DataContext = _appSettings;
+                this.DataContext = this;
                 IsDirty = false;
                 _isNewFileOp = false;
             }
@@ -622,13 +647,16 @@ namespace ChoEazyCopy
             if (!e.Cancel)
             {
                 var up = new ChoUserPreferences();
-
-                up.WindowHeight = this.Height;
-                up.WindowWidth = this.Width;
-                up.WindowTop = this.Top;
-                up.WindowLeft = this.Left;
-                up.WindowState = this.WindowState;
-
+                if (RememberWindowSizeAndPosition)
+                {
+                    up.WindowHeight = this.Height;
+                    up.WindowWidth = this.Width;
+                    up.WindowTop = this.Top;
+                    up.WindowLeft = this.Left;
+                    up.WindowState = this.WindowState;
+                }
+                up.RememberWindowSizeAndPosition = RememberWindowSizeAndPosition;
+                up.ScrollOutput = ScrollOutput;
                 up.Save();
             }
         }
@@ -643,11 +671,6 @@ namespace ChoEazyCopy
         {
             if (!_isNewFileOp)
                 IsDirty = true;
-        }
-
-        private void btnScrollOutput_Click(object sender, RoutedEventArgs e)
-        {
-            ScrollOutput = btnScrollOutput.IsChecked.Value;
         }
 
         private void RibbonWin_Loaded(object sender, RoutedEventArgs e)
@@ -699,5 +722,153 @@ namespace ChoEazyCopy
         }
 
         #endregion
+    }
+    public class MathConverter : IValueConverter
+    {
+        private static readonly char[] _allOperators = new[] { '+', '-', '*', '/', '%', '(', ')' };
+
+        private static readonly List<string> _grouping = new List<string> { "(", ")" };
+        private static readonly List<string> _operators = new List<string> { "+", "-", "*", "/", "%" };
+
+        #region IValueConverter Members
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            // Parse value into equation and remove spaces
+            var mathEquation = parameter as string;
+            mathEquation = mathEquation.Replace(" ", "");
+            mathEquation = mathEquation.Replace("@VALUE", value.ToString());
+
+            // Validate values and get list of numbers in equation
+            var numbers = new List<double>();
+            double tmp;
+
+            foreach (string s in mathEquation.Split(_allOperators))
+            {
+                if (s != string.Empty)
+                {
+                    if (double.TryParse(s, out tmp))
+                    {
+                        numbers.Add(tmp);
+                    }
+                    else
+                    {
+                        // Handle Error - Some non-numeric, operator, or grouping character found in string
+                        throw new InvalidCastException();
+                    }
+                }
+            }
+
+            // Begin parsing method
+            EvaluateMathString(ref mathEquation, ref numbers, 0);
+
+            // After parsing the numbers list should only have one value - the total
+            return numbers[0];
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        // Evaluates a mathematical string and keeps track of the results in a List<double> of numbers
+        private void EvaluateMathString(ref string mathEquation, ref List<double> numbers, int index)
+        {
+            // Loop through each mathemtaical token in the equation
+            string token = GetNextToken(mathEquation);
+
+            while (token != string.Empty)
+            {
+                // Remove token from mathEquation
+                mathEquation = mathEquation.Remove(0, token.Length);
+
+                // If token is a grouping character, it affects program flow
+                if (_grouping.Contains(token))
+                {
+                    switch (token)
+                    {
+                        case "(":
+                            EvaluateMathString(ref mathEquation, ref numbers, index);
+                            break;
+
+                        case ")":
+                            return;
+                    }
+                }
+
+                // If token is an operator, do requested operation
+                if (_operators.Contains(token))
+                {
+                    // If next token after operator is a parenthesis, call method recursively
+                    string nextToken = GetNextToken(mathEquation);
+                    if (nextToken == "(")
+                    {
+                        EvaluateMathString(ref mathEquation, ref numbers, index + 1);
+                    }
+
+                    // Verify that enough numbers exist in the List<double> to complete the operation
+                    // and that the next token is either the number expected, or it was a ( meaning
+                    // that this was called recursively and that the number changed
+                    if (numbers.Count > (index + 1) &&
+                        (double.Parse(nextToken) == numbers[index + 1] || nextToken == "("))
+                    {
+                        switch (token)
+                        {
+                            case "+":
+                                numbers[index] = numbers[index] + numbers[index + 1];
+                                break;
+                            case "-":
+                                numbers[index] = numbers[index] - numbers[index + 1];
+                                break;
+                            case "*":
+                                numbers[index] = numbers[index] * numbers[index + 1];
+                                break;
+                            case "/":
+                                numbers[index] = numbers[index] / numbers[index + 1];
+                                break;
+                            case "%":
+                                numbers[index] = numbers[index] % numbers[index + 1];
+                                break;
+                        }
+                        numbers.RemoveAt(index + 1);
+                    }
+                    else
+                    {
+                        // Handle Error - Next token is not the expected number
+                        throw new FormatException("Next token is not the expected number");
+                    }
+                }
+
+                token = GetNextToken(mathEquation);
+            }
+        }
+
+        // Gets the next mathematical token in the equation
+        private string GetNextToken(string mathEquation)
+        {
+            // If we're at the end of the equation, return string.empty
+            if (mathEquation == string.Empty)
+            {
+                return string.Empty;
+            }
+
+            // Get next operator or numeric value in equation and return it
+            string tmp = "";
+            foreach (char c in mathEquation)
+            {
+                if (_allOperators.Contains(c))
+                {
+                    return (tmp == "" ? c.ToString() : tmp);
+                }
+                else
+                {
+                    tmp += c;
+                }
+            }
+
+            return tmp;
+        }
     }
 }

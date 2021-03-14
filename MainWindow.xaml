@@ -18,6 +18,13 @@
     TitleCaps="False"
     ResizeMode="CanResizeWithGrip"
     Loaded="MyWindow_Loaded" Icon="App.ico" Closing="Window_Closing" ContentRendered="MyWindow_ContentRendered">
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Controls:ToggleSwitch Foreground="LightYellow" FontSize="16" ToolTip="Remember windows position/size."
+                                   IsChecked="{Binding RememberWindowSizeAndPosition}"
+                                   />
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
     <Window.Resources>
         <ContextMenu x:Key="TextBoxContextMenu" Background="White">
             <MenuItem Command="ApplicationCommands.Copy">
@@ -101,6 +108,7 @@
         </Style>
         <local:BoolInverterConverter x:Key="BoolInverterConverter1"/>
         <local:BoolInverterConverter x:Key="BoolInverterConverter2"/>
+        <local:MathConverter x:Key="MathConverter"/>
     </Window.Resources>
     <DockPanel>
         <StatusBar DockPanel.Dock="Bottom" Margin="5,0,5,5" Width="Auto">
@@ -128,6 +136,9 @@
                                     <!-- MinHeight when Collapsed -->
                                     <Setter Property="MaxWidth" Value="40" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=MyExpander, Path=IsExpanded}" Value="True">
+                                    <Setter Property="MaxWidth" Value="{Binding ElementName=MyWindow, Path=Width, Converter={StaticResource MathConverter}, ConverterParameter=@VALUE/2 }" />
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </ColumnDefinition.Style>
@@ -143,7 +154,7 @@
                             <RibbonButton x:Name="btnRun" LargeImageSource="Resources\Run.png" Label="Run" KeyTip="R" Click="btnRun_Click"  ContextMenu="{x:Null}"/>
                             <RibbonButton x:Name="btnStop" SmallImageSource="Resources\Stop.png" Label="Stop" KeyTip="T" Click="btnStop_Click"  ContextMenu="{x:Null}"/>
                             <RibbonButton x:Name="btnClear" SmallImageSource="Resources\Erase.png" Label="Clear Output" KeyTip="E" Click="btnClear_Click"  ContextMenu="{x:Null}"/>
-                            <RibbonCheckBox x:Name="btnScrollOutput" SmallImageSource="Resources\Scroll.png" Label="Scroll Output" KeyTip="L" Click="btnScrollOutput_Click"  ContextMenu="{x:Null}"/>
+                            <RibbonCheckBox x:Name="btnScrollOutput" SmallImageSource="Resources\Scroll.png" Label="Scroll Output" KeyTip="L" IsChecked="{Binding ScrollOutput}"  ContextMenu="{x:Null}"/>
                         </RibbonGroup>
                         <RibbonGroup x:Name="FileGroup" Header="File" ContextMenu="{x:Null}">
                             <RibbonButton x:Name="btnNewFile" LargeImageSource="Resources\NewFile.png" Label="New" KeyTip="N" Click="btnNewFile_Click"  ContextMenu="{x:Null}"/>
@@ -158,7 +169,7 @@
                             <DockPanel LastChildFill="True">
                                 <TextBlock DockPanel.Dock="Bottom">Settings File</TextBlock>
                                 <TextBlock x:Name="tbSettingsName" FontSize="24" FontWeight="Bold" Foreground="DarkBlue" 
-                                           Width="Auto" VerticalAlignment="Stretch" FontFamily="Verdana"/>
+                                            Width="Auto" VerticalAlignment="Stretch" FontFamily="Verdana"/>
                             </DockPanel>
                         </RibbonGroup>
                     </RibbonTab>
@@ -206,7 +217,7 @@
                         Style="{StaticResource WaterMarkTextBoxStyle}" 
                         Tag="Choose source directory..."
                         ToolTip="Choose source directory..."
-                            Text="{Binding Path=SourceDirectory, UpdateSourceTrigger=PropertyChanged}"
+                            Text="{Binding Path=AppSettings.SourceDirectory, UpdateSourceTrigger=PropertyChanged}"
                         />
                                 <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                         Grid.Row="0"
@@ -236,7 +247,7 @@
                         Style="{StaticResource WaterMarkTextBoxStyle}"
                         Tag="Choose destination directory..."
                         ToolTip="Choose destination directory..."
-                            Text="{Binding Path=DestDirectory, UpdateSourceTrigger=PropertyChanged}"
+                            Text="{Binding Path=AppSettings.DestDirectory, UpdateSourceTrigger=PropertyChanged}"
                             />
                                 <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                         Grid.Row="1"
@@ -326,7 +337,7 @@
                         </TextBlock.LayoutTransform>
                     </TextBlock>
                 </Expander.Header>
-                <xctk:PropertyGrid VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding}" SelectedObjectName="" ShowTitle="False" ShowDescriptionByTooltip="True" />
+                <xctk:PropertyGrid VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False" ShowDescriptionByTooltip="True" />
             </Expander>
             <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" ResizeDirection="Columns" />
         </Grid>

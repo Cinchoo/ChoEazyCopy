@@ -159,7 +159,7 @@
         [Category("1. Common Options")]
         [Description("Additional command line parameters (Optional).")]
         [DisplayName("AdditionalParams")]
-        [ChoPropertyInfo("additionalParams")]
+        [ChoPropertyInfo("additionalParams", DefaultValue = "")]
         public string AdditionalParams
         {
             get;
@@ -169,7 +169,7 @@
         [Category("1. Common Options")]
         [Description("Specify MS-DOS commands to run before robocopy operations, separated by ; (Optional).")]
         [DisplayName("PreCommands")]
-        [ChoPropertyInfo("precommands")]
+        [ChoPropertyInfo("precommands", DefaultValue = "")]
         public string Precommands
         {
             get;
@@ -179,7 +179,7 @@
         [Category("1. Common Options")]
         [Description("Specify MS-DOS commands to run after robocopy operations, separated by ; (Optional).")]
         [DisplayName("Postcommands")]
-        [ChoPropertyInfo("postcommands")]
+        [ChoPropertyInfo("postcommands", DefaultValue = "")]
         public string Postcommands
         {
             get;
@@ -338,7 +338,7 @@
         [Category("3. Destination Options")]
         [Description("Add the given attributes to copied files. (/A+:[RASHCNET]).")]
         [DisplayName("AddFileAttributes")]
-        [ChoPropertyInfo("addFileAttributes")]
+        [ChoPropertyInfo("addFileAttributes", DefaultValue = "")]
         [Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
         public string AddFileAttributes
         {
@@ -349,7 +349,7 @@
         [Category("3. Destination Options")]
         [Description("Remove the given Attributes from copied files. (/A-:[RASHCNET]).")]
         [DisplayName("RemoveFileAttributes")]
-        [ChoPropertyInfo("removeFileAttributes")]
+        [ChoPropertyInfo("removeFileAttributes", DefaultValue = "")]
         [Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
         public string RemoveFileAttributes
         {
@@ -525,7 +525,7 @@
         [Category("4. Copy Options")]
         [Description("eXclude Files matching given names/paths/wildcards. Separate names with ;. (/XF).")]
         [DisplayName("ExcludeFilesWithGivenNames")]
-        [ChoPropertyInfo("excludeFilesWithGivenNames")]
+        [ChoPropertyInfo("excludeFilesWithGivenNames", DefaultValue = "")]
         [Editor(typeof(ChoPropertyGridFilePicker), typeof(ChoPropertyGridFilePicker))]
         public string ExcludeFilesWithGivenNames
         {
@@ -536,7 +536,7 @@
         [Category("4. Copy Options")]
         [Description("eXclude Directories matching given names/paths. Separate names with ;. (/XD).")]
         [DisplayName("ExcludeDirsWithGivenNames")]
-        [ChoPropertyInfo("excludeDirsWithGivenNames")]
+        [ChoPropertyInfo("excludeDirsWithGivenNames", DefaultValue = "")]
         [Editor(typeof(ChoPropertyGridFolderPicker), typeof(ChoPropertyGridFolderPicker))]
         public string ExcludeDirsWithGivenNames
         {
@@ -547,7 +547,7 @@
         [Category("4. Copy Options")]
         [Description("Include only files with any of the given Attributes set. (/IA:[RASHCNETO]).")]
         [DisplayName("IncludeFilesWithGivenAttributes")]
-        [ChoPropertyInfo("includeFilesWithGivenAttributes")]
+        [ChoPropertyInfo("includeFilesWithGivenAttributes", DefaultValue = "")]
         [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
         public string IncludeFilesWithGivenAttributes
         {
@@ -558,7 +558,7 @@
         [Category("4. Copy Options")]
         [Description("eXclude files with any of the given Attributes set. (/XA:[RASHCNETO]).")]
         [DisplayName("ExcludeFilesWithGivenAttributes")]
-        [ChoPropertyInfo("excludeFilesWithGivenAttributes")]
+        [ChoPropertyInfo("excludeFilesWithGivenAttributes", DefaultValue = "")]
         [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
         public string ExcludeFilesWithGivenAttributes
         {
@@ -900,7 +900,7 @@
         [Category("7. Logging Options")]
         [Description("Output status to LOG file (overwrite existing log). (/LOG:file).")]
         [DisplayName("OutputLogFilePath")]
-        [ChoPropertyInfo("outputLogFilePath")]
+        [ChoPropertyInfo("outputLogFilePath", DefaultValue = "")]
         public string OutputLogFilePath
         {
             get;
@@ -910,7 +910,7 @@
         [Category("7. Logging Options")]
         [Description("Output status to LOG file as UNICODE (overwrite existing log). (/UNILOG:file).")]
         [DisplayName("UnicodeOutputLogFilePath")]
-        [ChoPropertyInfo("unicodeOutputLogFilePath")]
+        [ChoPropertyInfo("unicodeOutputLogFilePath", DefaultValue = "")]
         public string UnicodeOutputLogFilePath
         {
             get;
@@ -920,7 +920,7 @@
         [Category("7. Logging Options")]
         [Description("Output status to LOG file (append to existing log). (/LOG+:file).")]
         [DisplayName("AppendOutputLogFilePath")]
-        [ChoPropertyInfo("appendOutputLogFilePath")]
+        [ChoPropertyInfo("appendOutputLogFilePath", DefaultValue = "")]
         public string AppendOutputLogFilePath
         {
             get;
@@ -930,7 +930,7 @@
         [Category("7. Logging Options")]
         [Description("Output status to LOG file as UNICODE (append to existing log). (/UNILOG+:file).")]
         [DisplayName("AppendUnicodeOutputLogFilePath")]
-        [ChoPropertyInfo("appendUnicodeOutputLogFilePath")]
+        [ChoPropertyInfo("appendUnicodeOutputLogFilePath", DefaultValue = "")]
         public string AppendUnicodeOutputLogFilePath
         {
             get;

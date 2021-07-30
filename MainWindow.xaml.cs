@@ -38,8 +38,9 @@ namespace ChoEazyCopy
         internal static string Caption;
         private DispatcherTimer _dispatcherTimer;
         private Thread _mainUIThread;
-        private Thread _fileNameProcessThread;
+        private Thread _processFilesThread;
         private ChoAppSettings _appSettings;
+        private bool IsStopping = false;
         private bool _isRunning = false;
         public bool IsRunning
         {
@@ -111,6 +112,39 @@ namespace ChoEazyCopy
             }
         }
 
+        private string _sourceDirTooltip = "Choose source directory...";
+        public string SourceDirTooltip
+        {
+            get { return _sourceDirTooltip; }
+            set
+            {
+                _sourceDirTooltip = value;
+                RaisePropertyChanged(nameof(SourceDirTooltip));
+            }
+        }
+
+        private bool _sourceDirStatus = true;
+        public bool SourceDirStatus
+        {
+            get { return _sourceDirStatus; }
+            set
+            {
+                _sourceDirStatus = value;
+                RaisePropertyChanged(nameof(SourceDirStatus));
+            }
+        }
+
+        private bool _showOutputLineNo = true;
+        public bool ShowOutputLineNo
+        {
+            get { return _showOutputLineNo; }
+            set
+            {
+                _showOutputLineNo = value;
+                RaisePropertyChanged(nameof(ShowOutputLineNo));
+            }
+        }
+
         public MainWindow() :
             this(null)
         {
@@ -155,7 +189,7 @@ namespace ChoEazyCopy
 
             _dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             _dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-            _dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000);
+            _dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 30);
             _dispatcherTimer.Start();
 
             string x = _appSettings.SourceDirectory;
@@ -274,7 +308,24 @@ namespace ChoEazyCopy
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
+            if (_msgBuffer.Length > 0)
+            {
+                lock (_msgBufferLock)
+                {
+                    if (_msgBuffer.Length > 0)
+                    {
+                        txtStatus.AppendText(_msgBuffer.ToString());
+                        if (ScrollOutput)
+                            txtStatus.ScrollToEnd();
+                        _msgBuffer.Clear();
+                    }
+                }
+            }
+            if (IsStopping)
+                return;
+
             grpFolders.IsEnabled = !IsRunning;
+
             if (IsRunning)
                 btnRun.IsEnabled = false;
             else
@@ -285,7 +336,21 @@ namespace ChoEazyCopy
                     )
                     btnRun.IsEnabled = true;
                 else
+                {
                     btnRun.IsEnabled = false;
+                }
+            }
+            if (txtSourceDirectory.Text.IsNullOrWhiteSpace()
+                    || Directory.Exists(txtSourceDirectory.Text)
+                )
+            {
+                SourceDirTooltip = "Choose source directory...";
+                SourceDirStatus = true;
+            }
+            else
+            {
+                SourceDirTooltip = $"Direcory not exists.";
+                SourceDirStatus = false;
             }
 
             btnStop.IsEnabled = IsRunning;
@@ -307,7 +372,7 @@ namespace ChoEazyCopy
             }
             btnClear.IsEnabled = !IsRunning && txtStatus.Text.Length > 0;
 
-            if (_fileNameProcessThread != null && _fileNameProcessThread.IsAlive)
+            if (_processFilesThread != null && _processFilesThread.IsAlive)
             {
             }
             else
@@ -402,10 +467,19 @@ namespace ChoEazyCopy
             }
         }
 
+        private readonly StringBuilder _msgBuffer = new StringBuilder();
+        private readonly object _msgBufferLock = new object();
+
         private void SetStatusMsg(string msg)
         {
             if (msg != Environment.NewLine && msg.IsNullOrWhiteSpace()) return;
 
+            lock (_msgBufferLock)
+            {
+                _msgBuffer.Append(msg);
+            }
+
+            /*
             if (Thread.CurrentThread != _mainUIThread)
             {
                 this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => SetStatusMsg(msg)));
@@ -423,6 +497,7 @@ namespace ChoEazyCopy
                 if (ScrollOutput)
                     txtStatus.ScrollToEnd();
             }
+            */
         }
 
         private void UpdateStatus(string text, string toolTipText)
@@ -479,9 +554,9 @@ namespace ChoEazyCopy
                 }
             }
 
-            _fileNameProcessThread = new Thread(new ParameterizedThreadStart(ProcessFiles));
-            _fileNameProcessThread.IsBackground = true;
-            _fileNameProcessThread.Start(_appSettings);
+            _processFilesThread = new Thread(new ParameterizedThreadStart(ProcessFiles));
+            _processFilesThread.IsBackground = true;
+            _processFilesThread.Start(_appSettings);
         }
 
         private void btnStop_Click(object sender, RoutedEventArgs e)
@@ -490,28 +565,31 @@ namespace ChoEazyCopy
                 == MessageBoxResult.No)
                 return;
 
-            using (new ChoWPFWaitCursor())
+            IsStopping = true;
+            btnStop.IsEnabled = false;
+            Task.Run(() =>
             {
-                Thread.Sleep(1000);
-
                 ChoRoboCopyManager roboCopyManager = _roboCopyManager;
                 if (roboCopyManager != null)
+                {
                     roboCopyManager.Cancel();
+                }
 
-                Thread fileNameProcessorThread = _fileNameProcessThread;
-                if (fileNameProcessorThread != null)
+                Thread processFilesThread = _processFilesThread;
+                if (processFilesThread != null)
                 {
                     try
                     {
-                        fileNameProcessorThread.Abort();
+                        processFilesThread.Abort();
                     }
                     catch (ThreadAbortException)
                     {
                         Thread.ResetAbort();
                     }
-                    _fileNameProcessThread = null;
+                    _processFilesThread = null;
                 }
-            }
+                IsStopping = false;
+            });
         }
 
         private void btnSaveAsFile_Click(object sender, RoutedEventArgs e)
@@ -722,6 +800,22 @@ namespace ChoEazyCopy
         }
 
         #endregion
+    }
+    public class BoolToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var val = (bool)value;
+            if (val)
+                return SystemColors.WindowBrush;
+            else
+                return Brushes.Red;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class MathConverter : IValueConverter
     {

@@ -108,6 +108,7 @@
         </Style>
         <local:BoolInverterConverter x:Key="BoolInverterConverter1"/>
         <local:BoolInverterConverter x:Key="BoolInverterConverter2"/>
+        <local:BoolToColorConverter x:Key="BoolToColorConverter1"/>
         <local:MathConverter x:Key="MathConverter"/>
     </Window.Resources>
     <DockPanel>
@@ -215,10 +216,11 @@
                         Margin="1"
                         TabIndex="0" Grid.ColumnSpan="3" 
                         Style="{StaticResource WaterMarkTextBoxStyle}" 
-                        Tag="Choose source directory..."
-                        ToolTip="Choose source directory..."
+                        ToolTip="{Binding Path=SourceDirTooltip}"
                             Text="{Binding Path=AppSettings.SourceDirectory, UpdateSourceTrigger=PropertyChanged}"
-                        />
+                                    Background="{Binding SourceDirStatus, Converter={StaticResource BoolToColorConverter1}}"
+                        >
+                                </TextBox>
                                 <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                         Grid.Row="0"
                         Grid.Column="3"
@@ -245,7 +247,6 @@
                         Margin="1"
                         TabIndex="2" Grid.ColumnSpan="3" 
                         Style="{StaticResource WaterMarkTextBoxStyle}"
-                        Tag="Choose destination directory..."
                         ToolTip="Choose destination directory..."
                             Text="{Binding Path=AppSettings.DestDirectory, UpdateSourceTrigger=PropertyChanged}"
                             />
@@ -316,14 +317,48 @@
                         <GroupBox
                 Margin="5,0,5,5"
                 Grid.Row="2"
-                Header="Output"
                 VerticalAlignment="Stretch">
-                            <TextBox
+                            <GroupBox.Header>
+                                <DockPanel LastChildFill="True">
+                                    <CheckBox DockPanel.Dock="Right" Content="Show Line Numbers" IsChecked="{Binding ShowOutputLineNo}"
+          xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+          xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                        <CheckBox.Foreground>
+                                            <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            </MultiBinding>
+                                        </CheckBox.Foreground>
+                                    </CheckBox>
+                                    <TextBlock Text="OUTPUT"
+          xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+          xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                        <TextBlock.Foreground>
+                                            <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            </MultiBinding>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>
+                                </DockPanel>
+                            </GroupBox.Header>
+                    <avalonEdit:TextEditor
+                        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+                        Name="txtStatus"
+                        FontFamily="Courier New"
+                        SyntaxHighlighting="DOS"
+                        FontSize="10pt"
+                        IsReadOnly="true" 
+                        TabIndex="25" 
+                        ShowLineNumbers="{Binding ShowOutputLineNo}"
+                        VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                />
+                            <!--TextBox
                     Margin="0,3,0,2"
                     VerticalAlignment="Stretch"
                     x:Name="txtStatus"
                     IsReadOnly="True"
-                    TabIndex="25" FontFamily="Courier New" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+                    TabIndex="25" FontFamily="Courier New" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" /-->
                         </GroupBox>
                     </Grid>
                 </DockPanel>

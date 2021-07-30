@@ -14,6 +14,7 @@
     using System.Threading;
     using System.Diagnostics;
     using System.Threading.Tasks;
+    using System.Management;
 
     #endregion NameSpaces
 
@@ -184,7 +185,7 @@
         {
             cleanup = false;
             StreamReader reader = state as StreamReader;
-            char[] buffer = new char[1024];
+            char[] buffer = new char[32768];
             int chars;
             StringBuilder txt = new StringBuilder();
             while ((chars = reader.Read(buffer, 0, buffer.Length)) > 0)
@@ -197,8 +198,6 @@
                     Status.Raise(this, new ChoFileProcessEventArgs(CleanUp(txt.ToString())));
                     txt.Clear();
                 }
-
-                Thread.Sleep(30);
             }
             if (txt.Length > 0)
             {
@@ -216,6 +215,12 @@
 
             try
             {
+                try
+                {
+                    KillProcessAndChildrens(_process.Id);
+                }
+                catch { }
+
                 process.Kill();
                 AppStatus.Raise(this, new ChoFileProcessEventArgs("RoboCopy operation canceled."));
                 _process = null;
@@ -223,6 +228,32 @@
             catch { }
         }
 
+        private void KillProcessAndChildrens(int pid)
+        {
+            ManagementObjectSearcher processSearcher = new ManagementObjectSearcher
+              ("Select * From Win32_Process Where ParentProcessID=" + pid);
+            ManagementObjectCollection processCollection = processSearcher.Get();
+
+            // We must kill child processes first!
+            if (processCollection != null)
+            {
+                foreach (ManagementObject mo in processCollection)
+                {
+                    KillProcessAndChildrens(Convert.ToInt32(mo["ProcessID"])); //kill child processes(also kills childrens of childrens etc.)
+                }
+            }
+
+            // Then kill parents.
+            try
+            {
+                Process proc = System.Diagnostics.Process.GetProcessById(pid);
+                if (!proc.HasExited) proc.Kill();
+            }
+            catch (ArgumentException)
+            {
+                // Process already exited.
+            }
+        }
         #endregion Instance Members (Public)
 
         #region IDisposable Members

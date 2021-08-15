@@ -125,6 +125,10 @@
                 //Run precommands
                 if (!preCommands.IsNullOrWhiteSpace())
                 {
+                    //Replace tokens
+                    preCommands = preCommands.Replace("{{SRC_DIR}}", appSettings.SourceDirectory);
+                    preCommands = preCommands.Replace("{{DEST_DIR}}", appSettings.DestDirectory);
+
                     foreach (var cmd in preCommands.SplitNTrim().Select(c => c.NTrim()).Select(c => MarshalCmd(c, appSettings)).Where(c => !c.IsNullOrWhiteSpace()))
                         process.StandardInput.WriteLine($"{cmd}");
                 }
@@ -133,6 +137,10 @@
                 //Run postcommands
                 if (!postCommands.IsNullOrWhiteSpace())
                 {
+                    //Replace tokens
+                    postCommands = postCommands.Replace("{{SRC_DIR}}", appSettings.SourceDirectory);
+                    postCommands = postCommands.Replace("{{DEST_DIR}}", appSettings.DestDirectory);
+
                     foreach (var cmd in postCommands.SplitNTrim().Select(c => c.NTrim()).Select(c => MarshalCmd(c, appSettings)).Where(c => !c.IsNullOrWhiteSpace()))
                         process.StandardInput.WriteLine($"{cmd}");
                 }

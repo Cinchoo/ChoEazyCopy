@@ -25,6 +25,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using Xceed.Wpf.Toolkit.PropertyGrid;
 
 namespace ChoEazyCopy
 {
@@ -773,6 +774,15 @@ namespace ChoEazyCopy
 
             System.Diagnostics.Process.Start(url);
         }
+
+        private void btnHelp_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy");
+            }
+            catch { }
+        }
     }
 
     public class BoolInverterConverter : IValueConverter
@@ -963,6 +973,17 @@ namespace ChoEazyCopy
             }
 
             return tmp;
+        }
+    }
+
+    public class ExtendedPropertyGrid : PropertyGrid
+    {
+        protected override void OnFilterChanged(string oldValue, string newValue)
+        {
+            newValue = newValue.ToLower();
+            CollectionViewSource.GetDefaultView((object)this.Properties).Filter
+                = (item => (item as PropertyItem).DisplayName.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0 
+                || (item as PropertyItem).Description.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
     }
 }

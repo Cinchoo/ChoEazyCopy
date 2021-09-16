@@ -7,9 +7,9 @@
     x:Class="ChoEazyCopy.MainWindow"
     Title="ChoEazyCopy - Cinchoo Inc."
     Height="500"
-    Width="800"
+    Width="850"
     MinHeight="500"
-    MinWidth="700"
+    MinWidth="850"
     AllowDrop="True"
     Closed="Window_Closed"
     x:Name="MyWindow"
@@ -164,7 +164,7 @@
                             <RibbonButton x:Name="btnSaveAsFile" SmallImageSource="Resources\SaveAsFile.png" Label="Save As" KeyTip="A" Click="btnSaveAsFile_Click"  ContextMenu="{x:Null}"/>
                         </RibbonGroup>
                         <RibbonGroup x:Name="DonateGroup" ContextMenu="{x:Null}">
-                            <RibbonButton x:Name="btnDomate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDonate_Click" ToolTip="Your supoort is much appreciated." ContextMenu="{x:Null}"/>
+                            <RibbonButton x:Name="btnDonate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDonate_Click" ToolTip="Your supoort is much appreciated." ContextMenu="{x:Null}"/>
                         </RibbonGroup>
                         <RibbonGroup VerticalAlignment="Center" ContextMenu="{x:Null}">
                             <DockPanel LastChildFill="True">
@@ -172,6 +172,9 @@
                                 <TextBlock x:Name="tbSettingsName" FontSize="24" FontWeight="Bold" Foreground="DarkBlue" 
                                             Width="Auto" VerticalAlignment="Stretch" FontFamily="Verdana"/>
                             </DockPanel>
+                        </RibbonGroup>
+                        <RibbonGroup x:Name="HelpGroup" ContextMenu="{x:Null}">
+                            <RibbonButton x:Name="btnHelp" LargeImageSource="Resources\Help.png" Label="Help" KeyTip="D" Click="btnHelp_Click" ToolTip="RoboCopy offical help" ContextMenu="{x:Null}"/>
                         </RibbonGroup>
                     </RibbonTab>
                 </Ribbon>
@@ -372,7 +375,8 @@
                         </TextBlock.LayoutTransform>
                     </TextBlock>
                 </Expander.Header>
-                <xctk:PropertyGrid VerticalAlignment="Stretch" Name="pgAppSettings" SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False" ShowDescriptionByTooltip="True" />
+                <local:ExtendedPropertyGrid VerticalAlignment="Stretch" x:Name="pgAppSettings" SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False" 
+                                   ShowDescriptionByTooltip="True"  />
             </Expander>
             <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" ResizeDirection="Columns" />
         </Grid>

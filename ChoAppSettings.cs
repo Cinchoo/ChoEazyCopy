@@ -1121,7 +1121,7 @@
         string DirSafeguard(string path)
         {
             // Escape the last '\' from the path if it is not escaped yet.
-            if (path.Last() == '\\' && (path[path.Length - 2] != '\\'))
+            if (path.Length > 1 && path.Last() == '\\' && (path[path.Length - 2] != '\\'))
                 path += '\\';
             return path;
         }

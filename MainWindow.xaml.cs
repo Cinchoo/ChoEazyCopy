@@ -141,8 +141,17 @@ namespace ChoEazyCopy
             get { return _showOutputLineNo; }
             set
             {
-                _showOutputLineNo = value;
-                RaisePropertyChanged(nameof(ShowOutputLineNo));
+                if (_showOutputLineNo != value)
+                {
+                    var appSettings = AppSettings;
+                    if (appSettings != null)
+                    {
+                        IsDirty = true;
+                        appSettings.ShowOutputLineNumbers = value;
+                    }
+                    _showOutputLineNo = value;
+                    RaisePropertyChanged(nameof(ShowOutputLineNo));
+                }
             }
         }
 
@@ -193,10 +202,12 @@ namespace ChoEazyCopy
             _dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 30);
             _dispatcherTimer.Start();
 
-            string x = _appSettings.SourceDirectory;
+            string _ = _appSettings.SourceDirectory;
             ChoShellExtCmdLineArgs cmdLineArgs = new ChoShellExtCmdLineArgs();
             if (!cmdLineArgs.Directory.IsNullOrWhiteSpace())
                 _appSettings.SourceDirectory = cmdLineArgs.Directory;
+
+            _showOutputLineNo = _appSettings.ShowOutputLineNumbers;
 
             IsDirty = false;
         }

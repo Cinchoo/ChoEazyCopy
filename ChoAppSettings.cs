@@ -103,6 +103,14 @@
     {
         #region Instance Data Members (Others)
 
+        [Browsable(false)]
+        [ChoPropertyInfo("showOutputLineNumbers")]
+        public bool ShowOutputLineNumbers
+        {
+            get;
+            set;
+        }
+
         private int _maxStatusMsgSize;
         [Browsable(false)]
         [ChoPropertyInfo("maxStatusMsgSize", DefaultValue = "1000")]

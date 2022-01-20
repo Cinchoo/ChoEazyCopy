@@ -196,7 +196,26 @@
                 Margin="5"
                 Height="Auto"
                 Grid.Column="0"
-                Header="Choose Folders">
+                >
+                    <GroupBox.Header>
+                        <DockPanel LastChildFill="True">
+                            <Button x:Name="btnSwapDir" DockPanel.Dock="Right" Content="Swap Directories" 
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro" Click="btnSwapDir_Click"
+                                    Style="{DynamicResource MetroButton}" />
+                                    <TextBlock Text="CHOOSE FOLDERS" VerticalAlignment="Center"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                <TextBlock.Foreground>
+                                    <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                        <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                        <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                    </MultiBinding>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                        </DockPanel>
+                    </GroupBox.Header>
+
                             <Grid
                     Width="Auto"
                     Height="Auto"
@@ -291,18 +310,43 @@
                     MinHeight="100" />
                         </Grid.RowDefinitions>
                         <GroupBox
-                Margin="5,0,5,0"
-                Grid.Row="0"
-                Header="RoboCopy Command"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch">
+                            Margin="5,0,5,0"
+                            Grid.Row="0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+                            <GroupBox.Header>
+                                <DockPanel LastChildFill="True">
+                                    <CheckBox DockPanel.Dock="Right" Content="TEST RUN" IsChecked="{Binding ListOnly}"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                        Style="{DynamicResource MetroCheckBox}">
+                                        <CheckBox.Foreground>
+                                            <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            </MultiBinding>
+                                        </CheckBox.Foreground>
+                                    </CheckBox>
+                                    <TextBlock Text="ROBOCOPY COMMAND" VerticalAlignment="Center"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                        <TextBlock.Foreground>
+                                            <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            </MultiBinding>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>
+                                </DockPanel>
+                            </GroupBox.Header>
+                            
                             <DockPanel LastChildFill="True">
                             <TextBox Visibility="Collapsed"
-                    Margin="0,3,0,2"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Name="txtRoboCopyCmdEx"
-                    TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" TextChanged="txtRoboCopyCmdEx_TextChanged" />
+                                Margin="0,3,0,2"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Name="txtRoboCopyCmdEx"
+                                TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" TextChanged="txtRoboCopyCmdEx_TextChanged" />
                                 <TextBox
                     Margin="0,3,0,2"
                     HorizontalAlignment="Stretch"
@@ -321,30 +365,31 @@
                 Margin="5,0,5,5"
                 Grid.Row="2"
                 VerticalAlignment="Stretch">
-                            <GroupBox.Header>
-                                <DockPanel LastChildFill="True">
-                                    <CheckBox DockPanel.Dock="Right" Content="Show Line Numbers" IsChecked="{Binding ShowOutputLineNo}"
-          xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-          xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
-                                        <CheckBox.Foreground>
-                                            <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                            </MultiBinding>
-                                        </CheckBox.Foreground>
-                                    </CheckBox>
-                                    <TextBlock Text="OUTPUT"
-          xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-          xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
-                                        <TextBlock.Foreground>
-                                            <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                            </MultiBinding>
-                                        </TextBlock.Foreground>
-                                    </TextBlock>
-                                </DockPanel>
-                            </GroupBox.Header>
+                    <GroupBox.Header>
+                        <DockPanel LastChildFill="True">
+                            <CheckBox DockPanel.Dock="Right" Content="SHOW LINE NUMBERS" IsChecked="{Binding ShowOutputLineNo}"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                        Style="{DynamicResource MetroCheckBox}">
+                                <CheckBox.Foreground>
+                                    <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                        <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                        <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                    </MultiBinding>
+                                </CheckBox.Foreground>
+                            </CheckBox>
+                            <TextBlock Text="OUTPUT" VerticalAlignment="Center"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                <TextBlock.Foreground>
+                                    <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                        <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                        <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                    </MultiBinding>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                        </DockPanel>
+                    </GroupBox.Header>
                     <avalonEdit:TextEditor
                         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
                         Name="txtStatus"

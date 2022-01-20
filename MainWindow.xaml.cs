@@ -155,6 +155,26 @@ namespace ChoEazyCopy
             }
         }
 
+        private bool _listOnly = true;
+        public bool ListOnly
+        {
+            get { return _listOnly; }
+            set
+            {
+                if (_listOnly != value)
+                {
+                    var appSettings = AppSettings;
+                    if (appSettings != null)
+                    {
+                        IsDirty = true;
+                        appSettings.ListOnly = value;
+                    }
+                    _listOnly = value;
+                    RaisePropertyChanged(nameof(ListOnly));
+                }
+            }
+        }
+
         public MainWindow() :
             this(null)
         {
@@ -208,6 +228,7 @@ namespace ChoEazyCopy
                 _appSettings.SourceDirectory = cmdLineArgs.Directory;
 
             _showOutputLineNo = _appSettings.ShowOutputLineNumbers;
+            _listOnly = _appSettings.ListOnly;
 
             IsDirty = false;
         }
@@ -658,7 +679,8 @@ namespace ChoEazyCopy
             try
             {
                 if (SettingsFilePath.IsNullOrWhiteSpace()) return true;
-                File.WriteAllText(SettingsFilePath, _appSettings.ToXml());
+                var xml = _appSettings.ToXml();
+                File.WriteAllText(SettingsFilePath, xml);
                 IsDirty = false;
                 return true;
             }
@@ -689,6 +711,9 @@ namespace ChoEazyCopy
                     UnregisterEvents();
                     _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
                     RegisterEvents();
+                    ShowOutputLineNo = _appSettings.ShowOutputLineNumbers;
+                    ListOnly = _appSettings.ListOnly;
+                    txtStatus.Text = String.Empty;
                     this.DataContext = null;
                     this.DataContext = this;
                     IsDirty = false;
@@ -708,6 +733,9 @@ namespace ChoEazyCopy
                 SettingsFilePath = null;
                 txtSourceDirectory.Text = String.Empty;
                 txtDestDirectory.Text = String.Empty;
+                ShowOutputLineNo = false;
+                ListOnly = false;
+                txtStatus.Text = String.Empty;
                 UnregisterEvents();
                 _appSettings.Reset();
                 RegisterEvents();
@@ -793,6 +821,19 @@ namespace ChoEazyCopy
                 System.Diagnostics.Process.Start("https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy");
             }
             catch { }
+        }
+
+        private void btnSwapDir_Click(object sender, RoutedEventArgs e)
+        {
+            var appSettings = AppSettings;
+            if (appSettings == null)
+                return;
+
+            var srcDir = appSettings.SourceDirectory;
+            var destDir = appSettings.DestDirectory;
+
+            txtSourceDirectory.Text = destDir;
+            txtDestDirectory.Text = srcDir;
         }
     }
 

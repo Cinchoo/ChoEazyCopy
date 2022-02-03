@@ -6,10 +6,10 @@
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     x:Class="ChoEazyCopy.MainWindow"
     Title="ChoEazyCopy - Cinchoo Inc."
-    Height="500"
-    Width="850"
-    MinHeight="500"
-    MinWidth="850"
+    Height="600"
+    Width="950"
+    MinHeight="400"
+    MinWidth="500"
     AllowDrop="True"
     Closed="Window_Closed"
     x:Name="MyWindow"
@@ -229,11 +229,14 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
                                     <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
                                 </Grid.RowDefinitions>
+                                <Label FontWeight="Bold" Grid.Row="0" Grid.ColumnSpan="2">Source Directory</Label>
                                 <TextBox 
                         x:Name="txtSourceDirectory"
                         VerticalAlignment="Stretch"
-                        Grid.Row="0"
+                        Grid.Row="1"
                         Grid.Column="0"
                         Margin="1"
                         TabIndex="0" Grid.ColumnSpan="3" 
@@ -244,7 +247,7 @@
                         >
                                 </TextBox>
                                 <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Grid.Row="0"
+                        Grid.Row="1"
                         Grid.Column="3"
                         Margin="1,0,1,2"
                         x:Name="btnSourceDirBrowse"
@@ -262,9 +265,10 @@
                                         </Image.Style>
                                     </Image>
                                 </Button>
+                                <Label FontWeight="Bold" Grid.Row="2" Grid.ColumnSpan="2">Destination Directory</Label>
                                 <TextBox
                         x:Name="txtDestDirectory" 
-                        Grid.Row="1" 
+                        Grid.Row="3" 
                         Grid.Column="0"
                         Margin="1"
                         TabIndex="2" Grid.ColumnSpan="3" 
@@ -273,7 +277,7 @@
                             Text="{Binding Path=AppSettings.DestDirectory, UpdateSourceTrigger=PropertyChanged}"
                             />
                                 <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Grid.Row="1"
+                        Grid.Row="3"
                         Grid.Column="3"
                         Margin="1,2,1,1"
                         x:Name="btnDestDirBrowse"
@@ -420,7 +424,8 @@
                         </TextBlock.LayoutTransform>
                     </TextBlock>
                 </Expander.Header>
-                <local:ExtendedPropertyGrid VerticalAlignment="Stretch" x:Name="pgAppSettings" SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False" 
+                <local:ExtendedPropertyGrid VerticalAlignment="Stretch" x:Name="pgAppSettings" 
+                                            SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False" 
                                    ShowDescriptionByTooltip="True"  />
             </Expander>
             <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" ResizeDirection="Columns" />

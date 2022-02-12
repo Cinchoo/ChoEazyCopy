@@ -93,6 +93,7 @@
 
             string preCommands = appSettings.Precommands;
             string postCommands = appSettings.Postcommands;
+            bool testRun = appSettings.ListOnly;
 
             try
             {
@@ -123,7 +124,7 @@
                     process.StandardInput.WriteLine("prompt $G");
 
                 //Run precommands
-                if (!preCommands.IsNullOrWhiteSpace())
+                if (!testRun && !preCommands.IsNullOrWhiteSpace())
                 {
                     //Replace tokens
                     preCommands = preCommands.Replace("{{SRC_DIR}}", appSettings.SourceDirectory);
@@ -135,7 +136,7 @@
                 process.StandardInput.WriteLine($"{fileName} {arguments}");
 
                 //Run postcommands
-                if (!postCommands.IsNullOrWhiteSpace())
+                if (!testRun && !postCommands.IsNullOrWhiteSpace())
                 {
                     //Replace tokens
                     postCommands = postCommands.Replace("{{SRC_DIR}}", appSettings.SourceDirectory);

@@ -418,16 +418,104 @@
             </DockPanel>
             <Expander Grid.Column="2" ExpandDirection="Left" IsExpanded="True" x:Name="MyExpander">
                 <Expander.Header>
-                    <TextBlock Text="RoboCopy Options" Foreground="White" FontWeight="Bold">
+                    <TextBlock Text="Control Panel" Foreground="White" FontWeight="Bold">
                         <TextBlock.LayoutTransform>
                             <RotateTransform Angle="90"/>
                         </TextBlock.LayoutTransform>
                     </TextBlock>
                 </Expander.Header>
-                <local:ExtendedPropertyGrid VerticalAlignment="Stretch" x:Name="pgAppSettings" 
-                                            SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False" 
-                                   ShowDescriptionByTooltip="True"  />
+
+                <TabControl TabStripPlacement="Bottom" Grid.Column="2">
+                    <TabControl.Resources>
+                        <Style TargetType="{x:Type TabItem}">
+                            <Setter Property="HeaderTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <ContentPresenter TextBlock.FontWeight="Bold" Content="{TemplateBinding Content}">
+                                            <ContentPresenter.LayoutTransform>
+                                                <RotateTransform Angle="0" />
+                                            </ContentPresenter.LayoutTransform>
+                                        </ContentPresenter>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TabControl.Resources>
+                    <TabItem Header="RoboCopy Options">
+                        <local:ExtendedPropertyGrid  Margin="-3" VerticalAlignment="Stretch" x:Name="pgAppSettings" 
+                                                SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False" 
+                                       ShowDescriptionByTooltip="True"  />
+                    </TabItem>
+                    <TabItem Header="Backup Tasks">
+                        <GroupBox Header="Backup Tasks" Margin="-3" >
+                            <DockPanel LastChildFill="True">
+                                <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                                    <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Directory</TextBlock>
+                                    <DockPanel LastChildFill="True" DockPanel.Dock="Bottom" HorizontalAlignment="Stretch">
+                                        <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="20" DockPanel.Dock="Right"
+                                            Margin="1,0,1,2"
+                                            x:Name="btnRefreshBackupTasks"
+                                            ToolTip="Reload backup tasks..." VerticalAlignment="Bottom"
+                                                Click="btnRefreshBackupTasks_Click"
+                                                >
+                                            <Image Source="Resources/Refresh.png" >
+                                                <Image.Style>
+                                                    <Style TargetType="{x:Type Image}">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsEnabled" Value="False">
+                                                                <Setter Property="Opacity" Value="0.5" />
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                        </Button>
+                                        <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"  Width="20" DockPanel.Dock="Right"
+                                            Margin="1,0,1,2"
+                                            x:Name="btnBackupTaskDirectory"
+                                            ToolTip="Choose backup tasks directory..." VerticalAlignment="Bottom"
+                                                Click="btnBackupTaskDirectory_Click"
+                                                >
+                                            <Image Source="Resources/OpenFolder.png" >
+                                                <Image.Style>
+                                                    <Style TargetType="{x:Type Image}">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsEnabled" Value="False">
+                                                                <Setter Property="Opacity" Value="0.5" />
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                        </Button>
+                                        <TextBox HorizontalAlignment="Stretch"
+                                            x:Name="txtBackupTasksDirectory"
+                                            Margin="1"
+                                            TabIndex="0" 
+                                            Style="{StaticResource WaterMarkTextBoxStyle}" 
+                                            ToolTip="Backup Tasks directory"
+                                                Text="{Binding Path=BackupTaskDirectory, UpdateSourceTrigger=PropertyChanged}"
+                                                        Background="{Binding SourceDirStatus, Converter={StaticResource BoolToColorConverter1}}"
+                                            >
+                                        </TextBox>
+                                    </DockPanel>
+                                </DockPanel>
+
+                                <DockPanel LastChildFill="True">
+                                    <TextBox IsReadOnly="true" Margin="0,5,0,0" DockPanel.Dock="Bottom" Height="50" VerticalScrollBarVisibility="Auto" 
+                                             TextWrapping="WrapWithOverflow"
+                                             Text="{Binding Path=AppSettings.Comments}" Background="LightGray"/>
+                                    <ListBox x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
+                                             ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName" 
+                                             SelectedValue="{Binding SelectedBackupTaskFilePath}" >
+                                    </ListBox>
+                                </DockPanel>
+                            </DockPanel>
+                        </GroupBox>
+                    </TabItem>
+                </TabControl>
             </Expander>
+
             <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" ResizeDirection="Columns" />
         </Grid>
     </DockPanel>

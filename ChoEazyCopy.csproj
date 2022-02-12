@@ -217,6 +217,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\Cinchoo.Core.dll" />
+    <Resource Include="Resources\OpenFolder1.png" />
+    <Resource Include="Resources\Refresh.png" />
     <Resource Include="Resources\help.png" />
     <EmbeddedResource Include="Lib\ICSharpCode.AvalonEdit.dll" />
     <Resource Include="Resources\Run.png" />

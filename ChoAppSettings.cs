@@ -194,6 +194,16 @@
             set;
         }
 
+        [Category("1. Common Options")]
+        [Description("Short description of backup task.")]
+        [DisplayName("Comments")]
+        [ChoPropertyInfo("comments", DefaultValue = "")]
+        public string Comments
+        {
+            get;
+            set;
+        }
+
         #endregion Instance Data Members (Common Options)
 
         #region Instance Data Members (Source Options)
@@ -1114,6 +1124,7 @@
             MultithreadCopy = 8;
             Precommands = null;
             Postcommands = null;
+            Comments = null;
         }
         
         internal string GetCmdLineText()
@@ -1123,7 +1134,7 @@
 
         internal string GetCmdLineTextEx()
         {
-            return "{0} {1} {2}".FormatString(RoboCopyFilePath, GetCmdLineParams(), GetExCmdLineParams());
+            return "{0} {1} {2} {3}".FormatString(RoboCopyFilePath, GetCmdLineParams(), GetExCmdLineParams(), Comments);
         }
 
         string DirSafeguard(string path)

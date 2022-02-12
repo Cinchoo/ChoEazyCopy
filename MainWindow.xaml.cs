@@ -81,6 +81,69 @@ namespace ChoEazyCopy
         }
         #endregion Instance Members (Private)
 
+        private string _selectedBackupTaskFilePath;
+        public string SelectedBackupTaskFilePath
+        {
+            get { return _selectedBackupTaskFilePath; }
+            set
+            {
+                var origValue = _selectedBackupTaskFilePath;
+                if (value == _selectedBackupTaskFilePath)
+                    return;
+
+                _selectedBackupTaskFilePath = value;
+                if (!SaveSettings())
+                {
+                    OpenSettingsFile(_selectedBackupTaskFilePath);
+                    RaisePropertyChanged(nameof(SelectedBackupTaskFilePath));
+                }
+                else
+                {
+                    Application.Current.Dispatcher.BeginInvoke(
+                        new Action(() =>
+                        {
+                            _selectedBackupTaskFilePath = origValue;
+                            RaisePropertyChanged(nameof(SelectedBackupTaskFilePath));
+                        }),
+                        DispatcherPriority.ContextIdle,
+                        null
+                    );
+                }
+            }
+        }
+        private List<BackupTaskInfo> _backupTaskInfos;
+        public List<BackupTaskInfo> BackupTaskInfos
+        {
+            get { return _backupTaskInfos; }
+            set
+            {
+                _backupTaskInfos = value;
+                RaisePropertyChanged(nameof(BackupTaskInfos));
+            }
+        }
+
+        private string _backupTaskDirectory;
+        public string BackupTaskDirectory
+        {
+            get { return _backupTaskDirectory; }
+            set
+            {
+                _backupTaskDirectory = value;
+                RaisePropertyChanged(nameof(BackupTaskDirectory));
+            }
+        }
+
+        private bool _backupTaskDirStatus = true;
+        public bool BackupTaskDirStatus
+        {
+            get { return _backupTaskDirStatus; }
+            set
+            {
+                _backupTaskDirStatus = value;
+                RaisePropertyChanged(nameof(BackupTaskDirStatus));
+            }
+        }
+
         private bool _scrollOutput = true;
         public bool ScrollOutput
         {
@@ -200,6 +263,9 @@ namespace ChoEazyCopy
                 this.Left = up.WindowLeft;
                 this.WindowState = up.WindowState;
             }
+
+            BackupTaskDirectory = up.BackupTaskDirectory;
+            ReloadBackupTasks(BackupTaskDirectory);
         }
 
         private void MyWindow_Loaded(object sender1, RoutedEventArgs e1)
@@ -280,6 +346,8 @@ namespace ChoEazyCopy
                  {
                      txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
                      txtRoboCopyCmdEx.Text = _appSettings.GetCmdLineTextEx();
+                     if (e.PropertyName == "Comments")
+                        RaisePropertyChanged("AppSettings");
                  }));
         }
 
@@ -384,6 +452,17 @@ namespace ChoEazyCopy
             {
                 SourceDirTooltip = $"Direcory not exists.";
                 SourceDirStatus = false;
+            }
+
+            if (BackupTaskDirectory.IsNullOrWhiteSpace()
+                    || Directory.Exists(BackupTaskDirectory)
+                )
+            {
+                BackupTaskDirStatus = true;
+            }
+            else
+            {
+                BackupTaskDirStatus = false;
             }
 
             btnStop.IsEnabled = IsRunning;
@@ -704,21 +783,27 @@ namespace ChoEazyCopy
 
             if (result == true)
             {
-                using (var x = new ChoWPFWaitCursor())
-                {
-                    _isNewFileOp = true;
-                    SettingsFilePath = dlg.FileName;
-                    UnregisterEvents();
-                    _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
-                    RegisterEvents();
-                    ShowOutputLineNo = _appSettings.ShowOutputLineNumbers;
-                    ListOnly = _appSettings.ListOnly;
-                    txtStatus.Text = String.Empty;
-                    this.DataContext = null;
-                    this.DataContext = this;
-                    IsDirty = false;
-                    _isNewFileOp = false;
-                }
+                OpenSettingsFile(dlg.FileName);
+            }
+        }
+
+        private void OpenSettingsFile(string settingsFileName)
+        {
+            using (var x = new ChoWPFWaitCursor())
+            {
+                _isNewFileOp = true;
+                SettingsFilePath = settingsFileName;
+                UnregisterEvents();
+                _appSettings.Reset();
+                _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
+                RegisterEvents();
+                ShowOutputLineNo = _appSettings.ShowOutputLineNumbers;
+                ListOnly = _appSettings.ListOnly;
+                txtStatus.Text = String.Empty;
+                this.DataContext = null;
+                this.DataContext = this;
+                IsDirty = false;
+                _isNewFileOp = false;
             }
         }
 
@@ -775,6 +860,7 @@ namespace ChoEazyCopy
                 }
                 up.RememberWindowSizeAndPosition = RememberWindowSizeAndPosition;
                 up.ScrollOutput = ScrollOutput;
+                up.BackupTaskDirectory = BackupTaskDirectory;
                 up.Save();
             }
         }
@@ -834,6 +920,85 @@ namespace ChoEazyCopy
 
             txtSourceDirectory.Text = destDir;
             txtDestDirectory.Text = srcDir;
+        }
+
+        private void btnRefreshBackupTasks_Click(object sender, RoutedEventArgs e)
+        {
+            ReloadBackupTasks(BackupTaskDirectory);
+        }
+
+        private void btnBackupTaskDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            ChoFolderBrowserDialog dlg1 = new ChoFolderBrowserDialog
+            {
+                Description = "Choose Backup Tasks folder...",
+                ShowNewFolderButton = true,
+                ShowEditBox = true,
+                ShowBothFilesAndFolders = false,
+                NewStyle = true,
+                SelectedPath = (System.IO.Directory.Exists(BackupTaskDirectory)) ? BackupTaskDirectory : "",
+                ShowFullPathInEditBox = false,
+            };
+            dlg1.RootFolder = System.Environment.SpecialFolder.MyComputer;
+
+            var result = dlg1.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                if (Directory.Exists(dlg1.SelectedPath))
+                    BackupTaskDirectory = dlg1.SelectedPath;
+                else
+                    BackupTaskDirectory = System.IO.Path.GetDirectoryName(dlg1.SelectedPath);
+
+                var up = new ChoUserPreferences();
+                up.BackupTaskDirectory = BackupTaskDirectory;
+                up.Save();
+
+                ReloadBackupTasks(BackupTaskDirectory);
+            }
+        }
+
+        private bool _isBackupTasksLoading = false;
+        private object _padLock = new object();
+        private void ReloadBackupTasks(string backupTasksDir)
+        {
+            if (_isBackupTasksLoading)
+                return;
+
+            lock (_padLock)
+            {
+                if (_isBackupTasksLoading)
+                    return;
+
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        _isBackupTasksLoading = true;
+                        if (backupTasksDir.IsNullOrWhiteSpace() || !Directory.Exists(backupTasksDir))
+                            return;
+
+                        BackupTaskInfos = Directory.GetFiles(backupTasksDir, $"*{AppHost.AppFileExt}")
+                            .Select(f => new BackupTaskInfo(f)).ToList();
+                    }
+                    finally
+                    {
+                        _isBackupTasksLoading = false;
+                    }
+                });
+            }
+        }
+    }
+
+    public class BackupTaskInfo
+    {
+        public string FileName { get; set; }
+        public string FilePath { get; set; }
+
+        public BackupTaskInfo(string filePath)
+        {
+            FilePath = filePath;
+            FileName = Path.GetFileName(filePath);
         }
     }
 
@@ -1034,7 +1199,7 @@ namespace ChoEazyCopy
         {
             newValue = newValue.ToLower();
             CollectionViewSource.GetDefaultView((object)this.Properties).Filter
-                = (item => (item as PropertyItem).DisplayName.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0 
+                = (item => (item as PropertyItem).DisplayName.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0
                 || (item as PropertyItem).Description.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
     }

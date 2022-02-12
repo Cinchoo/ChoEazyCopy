@@ -25,6 +25,7 @@ namespace ChoEazyCopy
 
         public bool ScrollOutput { get; set; }
 
+        public string BackupTaskDirectory { get; set; }
         #endregion
 
         #region Constructor
@@ -109,6 +110,7 @@ namespace ChoEazyCopy
             WindowState = Properties.Settings.Default.WindowState;
             RememberWindowSizeAndPosition = Properties.Settings.Default.RememberWindowSizeAndPosition;
             ScrollOutput = Properties.Settings.Default.ScrollOutput;
+            BackupTaskDirectory = Properties.Settings.Default.BackupTaskDirectory;
         }
 
         public void Save()
@@ -123,6 +125,12 @@ namespace ChoEazyCopy
                 Properties.Settings.Default.RememberWindowSizeAndPosition = RememberWindowSizeAndPosition;
                 Properties.Settings.Default.ScrollOutput = ScrollOutput;
 
+                Properties.Settings.Default.BackupTaskDirectory = BackupTaskDirectory;
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                Properties.Settings.Default.BackupTaskDirectory = BackupTaskDirectory;
                 Properties.Settings.Default.Save();
             }
         }

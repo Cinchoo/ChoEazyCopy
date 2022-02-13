@@ -123,27 +123,30 @@
                 if (!console)
                     process.StandardInput.WriteLine("prompt $G");
 
+                string echoCmd = testRun ? "@ECHO " : "";
                 //Run precommands
-                if (!testRun && !preCommands.IsNullOrWhiteSpace())
+                if (!preCommands.IsNullOrWhiteSpace())
                 {
                     //Replace tokens
                     preCommands = preCommands.Replace("{{SRC_DIR}}", appSettings.SourceDirectory);
                     preCommands = preCommands.Replace("{{DEST_DIR}}", appSettings.DestDirectory);
 
                     foreach (var cmd in preCommands.SplitNTrim().Select(c => c.NTrim()).Select(c => MarshalCmd(c, appSettings)).Where(c => !c.IsNullOrWhiteSpace()))
-                        process.StandardInput.WriteLine($"{cmd}");
+                        process.StandardInput.WriteLine($"{echoCmd}{cmd}");
                 }
+
+                //Run robocopy
                 process.StandardInput.WriteLine($"{fileName} {arguments}");
 
                 //Run postcommands
-                if (!testRun && !postCommands.IsNullOrWhiteSpace())
+                if (!postCommands.IsNullOrWhiteSpace())
                 {
                     //Replace tokens
                     postCommands = postCommands.Replace("{{SRC_DIR}}", appSettings.SourceDirectory);
                     postCommands = postCommands.Replace("{{DEST_DIR}}", appSettings.DestDirectory);
 
                     foreach (var cmd in postCommands.SplitNTrim().Select(c => c.NTrim()).Select(c => MarshalCmd(c, appSettings)).Where(c => !c.IsNullOrWhiteSpace()))
-                        process.StandardInput.WriteLine($"{cmd}");
+                        process.StandardInput.WriteLine($"{echoCmd}{cmd}");
                 }
                 process.StandardInput.WriteLine("exit");
 

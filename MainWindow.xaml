@@ -4,6 +4,7 @@
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:local="clr-namespace:ChoEazyCopy"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     x:Class="ChoEazyCopy.MainWindow"
     Title="ChoEazyCopy - Cinchoo Inc."
     Height="600"
@@ -43,6 +44,20 @@
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
+        <Style TargetType="ToolTip">
+            <Style.Triggers>
+                <Trigger Property="Content"
+                 Value="{x:Static sys:String.Empty}">
+                    <Setter Property="Visibility"
+                    Value="Collapsed" />
+                </Trigger>
+                <Trigger Property="Content"
+                 Value="{x:Null}">
+                    <Setter Property="Visibility"
+                    Value="Collapsed" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="ContextMenu" Value="{StaticResource TextBoxContextMenu}" />
         </Style>
@@ -108,7 +123,8 @@
         </Style>
         <local:BoolInverterConverter x:Key="BoolInverterConverter1"/>
         <local:BoolInverterConverter x:Key="BoolInverterConverter2"/>
-        <local:BoolToColorConverter x:Key="BoolToColorConverter1"/>
+        <local:BoolToBackgroundColorConverter x:Key="BoolToBackgroundColorConverter1"/>
+        <local:BoolToForegroundColorConverter x:Key="BoolToForegroundColorConverter1"/>
         <local:MathConverter x:Key="MathConverter"/>
     </Window.Resources>
     <DockPanel>
@@ -129,7 +145,7 @@
                 <ColumnDefinition Width="300" >
                     <ColumnDefinition.Style>
                         <Style TargetType="{x:Type ColumnDefinition}">
-                            <Setter Property="MinWidth" Value="150" />
+                            <Setter Property="MinWidth" Value="350" />
                             <!-- Default MinHeight -->
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ElementName=MyExpander, Path=IsExpanded}" Value="False">
@@ -243,7 +259,8 @@
                         Style="{StaticResource WaterMarkTextBoxStyle}" 
                         ToolTip="{Binding Path=SourceDirTooltip}"
                             Text="{Binding Path=AppSettings.SourceDirectory, UpdateSourceTrigger=PropertyChanged}"
-                                    Background="{Binding SourceDirStatus, Converter={StaticResource BoolToColorConverter1}}"
+                                    Background="{Binding SourceDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
+                                    Foreground="{Binding SourceDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
                         >
                                 </TextBox>
                                 <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
@@ -273,7 +290,7 @@
                         Margin="1"
                         TabIndex="2" Grid.ColumnSpan="3" 
                         Style="{StaticResource WaterMarkTextBoxStyle}"
-                        ToolTip="Choose destination directory..."
+                        ToolTip="Destination directory."
                             Text="{Binding Path=AppSettings.DestDirectory, UpdateSourceTrigger=PropertyChanged}"
                             />
                                 <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
@@ -425,7 +442,7 @@
                     </TextBlock>
                 </Expander.Header>
 
-                <TabControl TabStripPlacement="Bottom" Grid.Column="2">
+                <TabControl TabStripPlacement="Bottom" Grid.Column="2" x:Name="tabControlPanel">
                     <TabControl.Resources>
                         <Style TargetType="{x:Type TabItem}">
                             <Setter Property="HeaderTemplate">
@@ -441,13 +458,19 @@
                             </Setter>
                         </Style>
                     </TabControl.Resources>
-                    <TabItem Header="RoboCopy Options">
-                        <local:ExtendedPropertyGrid  Margin="-3" VerticalAlignment="Stretch" x:Name="pgAppSettings" 
-                                                SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False" 
-                                       ShowDescriptionByTooltip="True"  />
+                    <TabItem Header="RoboCopy Options" ToolTip="">
+                        <DockPanel LastChildFill="True">
+                            <TextBlock DockPanel.Dock="Top" x:Name="txtPropertyGridWaterMark" FontSize="20" TextWrapping="WrapWithOverflow" FontWeight="Bold" 
+                                       Foreground="Red" Text="{Binding PropertyGridTooltip}" ToolTip="{Binding PropertyGridTooltip}"
+                                        Visibility="Collapsed" />
+                            <local:ExtendedPropertyGrid  Margin="-3" VerticalAlignment="Stretch" x:Name="pgAppSettings" 
+                                                    SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False" 
+                                           ShowDescriptionByTooltip="True" FilterWatermark="{Binding PropertyGridTooltip}" 
+                                                         ToolTip="{Binding PropertyGridTooltip}"/>
+                        </DockPanel>
                     </TabItem>
-                    <TabItem Header="Backup Tasks">
-                        <GroupBox Header="Backup Tasks" Margin="-3" >
+                    <TabItem Header="Backup Tasks" x:Name="tabBackupTasks" ToolTip="">
+                        <GroupBox Header="Backup Tasks" Margin="-3" x:Name="grpBackupTasks">
                             <DockPanel LastChildFill="True">
                                 <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
                                     <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Directory</TextBlock>
@@ -493,22 +516,51 @@
                                             Margin="1"
                                             TabIndex="0" 
                                             Style="{StaticResource WaterMarkTextBoxStyle}" 
-                                            ToolTip="Backup Tasks directory"
+                                            ToolTip="{Binding BackupTaskDirTooltip}"
                                                 Text="{Binding Path=BackupTaskDirectory, UpdateSourceTrigger=PropertyChanged}"
-                                                        Background="{Binding SourceDirStatus, Converter={StaticResource BoolToColorConverter1}}"
+                                                        Background="{Binding BackupTaskDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
+                                                        Foreground="{Binding BackupTaskDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
                                             >
                                         </TextBox>
                                     </DockPanel>
                                 </DockPanel>
 
                                 <DockPanel LastChildFill="True">
-                                    <TextBox IsReadOnly="true" Margin="0,5,0,0" DockPanel.Dock="Bottom" Height="50" VerticalScrollBarVisibility="Auto" 
-                                             TextWrapping="WrapWithOverflow"
-                                             Text="{Binding Path=AppSettings.Comments}" Background="LightGray"/>
-                                    <ListBox x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
+                                    <DockPanel LastChildFill="True" DockPanel.Dock="Bottom">
+                                        <StackPanel Margin="0,5,0,0" Orientation="Vertical" DockPanel.Dock="Right" VerticalAlignment="Bottom" >
+                                            <Button Margin="5,0,0,0" x:Name="btnCloneTask" DockPanel.Dock="Right" Content="CLONE" IsEnabled="{Binding CloneTaskEnabled }"
+                                                xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                                xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                                Style="{DynamicResource MetroButton}" Click="btnCloneTask_Click" 
+                                                    ToolTip="Clone task"/>
+                                            <Button Margin="5,5,0,0" x:Name="btnDeleteTask" DockPanel.Dock="Right" Content="DELETE" IsEnabled="{Binding DeleteTaskEnabled }"
+                                                xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                                xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                                Style="{DynamicResource MetroButton}" Click="btnDeleteTask_Click" ToolTip="Delete task"/>
+                                        </StackPanel>
+                                        <DockPanel LastChildFill="True">
+                                            <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Backup Task Comments</TextBlock>
+                                            <TextBox Margin="0,5,0,0" Height="55" VerticalScrollBarVisibility="Auto" 
+                                                     TextWrapping="WrapWithOverflow"
+                                                     Text="{Binding Path=AppSettings.Comments}" ToolTip="Backup Task Comments"/>
+                                        </DockPanel>
+                                    </DockPanel>
+                                    <ListView x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
                                              ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName" 
-                                             SelectedValue="{Binding SelectedBackupTaskFilePath}" >
-                                    </ListBox>
+                                             SelectedValue="{Binding SelectedBackupTaskFilePath}"
+                                             local:GridViewSort.AutoSort="True" FontFamily="Courier New" FontSize="12" ToolTip="">
+                                        <ListView.View>
+                                            <GridView AllowsColumnReorder="true">
+                                                <GridViewColumn Header="Task Name" Width="120" DisplayMemberBinding="{Binding Path=TaskName}" local:GridViewSort.PropertyName="TaskName" />
+                                                <GridViewColumn Header="Created Time" Width="50" DisplayMemberBinding="{Binding Path=CreatedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" local:GridViewSort.PropertyName="CreatedDate" />
+                                                <GridViewColumn Header="Last Modified Time" Width="250" DisplayMemberBinding="{Binding Path=ModifiedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" local:GridViewSort.PropertyName="ModifiedDate" />
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                    
+                                    <!--<ListBox x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
+                                             ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName" 
+                                             SelectedValue="{Binding SelectedBackupTaskFilePath}" >-->
                                 </DockPanel>
                             </DockPanel>
                         </GroupBox>

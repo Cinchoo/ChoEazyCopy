@@ -19,6 +19,7 @@ Features:
 * Able to run the RoboCopy within the GUI.
 
 ![alt text](Images/EazyCopyMain.PNG)
+![alt text](Images/EazyCopyMain1.PNG)
  
 #### To read more about this tool, please refer below CodeProject article
 

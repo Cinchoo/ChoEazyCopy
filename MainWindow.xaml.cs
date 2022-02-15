@@ -35,6 +35,8 @@ namespace ChoEazyCopy
     /// </summary>
     public partial class MainWindow : MetroWindow, INotifyPropertyChanged
     {
+        const string NEW_SETTING_FILE_NAME = "<NEW>";
+
         #region Instance Members (Private)
 
         internal static string Caption;
@@ -70,8 +72,76 @@ namespace ChoEazyCopy
             {
                 _settingsFilePath = value;
                 IsDirty = false;
+                RaisePropertyChanged(nameof(SettingsFilePath));
+                SettingsFileName = Path.GetFileNameWithoutExtension(_settingsFilePath);
+                SetTitle();
             }
         }
+        private string _settingsFileName = null;
+        public string SettingsFileName
+        {
+            get { return _settingsFileName; }
+            private set
+            {
+                _settingsFileName = value;
+                RaisePropertyChanged(nameof(SettingsFileName));
+            }
+        }
+
+        public bool DateCreated
+        {
+            get { return Properties.Settings.Default.DateCreated; }
+            set
+            {
+                Properties.Settings.Default.DateCreated = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(DateCreated));
+            }
+        }
+
+        public bool DateModified
+        {
+            get { return Properties.Settings.Default.DateModified; }
+            set
+            {
+                Properties.Settings.Default.DateModified = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(DateModified));
+            }
+        }
+
+        public bool KeepDateCreated
+        {
+            get { return Properties.Settings.Default.KeepDateCreated; }
+            set
+            {
+                Properties.Settings.Default.KeepDateCreated = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(KeepDateCreated));
+            }
+        }
+
+        public bool KeepDateModified
+        {
+            get { return Properties.Settings.Default.KeepDateModified; }
+            set
+            {
+                Properties.Settings.Default.KeepDateModified = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(KeepDateModified));
+            }
+        }
+
+        public bool SizeColumnToFit
+        {
+            get { return Properties.Settings.Default.SizeColumnToFit; }
+            set
+            {
+                Properties.Settings.Default.SizeColumnToFit = value;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private string _propertyGridTooltip;
         public string PropertyGridTooltip
         {
@@ -112,6 +182,16 @@ namespace ChoEazyCopy
         }
         #endregion Instance Members (Private)
 
+        private BackupTaskInfo _selectedBackupTaskItem;
+        public BackupTaskInfo SelectedBackupTaskItem
+        {
+            get { return _selectedBackupTaskItem; }
+            set
+            {
+                _selectedBackupTaskItem = value;
+                RaisePropertyChanged(nameof(SelectedBackupTaskItem));
+            }
+        }
         private string _selectedBackupTaskFilePath;
         public string SelectedBackupTaskFilePath
         {
@@ -304,7 +384,19 @@ namespace ChoEazyCopy
             InitializeComponent();
 
             Caption = Title;
-            Title = "{0} (v{1})".FormatString(Title, Assembly.GetEntryAssembly().GetName().Version);
+            //Title = "{0} (v{1})".FormatString(Title, Assembly.GetEntryAssembly().GetName().Version);
+            SetTitle();
+        }
+
+        private void SetTitle()
+        {
+            var settingsFileName = SettingsFileName.IsNullOrWhiteSpace() ? String.Empty : $" - {SettingsFileName}";
+
+            var attr = typeof(MainWindow).Assembly.GetCustomAttribute<ChoAssemblyBetaVersionAttribute>();
+            if (attr != null && attr.Version.IsNullOrWhiteSpace())
+                Title = $"{Caption} (v{Assembly.GetEntryAssembly().GetName().Version}){settingsFileName}";
+            else
+                Title = $"{Caption} (v{Assembly.GetEntryAssembly().GetName().Version} - {attr.Version}){settingsFileName}";
         }
 
         private void MyWindow_Loaded(object sender1, RoutedEventArgs e1)
@@ -379,7 +471,7 @@ namespace ChoEazyCopy
                      if (IsDirty)
                      {
                          if (MessageBox.Show("Configuration settings has been modified outside of the tool. {0}Do you want to reload it and lose the changes made in the tool?".FormatString(Environment.NewLine),
-                             Title, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                             Caption, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                              return false;
                          else
                              return true;
@@ -554,18 +646,6 @@ namespace ChoEazyCopy
             btnOpenFile.IsEnabled = !IsRunning;
             btnSaveFile.IsEnabled = !IsRunning && IsDirty;
             btnSaveAsFile.IsEnabled = !IsRunning;
-            if (SettingsFilePath.IsNullOrWhiteSpace())
-            {
-                this.ToolTip = null;
-                tbSettingsName.Text = "<NEW>";
-                tbSettingsName.ToolTip = "New File";
-            }
-            else
-            {
-                //this.ToolTip = SettingsFilePath;
-                tbSettingsName.Text = Path.GetFileNameWithoutExtension(SettingsFilePath);
-                tbSettingsName.ToolTip = SettingsFilePath;
-            }
             btnClear.IsEnabled = !IsRunning && txtStatus.Text.Length > 0;
 
             if (_processFilesThread != null && _processFilesThread.IsAlive)
@@ -1105,13 +1185,30 @@ namespace ChoEazyCopy
             }
         }
 
+        private void mnuCloneTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedBackupTaskItem != null)
+                CloneTask();
+        }
+
+        private void mnuDeleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedBackupTaskItem != null)
+                DeleteTask();
+        }
+
         private void btnDeleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteTask();
+        }
+
+        private void DeleteTask()
         {
             if (SelectedBackupTaskFilePath.IsNullOrWhiteSpace())
                 return;
 
             if (MessageBox.Show($"Are you sure you want to delete `{Path.GetFileName(SelectedBackupTaskFilePath)}` task?",
-                Title, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                Caption, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 try
                 {
@@ -1120,7 +1217,9 @@ namespace ChoEazyCopy
                     var index = BackupTaskInfos.ToList().FindIndex(f => f.FilePath == SelectedBackupTaskFilePath);
                     BackupTaskInfos.RemoveAt(index);
                     if (index - 1 >= 0)
+                    {
                         SelectedBackupTaskFilePath = BackupTaskInfos[index - 1].FilePath;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1148,13 +1247,24 @@ namespace ChoEazyCopy
 
         private void btnCloneTask_Click(object sender, RoutedEventArgs e)
         {
+            CloneTask();
+        }
+
+        private void CloneTask()
+        {
             if (SelectedBackupTaskFilePath.IsNullOrWhiteSpace())
                 return;
 
             var clonedTaskFilePath = GetNextCloneTaskFileName(SelectedBackupTaskFilePath);
             try
             {
-                File.Copy(SelectedBackupTaskFilePath, clonedTaskFilePath);
+                var bfi = new BackupTaskInfo(SelectedBackupTaskFilePath);
+                File.Copy(SelectedBackupTaskFilePath, clonedTaskFilePath, true);
+                if (KeepDateCreated)
+                    File.SetCreationTime(clonedTaskFilePath, bfi.CreatedDate);
+                if (KeepDateModified)
+                    File.SetLastWriteTime(clonedTaskFilePath, bfi.ModifiedDate);
+
                 //ReloadBackupTasks();
                 BackupTaskInfos.Add(new BackupTaskInfo(clonedTaskFilePath));
                 SelectedBackupTaskFilePath = clonedTaskFilePath;
@@ -1402,6 +1512,17 @@ namespace ChoEazyCopy
             CollectionViewSource.GetDefaultView((object)this.Properties).Filter
                 = (item => (item as PropertyItem).DisplayName.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0
                 || (item as PropertyItem).Description.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0);
+        }
+    }
+
+
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = true)]
+    public class ChoAssemblyBetaVersionAttribute : Attribute
+    {
+        public string Version { get; set; }
+        public ChoAssemblyBetaVersionAttribute(string text)
+        {
+            Version = text;
         }
     }
 }

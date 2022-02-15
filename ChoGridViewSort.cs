@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace ChoEazyCopy
 {
-    public class GridViewSort
+    public class ChoGridViewSort
     {
         #region Attached properties
 
@@ -30,7 +30,7 @@ namespace ChoEazyCopy
             DependencyProperty.RegisterAttached(
                 "Command",
                 typeof(ICommand),
-                typeof(GridViewSort),
+                typeof(ChoGridViewSort),
                 new UIPropertyMetadata(
                     null,
                     (o, e) =>
@@ -69,7 +69,7 @@ namespace ChoEazyCopy
             DependencyProperty.RegisterAttached(
                 "AutoSort",
                 typeof(bool),
-                typeof(GridViewSort),
+                typeof(ChoGridViewSort),
                 new UIPropertyMetadata(
                     false,
                     (o, e) =>
@@ -110,7 +110,7 @@ namespace ChoEazyCopy
             DependencyProperty.RegisterAttached(
                 "PropertyName",
                 typeof(string),
-                typeof(GridViewSort),
+                typeof(ChoGridViewSort),
                 new UIPropertyMetadata(null)
             );
 

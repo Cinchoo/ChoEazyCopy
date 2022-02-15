@@ -182,13 +182,15 @@
                         <RibbonGroup x:Name="DonateGroup" ContextMenu="{x:Null}">
                             <RibbonButton x:Name="btnDonate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDonate_Click" ToolTip="Your supoort is much appreciated." ContextMenu="{x:Null}"/>
                         </RibbonGroup>
-                        <RibbonGroup VerticalAlignment="Center" ContextMenu="{x:Null}">
+                        <!--<RibbonGroup VerticalAlignment="Center" ContextMenu="{x:Null}">
                             <DockPanel LastChildFill="True">
                                 <TextBlock DockPanel.Dock="Bottom">Settings File</TextBlock>
                                 <TextBlock x:Name="tbSettingsName" FontSize="24" FontWeight="Bold" Foreground="DarkBlue" 
-                                            Width="Auto" VerticalAlignment="Stretch" FontFamily="Verdana"/>
+                                            Width="Auto" VerticalAlignment="Stretch" FontFamily="Verdana"
+                                           Text="{Binding SettingsFileName}" ToolTip="{Binding SettingsFilePath}"
+                                           />
                             </DockPanel>
-                        </RibbonGroup>
+                        </RibbonGroup>-->
                         <RibbonGroup x:Name="HelpGroup" ContextMenu="{x:Null}">
                             <RibbonButton x:Name="btnHelp" LargeImageSource="Resources\Help.png" Label="Help" KeyTip="D" Click="btnHelp_Click" ToolTip="RoboCopy offical help" ContextMenu="{x:Null}"/>
                         </RibbonGroup>
@@ -548,12 +550,58 @@
                                     <ListView x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
                                              ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName" 
                                              SelectedValue="{Binding SelectedBackupTaskFilePath}"
-                                             local:GridViewSort.AutoSort="True" FontFamily="Courier New" FontSize="12" ToolTip="">
+                                             SelectedItem="{Binding SelectedBackupTaskItem}"
+                                             local:ChoGridViewSort.AutoSort="True" 
+                                             local:ChoGridViewColumnVisibilityManager.Enabled="True"
+                                             FontFamily="Courier New" FontSize="12" ToolTip="">
+                                        <ListView.Resources>
+                                            <ContextMenu x:Key="grdHeaderContextMenu">
+                                                <MenuItem x:Name="mnuDateCreated" Header="DATE CREATED" IsCheckable="true" IsChecked="{Binding DateCreated}" 
+                                                          />
+                                                <MenuItem x:Name="mnuDateModified" Header="DATE MODIFIED" IsCheckable="true" IsChecked="{Binding DateModified}" 
+                                                          />
+                                                <Separator />
+                                                <MenuItem Header="CLONE OPTIONS">
+                                                    <MenuItem Header="KEEP DATE CREATED" IsCheckable="true" IsChecked="{Binding KeepDateCreated}"/>
+                                                    <MenuItem Header="KEEP DATE MODIFIED" IsCheckable="true" IsChecked="{Binding KeepDateModified}" />
+                                                </MenuItem>
+                                            </ContextMenu>
+                                            <ContextMenu x:Key="grdItemContextMenu">
+                                                <MenuItem x:Name="mnuCloneTask" Header="CLONE TASK" Click="mnuCloneTask_Click"
+                                                          />
+                                                <MenuItem x:Name="mnuDeleteTask" Header="DELETE TASK" Click="mnuDeleteTask_Click"
+                                                          />
+                                                <Separator />
+                                                <MenuItem Header="CLONE OPTIONS">
+                                                    <MenuItem Header="KEEP DATE CREATED" IsCheckable="true" IsChecked="{Binding KeepDateCreated}"/>
+                                                    <MenuItem Header="KEEP DATE MODIFIED" IsCheckable="true" IsChecked="{Binding KeepDateModified}" />
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </ListView.Resources>
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="{x:Type ListViewItem}">
+                                                <!--<EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListViewItem_PreviewMouseLeftButtonDown" />-->
+                                                <Setter Property="ContextMenu" Value="{StaticResource grdItemContextMenu}"/>
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
                                         <ListView.View>
                                             <GridView AllowsColumnReorder="true">
-                                                <GridViewColumn Header="Task Name" Width="120" DisplayMemberBinding="{Binding Path=TaskName}" local:GridViewSort.PropertyName="TaskName" />
-                                                <GridViewColumn Header="Created Time" Width="50" DisplayMemberBinding="{Binding Path=CreatedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" local:GridViewSort.PropertyName="CreatedDate" />
-                                                <GridViewColumn Header="Last Modified Time" Width="250" DisplayMemberBinding="{Binding Path=ModifiedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" local:GridViewSort.PropertyName="ModifiedDate" />
+                                                <GridViewColumn x:Name="grdTaskNameColumn" Width="Auto" DisplayMemberBinding="{Binding Path=TaskName}" 
+                                                                local:ChoGridViewSort.PropertyName="TaskName" >
+                                                    <GridViewColumnHeader Content="Task Name" ContextMenu="{StaticResource grdHeaderContextMenu}" />
+                                                </GridViewColumn>
+                                                <GridViewColumn x:Name="grdDateCreatedColumn" Width="Auto" 
+                                                                DisplayMemberBinding="{Binding Path=CreatedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
+                                                                local:ChoGridViewSort.PropertyName="CreatedDate" 
+                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateCreated}">
+                                                    <GridViewColumnHeader Content="DATE CREATED" ContextMenu="{StaticResource grdHeaderContextMenu}" />
+                                                </GridViewColumn>
+                                                <GridViewColumn x:Name="grdDateModifiedColumn" Width="Auto" 
+                                                                DisplayMemberBinding="{Binding Path=ModifiedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
+                                                                local:ChoGridViewSort.PropertyName="ModifiedDate" 
+                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateModified}" >
+                                                    <GridViewColumnHeader Content="DATE MODIFIED" ContextMenu="{StaticResource grdHeaderContextMenu}" />
+                                                </GridViewColumn>
                                             </GridView>
                                         </ListView.View>
                                     </ListView>

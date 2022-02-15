@@ -118,5 +118,65 @@ namespace ChoEazyCopy.Properties {
                 this["BackupTaskDirectory"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DateCreated {
+            get {
+                return ((bool)(this["DateCreated"]));
+            }
+            set {
+                this["DateCreated"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DateModified {
+            get {
+                return ((bool)(this["DateModified"]));
+            }
+            set {
+                this["DateModified"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SizeColumnToFit {
+            get {
+                return ((bool)(this["SizeColumnToFit"]));
+            }
+            set {
+                this["SizeColumnToFit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool KeepDateCreated {
+            get {
+                return ((bool)(this["KeepDateCreated"]));
+            }
+            set {
+                this["KeepDateCreated"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool KeepDateModified {
+            get {
+                return ((bool)(this["KeepDateModified"]));
+            }
+            set {
+                this["KeepDateModified"] = value;
+            }
+        }
     }
 }

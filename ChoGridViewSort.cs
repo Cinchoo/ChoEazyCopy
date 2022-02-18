@@ -97,12 +97,13 @@ namespace ChoEazyCopy
 
         public static string GetPropertyName(DependencyObject obj)
         {
-            return (string)obj.GetValue(PropertyNameProperty);
+            return obj != null ? (string)obj.GetValue(PropertyNameProperty) : null;
         }
 
         public static void SetPropertyName(DependencyObject obj, string value)
         {
-            obj.SetValue(PropertyNameProperty, value);
+            if (obj != null)
+                obj.SetValue(PropertyNameProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for PropertyName.  This enables animation, styling, binding, etc...

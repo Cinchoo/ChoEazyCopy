@@ -21,7 +21,7 @@
     Loaded="MyWindow_Loaded" Icon="App.ico" Closing="Window_Closing" ContentRendered="MyWindow_ContentRendered">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Controls:ToggleSwitch Foreground="LightYellow" FontSize="16" ToolTip="Remember windows position/size."
+            <Controls:ToggleSwitch Margin="10, 0, 0, 0" Foreground="LightYellow" FontSize="16" ToolTip="Remember windows position/size."
                                    IsChecked="{Binding RememberWindowSizeAndPosition}"
                                    />
         </Controls:WindowCommands>
@@ -148,12 +148,12 @@
                             <Setter Property="MinWidth" Value="350" />
                             <!-- Default MinHeight -->
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=MyExpander, Path=IsExpanded}" Value="False">
+                                <DataTrigger Binding="{Binding ElementName=expControlPanel, Path=IsExpanded}" Value="False">
                                     <Setter Property="MinWidth" Value="24" />
                                     <!-- MinHeight when Collapsed -->
                                     <Setter Property="MaxWidth" Value="40" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=MyExpander, Path=IsExpanded}" Value="True">
+                                <DataTrigger Binding="{Binding ElementName=expControlPanel, Path=IsExpanded}" Value="True">
                                     <Setter Property="MaxWidth" Value="{Binding ElementName=MyWindow, Path=Width, Converter={StaticResource MathConverter}, ConverterParameter=@VALUE/2 }" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -206,33 +206,44 @@
                     <Grid
             Width="Auto"
             DockPanel.Dock="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
+                        <Border Margin="5,5,5,0" Grid.Row="0" BorderThickness="1" BorderBrush="LightGray">
+                            <DockPanel LastChildFill="true">
+                                <Label FontWeight="Bold">TASK FILE:</Label>
+                                <Label Content="{Binding SettingsFileName}" ToolTip="{Binding SettingsFilePath}"></Label>
+                            </DockPanel>
+                        </Border>
+
                         <GroupBox
                     x:Name="grpFolders"
                 Margin="5"
-                Height="Auto"
+                Height="Auto" Grid.Row="1"
                 Grid.Column="0"
                 >
-                    <GroupBox.Header>
-                        <DockPanel LastChildFill="True">
-                            <Button x:Name="btnSwapDir" DockPanel.Dock="Right" Content="Swap Directories" 
+                            <GroupBox.Header>
+                                <DockPanel LastChildFill="True">
+                                    <Button x:Name="btnSwapDir" DockPanel.Dock="Right" Content="Swap Directories" 
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro" Click="btnSwapDir_Click"
                                     Style="{DynamicResource MetroButton}" />
                                     <TextBlock Text="CHOOSE FOLDERS" VerticalAlignment="Center"
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
-                                <TextBlock.Foreground>
-                                    <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                        <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                        <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                    </MultiBinding>
-                                </TextBlock.Foreground>
-                            </TextBlock>
-                        </DockPanel>
-                    </GroupBox.Header>
+                                        <TextBlock.Foreground>
+                                            <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            </MultiBinding>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>
+                                </DockPanel>
+                            </GroupBox.Header>
 
                             <Grid
                     Width="Auto"
@@ -362,9 +373,9 @@
                                     </TextBlock>
                                 </DockPanel>
                             </GroupBox.Header>
-                            
+
                             <DockPanel LastChildFill="True">
-                            <TextBox Visibility="Collapsed"
+                                <TextBox Visibility="Collapsed"
                                 Margin="0,3,0,2"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
@@ -388,32 +399,32 @@
                 Margin="5,0,5,5"
                 Grid.Row="2"
                 VerticalAlignment="Stretch">
-                    <GroupBox.Header>
-                        <DockPanel LastChildFill="True">
-                            <CheckBox DockPanel.Dock="Right" Content="SHOW LINE NUMBERS" IsChecked="{Binding ShowOutputLineNo}"
+                            <GroupBox.Header>
+                                <DockPanel LastChildFill="True">
+                                    <CheckBox DockPanel.Dock="Right" Content="SHOW LINE NUMBERS" IsChecked="{Binding ShowOutputLineNo}"
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
                                         Style="{DynamicResource MetroCheckBox}">
-                                <CheckBox.Foreground>
-                                    <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                        <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                        <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                    </MultiBinding>
-                                </CheckBox.Foreground>
-                            </CheckBox>
-                            <TextBlock Text="OUTPUT" VerticalAlignment="Center"
+                                        <CheckBox.Foreground>
+                                            <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            </MultiBinding>
+                                        </CheckBox.Foreground>
+                                    </CheckBox>
+                                    <TextBlock Text="OUTPUT" VerticalAlignment="Center"
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
-                                <TextBlock.Foreground>
-                                    <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                        <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                        <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                    </MultiBinding>
-                                </TextBlock.Foreground>
-                            </TextBlock>
-                        </DockPanel>
-                    </GroupBox.Header>
-                    <avalonEdit:TextEditor
+                                        <TextBlock.Foreground>
+                                            <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            </MultiBinding>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>
+                                </DockPanel>
+                            </GroupBox.Header>
+                            <avalonEdit:TextEditor
                         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
                         Name="txtStatus"
                         FontFamily="Courier New"
@@ -435,7 +446,7 @@
                 </DockPanel>
 
             </DockPanel>
-            <Expander Grid.Column="2" ExpandDirection="Left" IsExpanded="True" x:Name="MyExpander">
+            <Expander Grid.Column="2" ExpandDirection="Left" IsExpanded="True" x:Name="expControlPanel">
                 <Expander.Header>
                     <TextBlock Text="Control Panel" Foreground="White" FontWeight="Bold">
                         <TextBlock.LayoutTransform>
@@ -444,7 +455,7 @@
                     </TextBlock>
                 </Expander.Header>
 
-                <TabControl TabStripPlacement="Bottom" Grid.Column="2" x:Name="tabControlPanel">
+                <TabControl TabStripPlacement="Bottom" Grid.Column="2" x:Name="tabControlPanel" >
                     <TabControl.Resources>
                         <Style TargetType="{x:Type TabItem}">
                             <Setter Property="HeaderTemplate">
@@ -460,7 +471,7 @@
                             </Setter>
                         </Style>
                     </TabControl.Resources>
-                    <TabItem Header="RoboCopy Options" ToolTip="">
+                    <TabItem Header="RoboCopy Options" ToolTip="" x:Name="tabRoboCopyOptionsItem" Selector.Selected="tabRoboCopyOptionsItem_Selected" >
                         <DockPanel LastChildFill="True">
                             <TextBlock DockPanel.Dock="Top" x:Name="txtPropertyGridWaterMark" FontSize="20" TextWrapping="WrapWithOverflow" FontWeight="Bold" 
                                        Foreground="Red" Text="{Binding PropertyGridTooltip}" ToolTip="{Binding PropertyGridTooltip}"
@@ -471,7 +482,7 @@
                                                          ToolTip="{Binding PropertyGridTooltip}"/>
                         </DockPanel>
                     </TabItem>
-                    <TabItem Header="Backup Tasks" x:Name="tabBackupTasks" ToolTip="">
+                    <TabItem Header="Backup Tasks" x:Name="tabBackupTasks" ToolTip="" Selector.Selected="tabBackupTasks_Selected">
                         <GroupBox Header="Backup Tasks" Margin="-3" x:Name="grpBackupTasks">
                             <DockPanel LastChildFill="True">
                                 <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
@@ -553,29 +564,34 @@
                                              SelectedItem="{Binding SelectedBackupTaskItem}"
                                              local:ChoGridViewSort.AutoSort="True" 
                                              local:ChoGridViewColumnVisibilityManager.Enabled="True"
-                                             FontFamily="Courier New" FontSize="12" ToolTip="">
+                                             FontFamily="Courier New" FontSize="12" ToolTip=""
+                                               PreviewKeyUp="mnuDeleteTask_PreviewKeyUp">
                                         <ListView.Resources>
                                             <ContextMenu x:Key="grdHeaderContextMenu">
-                                                <MenuItem x:Name="mnuDateCreated" Header="DATE CREATED" IsCheckable="true" IsChecked="{Binding DateCreated}" 
-                                                          />
-                                                <MenuItem x:Name="mnuDateModified" Header="DATE MODIFIED" IsCheckable="true" IsChecked="{Binding DateModified}" 
-                                                          />
+                                                <MenuItem x:Name="mnuDateCreated" Header="Date Created" IsCheckable="true" IsChecked="{Binding DateCreated}" />
+                                                <MenuItem x:Name="mnuDateModified" Header="Date Modified" IsCheckable="true" IsChecked="{Binding DateModified}" />
                                                 <Separator />
-                                                <MenuItem Header="CLONE OPTIONS">
-                                                    <MenuItem Header="KEEP DATE CREATED" IsCheckable="true" IsChecked="{Binding KeepDateCreated}"/>
-                                                    <MenuItem Header="KEEP DATE MODIFIED" IsCheckable="true" IsChecked="{Binding KeepDateModified}" />
+                                                <MenuItem Header="Clone Options">
+                                                    <MenuItem Header="Keep Date Created" IsCheckable="true" IsChecked="{Binding KeepDateCreated}"/>
+                                                    <MenuItem Header="Keep Date Modified" IsCheckable="true" IsChecked="{Binding KeepDateModified}" />
                                                 </MenuItem>
+                                                <Separator />
+                                                <MenuItem x:Name="mnuColumnToFit" Header="Size Column to Fit" Click="mnuColumnToFit_Click" />
+                                                <MenuItem x:Name="mnuAllColumnsToFit" Header="Size All Columns to Fit" Click="mnuAllColumnsToFit_Click" />
+                                                <Separator />
+                                                <MenuItem Header="Confirm on Delete Task" IsCheckable="True" IsChecked="{Binding ConfirmOnDelete}" />
                                             </ContextMenu>
                                             <ContextMenu x:Key="grdItemContextMenu">
-                                                <MenuItem x:Name="mnuCloneTask" Header="CLONE TASK" Click="mnuCloneTask_Click"
-                                                          />
-                                                <MenuItem x:Name="mnuDeleteTask" Header="DELETE TASK" Click="mnuDeleteTask_Click"
-                                                          />
+                                                <MenuItem x:Name="mnuCloneTask" Header="Clone Task" Click="mnuCloneTask_Click" InputGestureText="Ctrl+V" />
+                                                <MenuItem x:Name="mnuDeleteTask" Header="Delete Task" Click="mnuDeleteTask_Click" 
+                                                          InputGestureText="Del" />
                                                 <Separator />
-                                                <MenuItem Header="CLONE OPTIONS">
-                                                    <MenuItem Header="KEEP DATE CREATED" IsCheckable="true" IsChecked="{Binding KeepDateCreated}"/>
-                                                    <MenuItem Header="KEEP DATE MODIFIED" IsCheckable="true" IsChecked="{Binding KeepDateModified}" />
+                                                <MenuItem Header="Clone Options">
+                                                    <MenuItem Header="Keep Date Created" IsCheckable="true" IsChecked="{Binding KeepDateCreated, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
+                                                    <MenuItem Header="Keep Date Modified" IsCheckable="true" IsChecked="{Binding KeepDateModified, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
                                                 </MenuItem>
+                                                <Separator />
+                                                <MenuItem Header="Confirm on Delete Task" IsCheckable="True" IsChecked="{Binding ConfirmOnDelete, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
                                             </ContextMenu>
                                         </ListView.Resources>
                                         <ListView.ItemContainerStyle>
@@ -586,26 +602,32 @@
                                         </ListView.ItemContainerStyle>
                                         <ListView.View>
                                             <GridView AllowsColumnReorder="true">
-                                                <GridViewColumn x:Name="grdTaskNameColumn" Width="Auto" DisplayMemberBinding="{Binding Path=TaskName}" 
+                                                <GridViewColumn x:Name="grdTaskNameColumn" Width="{Binding TaskNameColumnWidth}" DisplayMemberBinding="{Binding Path=TaskName}" 
                                                                 local:ChoGridViewSort.PropertyName="TaskName" >
-                                                    <GridViewColumnHeader Content="Task Name" ContextMenu="{StaticResource grdHeaderContextMenu}" />
+                                                    <GridViewColumnHeader x:Name="grdTaskNameColumnHeader" Content="Task Name" ContextMenu="{StaticResource grdHeaderContextMenu}" 
+                                                                          SizeChanged="TaskNameGridViewColumnHeader_SizeChanged" 
+                                                                          MouseDown="GridViewColumnHeader_MouseDown" />
                                                 </GridViewColumn>
-                                                <GridViewColumn x:Name="grdDateCreatedColumn" Width="Auto" 
+                                                <GridViewColumn x:Name="grdDateCreatedColumn" Width="{Binding DateCreatedColumnWidth}" 
                                                                 DisplayMemberBinding="{Binding Path=CreatedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
                                                                 local:ChoGridViewSort.PropertyName="CreatedDate" 
                                                                 local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateCreated}">
-                                                    <GridViewColumnHeader Content="DATE CREATED" ContextMenu="{StaticResource grdHeaderContextMenu}" />
+                                                    <GridViewColumnHeader Content="DATE CREATED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
+                                                                          SizeChanged="DateCreatedGridViewColumnHeader_SizeChanged" 
+                                                                          MouseDown="GridViewColumnHeader_MouseDown" />
                                                 </GridViewColumn>
-                                                <GridViewColumn x:Name="grdDateModifiedColumn" Width="Auto" 
+                                                <GridViewColumn x:Name="grdDateModifiedColumn" Width="{Binding DateModifiedColumnWidth}" 
                                                                 DisplayMemberBinding="{Binding Path=ModifiedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
                                                                 local:ChoGridViewSort.PropertyName="ModifiedDate" 
                                                                 local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateModified}" >
-                                                    <GridViewColumnHeader Content="DATE MODIFIED" ContextMenu="{StaticResource grdHeaderContextMenu}" />
+                                                    <GridViewColumnHeader Content="DATE MODIFIED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
+                                                                          SizeChanged="DateModifiedGridViewColumnHeader_SizeChanged" 
+                                                                          MouseDown="GridViewColumnHeader_MouseDown" />
                                                 </GridViewColumn>
                                             </GridView>
                                         </ListView.View>
                                     </ListView>
-                                    
+
                                     <!--<ListBox x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
                                              ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName" 
                                              SelectedValue="{Binding SelectedBackupTaskFilePath}" >-->

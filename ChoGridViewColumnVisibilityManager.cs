@@ -10,26 +10,58 @@ namespace ChoEazyCopy
 {
     public class ChoGridViewColumnVisibilityManager
     {
-        private static Dictionary<GridViewColumn, double> _columnWidths = null;
+        private static Dictionary<GridViewColumn, double> _columns = null;
+
+        public static void ResizeAllColumnsToFit()
+        {
+            var columns = _columns;
+            if (columns == null)
+                return;
+
+            foreach (GridViewColumn gc in columns.Keys.ToArray())
+            {
+                gc.Width = Double.NaN;
+                columns[gc] = gc.Width;
+            }
+
+        }
+        public static void SetGridColumnWidth(GridViewColumnHeader colHeader)
+        {
+            var col = colHeader.Column;
+            if (_columns.ContainsKey(col) && col.Width > 0)
+                _columns[col] = col.Width;
+        }
+        public static void SetGridColumnWidth(GridViewColumn col)
+        {
+            if (_columns.ContainsKey(col) && col.Width > 0)
+                _columns[col] = col.Width;
+        }
+
         static void UpdateListView(ListView lv)
         {
             GridView gridview = lv.View as GridView;
             if (gridview == null || gridview.Columns == null) return;
 
-            if (_columnWidths == null)
+            if (_columns == null)
             {
-                _columnWidths = new Dictionary<GridViewColumn, double>();
+                _columns = new Dictionary<GridViewColumn, double>();
                 foreach (GridViewColumn gc in gridview.Columns)
-                    _columnWidths.Add(gc, gc.Width);
+                    _columns.Add(gc, gc.Width);
             }
 
             List<GridViewColumn> toRemove = new List<GridViewColumn>();
             foreach (GridViewColumn gc in gridview.Columns)
             {
                 if (!GetIsVisible(gc))
+                {
                     gc.Width = 0;
+                    ((GridViewColumnHeader)gc.Header).IsHitTestVisible = false;
+                }
                 else
-                    gc.Width = _columnWidths[gc];
+                {
+                    gc.Width = _columns[gc];
+                    ((GridViewColumnHeader)gc.Header).IsHitTestVisible = true;
+                }
             }
         }
 
@@ -67,9 +99,15 @@ namespace ChoEazyCopy
             if (gc != null)
             {
                 if (!GetIsVisible(gc))
+                {
                     gc.Width = 0;
+                    ((GridViewColumnHeader)gc.Header).IsHitTestVisible = false;
+                }
                 else
-                    gc.Width = _columnWidths[gc];
+                {
+                    gc.Width = _columns[gc];
+                    ((GridViewColumnHeader)gc.Header).IsHitTestVisible = true;
+                }
             }
         }
         private static void OnEnabledChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)

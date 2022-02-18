@@ -80,7 +80,7 @@ namespace ChoEazyCopy
         private string _settingsFileName = null;
         public string SettingsFileName
         {
-            get { return _settingsFileName; }
+            get { return _settingsFileName.IsNullOrWhiteSpace() ? NEW_SETTING_FILE_NAME : _settingsFileName; }
             private set
             {
                 _settingsFileName = value;
@@ -139,9 +139,87 @@ namespace ChoEazyCopy
             {
                 Properties.Settings.Default.SizeColumnToFit = value;
                 Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(SizeColumnToFit));
             }
         }
 
+        public bool SizeAllColumnsToFit
+        {
+            get { return Properties.Settings.Default.SizeAllColumnsToFit; }
+            set
+            {
+                Properties.Settings.Default.SizeAllColumnsToFit = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(SizeAllColumnsToFit));
+            }
+        }
+
+        public bool ConfirmOnDelete
+        {
+            get { return Properties.Settings.Default.ConfirmOnDelete; }
+            set
+            {
+                Properties.Settings.Default.ConfirmOnDelete = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(ConfirmOnDelete));
+            }
+        }
+
+        public double TaskNameColumnWidth
+        {
+            get { return Properties.Settings.Default.TaskNameColumnWidth; }
+            set
+            {
+                Properties.Settings.Default.TaskNameColumnWidth = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(TaskNameColumnWidth));
+            }
+        }
+
+        public double DateCreatedColumnWidth
+        {
+            get { return Properties.Settings.Default.DateCreatedColumnWidth; }
+            set
+            {
+                Properties.Settings.Default.DateCreatedColumnWidth = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(DateCreatedColumnWidth));
+            }
+        }
+
+        public double DateModifiedColumnWidth
+        {
+            get { return Properties.Settings.Default.DateModifiedColumnWidth; }
+            set
+            {
+                Properties.Settings.Default.DateModifiedColumnWidth = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(DateModifiedColumnWidth));
+            }
+        }
+
+        public bool BackupTaskTabActiveAtOpen
+        {
+            get { return Properties.Settings.Default.BackupTaskTabActiveAtOpen; }
+            set
+            {
+                Properties.Settings.Default.BackupTaskTabActiveAtOpen = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(BackupTaskTabActiveAtOpen));
+            }
+        }
+
+        public bool ControlPanelMinimized
+        {
+            get { return Properties.Settings.Default.ControlPanelMinimized; }
+            set
+            {
+                Properties.Settings.Default.ControlPanelMinimized = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged(nameof(ControlPanelMinimized));
+            }
+        }
+        
         private string _propertyGridTooltip;
         public string PropertyGridTooltip
         {
@@ -179,6 +257,10 @@ namespace ChoEazyCopy
         private void RaisePropertyChanged(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
+        private void RaisePropertyChanged(object target, string propName)
+        {
+            PropertyChanged?.Invoke(target, new PropertyChangedEventArgs(propName));
         }
         #endregion Instance Members (Private)
 
@@ -390,7 +472,7 @@ namespace ChoEazyCopy
 
         private void SetTitle()
         {
-            var settingsFileName = SettingsFileName.IsNullOrWhiteSpace() ? String.Empty : $" - {SettingsFileName}";
+            var settingsFileName = String.Empty; // SettingsFileName.IsNullOrWhiteSpace() ? String.Empty : $" - {SettingsFileName}";
 
             var attr = typeof(MainWindow).Assembly.GetCustomAttribute<ChoAssemblyBetaVersionAttribute>();
             if (attr != null && attr.Version.IsNullOrWhiteSpace())
@@ -442,6 +524,18 @@ namespace ChoEazyCopy
 
             BackupTaskDirectory = up.BackupTaskDirectory;
 
+            grdTaskNameColumn.Width = TaskNameColumnWidth;
+            ChoGridViewColumnVisibilityManager.SetGridColumnWidth(grdTaskNameColumn);
+
+            grdDateCreatedColumn.Width = DateCreatedColumnWidth;
+            ChoGridViewColumnVisibilityManager.SetGridColumnWidth(grdDateCreatedColumn);
+
+            grdDateModifiedColumn.Width = DateModifiedColumnWidth;
+            ChoGridViewColumnVisibilityManager.SetGridColumnWidth(grdDateModifiedColumn);
+
+            tabBackupTasks.IsSelected = BackupTaskTabActiveAtOpen;
+            expControlPanel.IsExpanded = ControlPanelMinimized;
+
             IsDirty = false;
         }
 
@@ -492,8 +586,11 @@ namespace ChoEazyCopy
                  {
                      txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
                      txtRoboCopyCmdEx.Text = _appSettings.GetCmdLineTextEx();
-                     if (e.PropertyName == "Comments")
-                         RaisePropertyChanged("AppSettings");
+                     //if (e.PropertyName == "Comments")
+                     //    RaisePropertyChanged("AppSettings");
+
+                     RaisePropertyChanged(AppSettings, e.PropertyName);
+                     RaisePropertyChanged(nameof(AppSettings));
                  }));
         }
 
@@ -504,8 +601,8 @@ namespace ChoEazyCopy
                 this.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.ApplicationIdle,
                      new Action(() =>
                      {
-                         this.DataContext = null;
-                         this.DataContext = this;
+                         //this.DataContext = null;
+                         //this.DataContext = this;
                          txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
                          txtRoboCopyCmdEx.Text = _appSettings.GetCmdLineTextEx();
                          IsDirty = false;
@@ -965,15 +1062,14 @@ namespace ChoEazyCopy
                 _appSettings.Reset();
                 if (File.Exists(SettingsFilePath))
                     _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
-                else
-                    btnNewFile_Click(null, null);
+                //else
+                //    btnNewFile_Click(null, null);
                 RegisterEvents();
                 ShowOutputLineNo = _appSettings.ShowOutputLineNumbers;
                 ListOnly = _appSettings.ListOnly;
                 txtStatus.Text = String.Empty;
-                //this.DataContext = null;
-                //this.DataContext = this;
                 IsDirty = false;
+                LoadPropertyGrid(SettingsFilePath);
                 _isNewFileOp = false;
             }
         }
@@ -995,9 +1091,10 @@ namespace ChoEazyCopy
                 UnregisterEvents();
                 _appSettings.Reset();
                 RegisterEvents();
-                //this.DataContext = null;
-                //this.DataContext = this;
                 IsDirty = false;
+                this.DataContext = null;
+                this.DataContext = this;
+                SelectedBackupTaskItem = null;
                 _isNewFileOp = false;
             }
         }
@@ -1020,6 +1117,9 @@ namespace ChoEazyCopy
 
             if (!e.Cancel)
             {
+                BackupTaskTabActiveAtOpen = tabBackupTasks.IsSelected;
+                ControlPanelMinimized = expControlPanel.IsExpanded;
+
                 var up = new ChoUserPreferences();
                 if (RememberWindowSizeAndPosition)
                 {
@@ -1172,7 +1272,7 @@ namespace ChoEazyCopy
                             selectedBackupTaskInfo = fi != null ? fi.FilePath : null;
                         }
 
-                        SelectedBackupTaskFilePath = selectedBackupTaskInfo;
+                        //SelectedBackupTaskFilePath = selectedBackupTaskInfo;
                     }
                     finally
                     {
@@ -1197,6 +1297,20 @@ namespace ChoEazyCopy
                 DeleteTask();
         }
 
+        private void mnuDeleteTask_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                if (SelectedBackupTaskItem != null)
+                    DeleteTask();
+            }
+            else if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                if (SelectedBackupTaskItem != null)
+                    CloneTask();
+            }
+        }
+
         private void btnDeleteTask_Click(object sender, RoutedEventArgs e)
         {
             DeleteTask();
@@ -1207,8 +1321,14 @@ namespace ChoEazyCopy
             if (SelectedBackupTaskFilePath.IsNullOrWhiteSpace())
                 return;
 
-            if (MessageBox.Show($"Are you sure you want to delete `{Path.GetFileName(SelectedBackupTaskFilePath)}` task?",
-                Caption, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            MessageBoxResult result = MessageBoxResult.Yes;
+            if (ConfirmOnDelete)
+            {
+                result = MessageBox.Show($"Are you sure you want to delete `{Path.GetFileName(SelectedBackupTaskFilePath)}` task?",
+                    Caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            }
+
+            if (result == MessageBoxResult.Yes)
             {
                 try
                 {
@@ -1273,6 +1393,95 @@ namespace ChoEazyCopy
             {
                 MessageBox.Show($"Failed to clone `{Path.GetFileName(SelectedBackupTaskFilePath)}` task. {ex.Message}",
                     Caption, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private string _prevSelectedBackupTaskFilePath;
+        private void LoadPropertyGrid()
+        {
+            LoadPropertyGrid(SelectedBackupTaskFilePath);
+        }
+        private void LoadPropertyGrid(string selectedBackupTaskFilePath)
+        {
+            if (tabRoboCopyOptionsItem.IsSelected)
+            {
+                if ((_prevSelectedBackupTaskFilePath == null && selectedBackupTaskFilePath == null) ||
+                    _prevSelectedBackupTaskFilePath == selectedBackupTaskFilePath)
+                    return;
+
+                _prevSelectedBackupTaskFilePath = selectedBackupTaskFilePath;
+                using (var x = new ChoWPFWaitCursor())
+                {
+                    this.DataContext = null;
+                    this.DataContext = this;
+                }
+            }
+        }
+        private void tabRoboCopyOptionsItem_Selected(object sender, RoutedEventArgs e)
+        {
+            LoadPropertyGrid();
+        }
+
+        private void tabBackupTasks_Selected(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void TaskNameGridViewColumnHeader_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width <= 60)
+            {
+                e.Handled = true;
+                ((GridViewColumnHeader)sender).Column.Width = 60;
+            }
+            ChoGridViewColumnVisibilityManager.SetGridColumnWidth((GridViewColumnHeader)sender);
+            TaskNameColumnWidth = ((GridViewColumnHeader)sender).Column.Width;
+        }
+        private void DateCreatedGridViewColumnHeader_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != 0 && e.NewSize.Width <= 60)
+            {
+                e.Handled = true;
+                ((GridViewColumnHeader)sender).Column.Width = 60;
+            }
+            ChoGridViewColumnVisibilityManager.SetGridColumnWidth((GridViewColumnHeader)sender);
+            DateCreatedColumnWidth = ((GridViewColumnHeader)sender).Column.Width;
+        }
+        private void DateModifiedGridViewColumnHeader_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != 0 && e.NewSize.Width <= 60)
+            {
+                e.Handled = true;
+                ((GridViewColumnHeader)sender).Column.Width = 60;
+            }
+            ChoGridViewColumnVisibilityManager.SetGridColumnWidth((GridViewColumnHeader)sender);
+            DateModifiedColumnWidth = ((GridViewColumnHeader)sender).Column.Width;
+        }
+
+        private void mnuColumnToFit_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedGridViewColumnHeader = _selectedGridViewColumnHeader;
+            if (selectedGridViewColumnHeader == null)
+                return;
+
+            selectedGridViewColumnHeader.Column.Width = Double.NaN;
+            ChoGridViewColumnVisibilityManager.SetGridColumnWidth(selectedGridViewColumnHeader);
+        }
+
+        private void mnuAllColumnsToFit_Click(object sender, RoutedEventArgs e)
+        {
+            ChoGridViewColumnVisibilityManager.ResizeAllColumnsToFit();
+        }
+
+        private GridViewColumnHeader _selectedGridViewColumnHeader;
+        private void GridViewColumnHeader_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                _selectedGridViewColumnHeader = sender as GridViewColumnHeader;
+            }
+            else
+            {
+                _selectedGridViewColumnHeader = null;
             }
         }
     }

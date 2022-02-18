@@ -41,5 +41,26 @@
     <Setting Name="KeepDateModified" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="TaskNameColumnWidth" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">NaN</Value>
+    </Setting>
+    <Setting Name="DateCreatedColumnWidth" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">NaN</Value>
+    </Setting>
+    <Setting Name="DateModifiedColumnWidth" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">NaN</Value>
+    </Setting>
+    <Setting Name="SizeAllColumnsToFit" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ConfirmOnDelete" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="BackupTaskTabActiveAtOpen" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ControlPanelMinimized" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

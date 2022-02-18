@@ -178,5 +178,89 @@ namespace ChoEazyCopy.Properties {
                 this["KeepDateModified"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("NaN")]
+        public double TaskNameColumnWidth {
+            get {
+                return ((double)(this["TaskNameColumnWidth"]));
+            }
+            set {
+                this["TaskNameColumnWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("NaN")]
+        public double DateCreatedColumnWidth {
+            get {
+                return ((double)(this["DateCreatedColumnWidth"]));
+            }
+            set {
+                this["DateCreatedColumnWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("NaN")]
+        public double DateModifiedColumnWidth {
+            get {
+                return ((double)(this["DateModifiedColumnWidth"]));
+            }
+            set {
+                this["DateModifiedColumnWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SizeAllColumnsToFit {
+            get {
+                return ((bool)(this["SizeAllColumnsToFit"]));
+            }
+            set {
+                this["SizeAllColumnsToFit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ConfirmOnDelete {
+            get {
+                return ((bool)(this["ConfirmOnDelete"]));
+            }
+            set {
+                this["ConfirmOnDelete"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool BackupTaskTabActiveAtOpen {
+            get {
+                return ((bool)(this["BackupTaskTabActiveAtOpen"]));
+            }
+            set {
+                this["BackupTaskTabActiveAtOpen"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ControlPanelMinimized {
+            get {
+                return ((bool)(this["ControlPanelMinimized"]));
+            }
+            set {
+                this["ControlPanelMinimized"] = value;
+            }
+        }
     }
 }

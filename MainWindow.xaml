@@ -213,10 +213,10 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Border Margin="5,5,5,0" Grid.Row="0" BorderThickness="1" BorderBrush="LightGray">
+                        <Border Margin="5,5,5,0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray" Background="LightSlateGray" >
                             <DockPanel LastChildFill="true">
-                                <Label FontWeight="Bold">TASK FILE:</Label>
-                                <Label Content="{Binding SettingsFileName}" ToolTip="{Binding SettingsFilePath}"></Label>
+                                <Label FontWeight="Bold" Foreground="White">TASK FILE:</Label>
+                                <Label Foreground="White" Content="{Binding SettingsFileName}" ToolTip="{Binding SettingsFilePath}"></Label>
                             </DockPanel>
                         </Border>
 

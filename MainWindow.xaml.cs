@@ -287,8 +287,17 @@ namespace ChoEazyCopy
                 _selectedBackupTaskFilePath = value;
                 if (!SaveSettings())
                 {
-                    OpenSettingsFile(_selectedBackupTaskFilePath);
-                    RaisePropertyChanged(nameof(SelectedBackupTaskFilePath));
+                    if (File.Exists(_selectedBackupTaskFilePath))
+                    {
+                        OpenSettingsFile(_selectedBackupTaskFilePath);
+                        RaisePropertyChanged(nameof(SelectedBackupTaskFilePath));
+                    }
+                    else if (!_selectedBackupTaskFilePath.IsNullOrWhiteSpace())
+                    {
+                        MessageBox.Show($"File `{_selectedBackupTaskFilePath}` does not exists.", Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        NewSettingsFile(false);
+                        ReloadBackupTasks();
+                    }
                 }
                 else
                 {
@@ -455,6 +464,66 @@ namespace ChoEazyCopy
             }
         }
 
+        private string _taskComments;
+        public string TaskComments
+        {
+            get { return _taskComments; }
+            set
+            {
+                if (_taskComments != value)
+                {
+                    var appSettings = AppSettings;
+                    if (appSettings != null)
+                    {
+                        IsDirty = true;
+                        AppSettings.Comments = value;
+                    }
+                    _taskComments = value;
+                    RaisePropertyChanged(nameof(TaskComments));
+                }
+            }
+        }
+
+        private string _sourceDirectory;
+        public string SourceDirectory
+        {
+            get { return _sourceDirectory; }
+            set
+            {
+                if (_sourceDirectory != value)
+                {
+                    var appSettings = AppSettings;
+                    if (appSettings != null)
+                    {
+                        IsDirty = true;
+                        AppSettings.SourceDirectory = value;
+                    }
+                    _sourceDirectory = value;
+                    RaisePropertyChanged(nameof(SourceDirectory));
+                }
+            }
+        }
+
+        private string _destDirectory;
+        public string DestDirectory
+        {
+            get { return _destDirectory; }
+            set
+            {
+                if (_destDirectory != value)
+                {
+                    var appSettings = AppSettings;
+                    if (appSettings != null)
+                    {
+                        IsDirty = true;
+                        AppSettings.DestDirectory = value;
+                    }
+                    _destDirectory = value;
+                    RaisePropertyChanged(nameof(DestDirectory));
+                }
+            }
+        }
+
         public MainWindow() :
             this(null)
         {
@@ -508,6 +577,9 @@ namespace ChoEazyCopy
 
             _showOutputLineNo = _appSettings.ShowOutputLineNumbers;
             _listOnly = _appSettings.ListOnly;
+            _taskComments = _appSettings.Comments;
+            _sourceDirectory = _appSettings.SourceDirectory;
+            _destDirectory = _appSettings.DestDirectory;
 
             var up = new ChoUserPreferences();
             RememberWindowSizeAndPosition = up.RememberWindowSizeAndPosition;
@@ -646,7 +718,7 @@ namespace ChoEazyCopy
 
         private void _appSettings_ConfigurationObjectMemberLoadError(object sender, Cinchoo.Core.Configuration.ChoConfigurationObjectMemberErrorEventArgs e)
         {
-            MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(e.Exception.Message, Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
             e.Handled = true;
         }
 
@@ -1025,7 +1097,6 @@ namespace ChoEazyCopy
                 var xml = _appSettings.ToXml();
                 File.WriteAllText(SettingsFilePath, xml);
                 IsDirty = false;
-                ReloadBackupTasks();
                 return true;
             }
             catch (Exception ex)
@@ -1067,6 +1138,9 @@ namespace ChoEazyCopy
                 RegisterEvents();
                 ShowOutputLineNo = _appSettings.ShowOutputLineNumbers;
                 ListOnly = _appSettings.ListOnly;
+                TaskComments = _appSettings.Comments;
+                SourceDirectory = _appSettings.SourceDirectory;
+                DestDirectory = _appSettings.DestDirectory;
                 txtStatus.Text = String.Empty;
                 IsDirty = false;
                 LoadPropertyGrid(SettingsFilePath);
@@ -1079,6 +1153,11 @@ namespace ChoEazyCopy
             if (SaveSettings())
                 return;
 
+            NewSettingsFile();
+        }
+
+        private void NewSettingsFile(bool reset = true)
+        {
             using (var x = new ChoWPFWaitCursor())
             {
                 _isNewFileOp = true;
@@ -1087,13 +1166,19 @@ namespace ChoEazyCopy
                 txtDestDirectory.Text = String.Empty;
                 ShowOutputLineNo = false;
                 ListOnly = false;
+                TaskComments = String.Empty;
+                SourceDirectory = String.Empty;
+                DestDirectory = String.Empty;
                 txtStatus.Text = String.Empty;
                 UnregisterEvents();
                 _appSettings.Reset();
                 RegisterEvents();
                 IsDirty = false;
-                this.DataContext = null;
-                this.DataContext = this;
+                if (reset)
+                {
+                    this.DataContext = null;
+                    this.DataContext = this;
+                }
                 SelectedBackupTaskItem = null;
                 _isNewFileOp = false;
             }
@@ -1438,9 +1523,13 @@ namespace ChoEazyCopy
         }
         private void DateCreatedGridViewColumnHeader_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.NewSize.Width != 0 && e.NewSize.Width <= 60)
+            if (!ChoGridViewColumnVisibilityManager.GetIsVisible(((GridViewColumnHeader)sender).Column))
+                return;
+
+            if (e.NewSize.Width <= 60)
             {
                 e.Handled = true;
+                ((GridViewColumnHeader)sender).Column.Width = 0;
                 ((GridViewColumnHeader)sender).Column.Width = 60;
             }
             ChoGridViewColumnVisibilityManager.SetGridColumnWidth((GridViewColumnHeader)sender);
@@ -1448,9 +1537,13 @@ namespace ChoEazyCopy
         }
         private void DateModifiedGridViewColumnHeader_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.NewSize.Width != 0 && e.NewSize.Width <= 60)
+            if (!ChoGridViewColumnVisibilityManager.GetIsVisible(((GridViewColumnHeader)sender).Column))
+                return;
+
+            if (e.NewSize.Width <= 60)
             {
                 e.Handled = true;
+                ((GridViewColumnHeader)sender).Column.Width = 0;
                 ((GridViewColumnHeader)sender).Column.Width = 60;
             }
             ChoGridViewColumnVisibilityManager.SetGridColumnWidth((GridViewColumnHeader)sender);
@@ -1463,6 +1556,7 @@ namespace ChoEazyCopy
             if (selectedGridViewColumnHeader == null)
                 return;
 
+            selectedGridViewColumnHeader.Column.Width = 0;
             selectedGridViewColumnHeader.Column.Width = Double.NaN;
             ChoGridViewColumnVisibilityManager.SetGridColumnWidth(selectedGridViewColumnHeader);
         }
@@ -1483,6 +1577,12 @@ namespace ChoEazyCopy
             {
                 _selectedGridViewColumnHeader = null;
             }
+        }
+
+        private void txtTaskComments_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!_isNewFileOp)
+                IsDirty = true;
         }
     }
 

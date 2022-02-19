@@ -20,6 +20,7 @@ namespace ChoEazyCopy
 
             foreach (GridViewColumn gc in columns.Keys.ToArray())
             {
+                gc.Width = 0;
                 gc.Width = Double.NaN;
                 columns[gc] = gc.Width;
             }
@@ -28,7 +29,7 @@ namespace ChoEazyCopy
         public static void SetGridColumnWidth(GridViewColumnHeader colHeader)
         {
             var col = colHeader.Column;
-            if (_columns.ContainsKey(col) && col.Width > 0)
+            if (_columns.ContainsKey(col) && (col.Width > 0 || col.Width == double.NaN))
                 _columns[col] = col.Width;
         }
         public static void SetGridColumnWidth(GridViewColumn col)

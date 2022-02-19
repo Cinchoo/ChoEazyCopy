@@ -271,7 +271,7 @@
                         TabIndex="0" Grid.ColumnSpan="3" 
                         Style="{StaticResource WaterMarkTextBoxStyle}" 
                         ToolTip="{Binding Path=SourceDirTooltip}"
-                            Text="{Binding Path=AppSettings.SourceDirectory, UpdateSourceTrigger=PropertyChanged}"
+                            Text="{Binding Path=SourceDirectory}"
                                     Background="{Binding SourceDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
                                     Foreground="{Binding SourceDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
                         >
@@ -304,7 +304,7 @@
                         TabIndex="2" Grid.ColumnSpan="3" 
                         Style="{StaticResource WaterMarkTextBoxStyle}"
                         ToolTip="Destination directory."
-                            Text="{Binding Path=AppSettings.DestDirectory, UpdateSourceTrigger=PropertyChanged}"
+                            Text="{Binding Path=DestDirectory, UpdateSourceTrigger=PropertyChanged}"
                             />
                                 <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                         Grid.Row="3"
@@ -553,9 +553,9 @@
                                         </StackPanel>
                                         <DockPanel LastChildFill="True">
                                             <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Backup Task Comments</TextBlock>
-                                            <TextBox Margin="0,5,0,0" Height="55" VerticalScrollBarVisibility="Auto" 
+                                            <TextBox x:Name="txtTaskComments" Margin="0,5,0,0" Height="55" VerticalScrollBarVisibility="Auto" 
                                                      TextWrapping="WrapWithOverflow"
-                                                     Text="{Binding Path=AppSettings.Comments}" ToolTip="Backup Task Comments"/>
+                                                     Text="{Binding TaskComments}" ToolTip="Backup Task Comments" />
                                         </DockPanel>
                                     </DockPanel>
                                     <ListView x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"

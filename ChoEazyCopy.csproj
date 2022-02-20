@@ -160,6 +160,7 @@
     <Compile Include="ChoUserPreferences.cs" />
     <Compile Include="ChoGridViewColumnVisibilityManager.cs" />
     <Compile Include="ChoGridViewSort.cs" />
+    <Compile Include="ChoSortAdorner.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

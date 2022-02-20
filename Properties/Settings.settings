@@ -62,5 +62,8 @@
     <Setting Name="ControlPanelMinimized" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="ControlPanelWidth" Type="System.Windows.GridLength" Scope="User">
+      <Value Profile="(Default)">300</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

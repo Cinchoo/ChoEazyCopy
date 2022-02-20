@@ -5,6 +5,7 @@
     xmlns:local="clr-namespace:ChoEazyCopy"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:Properties="clr-namespace:ChoEazyCopy.Properties"
     x:Class="ChoEazyCopy.MainWindow"
     Title="ChoEazyCopy - Cinchoo Inc."
     Height="600"
@@ -72,15 +73,23 @@
                 </Style>
             </Style.Resources>
         </Style>
+        <Style x:Key="GridViewColumnHeaderStyle1" TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="LightSlateGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="WaterMarkTextBoxStyle" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TextBox}">
                         <Grid>
                             <Border x:Name="Bd" SnapsToDevicePixels="True" 
-          Background="{TemplateBinding Background}" 
-          BorderBrush="{TemplateBinding BorderBrush}"
-          BorderThickness="{TemplateBinding BorderThickness}" >
+                                  Background="{TemplateBinding Background}" 
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}" >
                                 <Grid>
                                     <ScrollViewer x:Name="PART_ContentHost"
                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
@@ -142,7 +151,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="300" >
+                <ColumnDefinition Width="{Binding ControlPanelWidth, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" >
                     <ColumnDefinition.Style>
                         <Style TargetType="{x:Type ColumnDefinition}">
                             <Setter Property="MinWidth" Value="350" />
@@ -229,12 +238,12 @@
                             <GroupBox.Header>
                                 <DockPanel LastChildFill="True">
                                     <Button x:Name="btnSwapDir" DockPanel.Dock="Right" Content="Swap Directories" 
-    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro" Click="btnSwapDir_Click"
+                                        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro" Click="btnSwapDir_Click"
                                     Style="{DynamicResource MetroButton}" />
                                     <TextBlock Text="CHOOSE FOLDERS" VerticalAlignment="Center"
-    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
                                         <TextBlock.Foreground>
                                             <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
                                                 <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
@@ -601,28 +610,28 @@
                                             </Style>
                                         </ListView.ItemContainerStyle>
                                         <ListView.View>
-                                            <GridView AllowsColumnReorder="true">
+                                            <GridView AllowsColumnReorder="true" ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle1}">
                                                 <GridViewColumn x:Name="grdTaskNameColumn" Width="{Binding TaskNameColumnWidth}" DisplayMemberBinding="{Binding Path=TaskName}" 
                                                                 local:ChoGridViewSort.PropertyName="TaskName" >
-                                                    <GridViewColumnHeader x:Name="grdTaskNameColumnHeader" Content="Task Name" ContextMenu="{StaticResource grdHeaderContextMenu}" 
-                                                                          SizeChanged="TaskNameGridViewColumnHeader_SizeChanged" 
-                                                                          MouseDown="GridViewColumnHeader_MouseDown" />
+                                                    <GridViewColumnHeader x:Name="grdTaskNameColumnHeader" Content="TASK NAME" ContextMenu="{StaticResource grdHeaderContextMenu}" 
+                                                                          SizeChanged="TaskNameGridViewColumnHeader_SizeChanged" Tag="TaskName"
+                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grdTaskNameColumnHeader_Click" />
                                                 </GridViewColumn>
                                                 <GridViewColumn x:Name="grdDateCreatedColumn" Width="{Binding DateCreatedColumnWidth}" 
                                                                 DisplayMemberBinding="{Binding Path=CreatedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
                                                                 local:ChoGridViewSort.PropertyName="CreatedDate" 
                                                                 local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateCreated}">
-                                                    <GridViewColumnHeader Content="DATE CREATED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
-                                                                          SizeChanged="DateCreatedGridViewColumnHeader_SizeChanged" 
-                                                                          MouseDown="GridViewColumnHeader_MouseDown" />
+                                                    <GridViewColumnHeader x:Name="grddDateCreatedColumnHeader" Content="DATE CREATED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
+                                                                          SizeChanged="DateCreatedGridViewColumnHeader_SizeChanged" Tag="CreatedDate"
+                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grddDateCreatedColumnHeader_Click" />
                                                 </GridViewColumn>
                                                 <GridViewColumn x:Name="grdDateModifiedColumn" Width="{Binding DateModifiedColumnWidth}" 
                                                                 DisplayMemberBinding="{Binding Path=ModifiedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
                                                                 local:ChoGridViewSort.PropertyName="ModifiedDate" 
                                                                 local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateModified}" >
-                                                    <GridViewColumnHeader Content="DATE MODIFIED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
-                                                                          SizeChanged="DateModifiedGridViewColumnHeader_SizeChanged" 
-                                                                          MouseDown="GridViewColumnHeader_MouseDown" />
+                                                    <GridViewColumnHeader x:Name="grddDateModifiedColumnHeader" Content="DATE MODIFIED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
+                                                                          SizeChanged="DateModifiedGridViewColumnHeader_SizeChanged" Tag="ModifiedDate"
+                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grddDateModifiedColumnHeader_Click"/>
                                                 </GridViewColumn>
                                             </GridView>
                                         </ListView.View>

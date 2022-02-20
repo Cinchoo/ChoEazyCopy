@@ -1584,6 +1584,45 @@ namespace ChoEazyCopy
             if (!_isNewFileOp)
                 IsDirty = true;
         }
+
+        private GridViewColumnHeader listViewSortCol = null;
+        private ChoSortAdorner listViewSortAdorner = null;
+        private void grdTaskNameColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            GridViewColumnHeader column = (sender as GridViewColumnHeader);
+            SortColumn(column);
+        }
+
+        private void grddDateCreatedColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            GridViewColumnHeader column = (sender as GridViewColumnHeader);
+            SortColumn(column);
+        }
+
+        private void grddDateModifiedColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            GridViewColumnHeader column = (sender as GridViewColumnHeader);
+            SortColumn(column);
+        }
+
+        private void SortColumn(GridViewColumnHeader column)
+        {
+            string sortBy = column.Tag.ToString();
+            if (listViewSortCol != null)
+            {
+                AdornerLayer.GetAdornerLayer(listViewSortCol).Remove(listViewSortAdorner);
+                lstBackupTasks.Items.SortDescriptions.Clear();
+            }
+
+            ListSortDirection newDir = ListSortDirection.Ascending;
+            if (listViewSortCol == column && listViewSortAdorner.Direction == newDir)
+                newDir = ListSortDirection.Descending;
+
+            listViewSortCol = column;
+            listViewSortAdorner = new ChoSortAdorner(listViewSortCol, newDir);
+            AdornerLayer.GetAdornerLayer(listViewSortCol).Add(listViewSortAdorner);
+            lstBackupTasks.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+        }
     }
 
     public class BackupTaskInfo

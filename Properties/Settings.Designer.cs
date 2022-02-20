@@ -262,5 +262,17 @@ namespace ChoEazyCopy.Properties {
                 this["ControlPanelMinimized"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public global::System.Windows.GridLength ControlPanelWidth {
+            get {
+                return ((global::System.Windows.GridLength)(this["ControlPanelWidth"]));
+            }
+            set {
+                this["ControlPanelWidth"] = value;
+            }
+        }
     }
 }

@@ -26,6 +26,8 @@
     using System.Collections.ObjectModel;
     using System.Windows.Controls;
     using System.Windows.Threading;
+    using System.Runtime.CompilerServices;
+    using System.Reflection;
 
     #endregion NameSpaces
 
@@ -97,18 +99,56 @@
         [Description("/MOVE")]
         MoveDirectoriesAndFiles,
     }
+    public abstract class ChoViewModelBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void NotifyPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+    }
 
     [ChoNameValueConfigurationSection("applicationSettings" /*, BindingMode = ChoConfigurationBindingMode.OneWayToSource */, Silent = false)]
-    public class ChoAppSettings : ChoConfigurableObject
+    public class ChoAppSettings : ChoViewModelBase, ICloneable<ChoAppSettings> //: ChoConfigurableObject
     {
+        private readonly static XmlSerializer _xmlSerializer = new XmlSerializer(typeof(ChoAppSettings));
+        private readonly static Dictionary<string, PropertyInfo> _propInfos = new Dictionary<string, PropertyInfo>();
+        private readonly static Dictionary<PropertyInfo, object> _defaultValues = new Dictionary<PropertyInfo, object>();
+        private readonly static ChoAppSettings DefaultInstance = new ChoAppSettings();
+        static ChoAppSettings()
+        {
+            ChoPropertyInfoAttribute attr = null;
+            foreach (var pi in ChoType.GetProperties(typeof(ChoAppSettings)))
+            {
+                attr = pi.GetCustomAttributes(false).OfType<ChoPropertyInfoAttribute>().FirstOrDefault();
+                if (attr != null)
+                {
+                    _propInfos.Add(pi.Name, pi);
+                    _defaultValues.Add(pi, attr.DefaultValue);
+                }
+            }
+
+            ChoObject.ResetObject(DefaultInstance);
+        }
+
+        public ChoAppSettings()
+        {
+        }
+
         #region Instance Data Members (Others)
 
+        private bool _showOutputLineNumbers;
         [Browsable(false)]
         [ChoPropertyInfo("showOutputLineNumbers")]
         public bool ShowOutputLineNumbers
         {
-            get;
-            set;
+            get { return _showOutputLineNumbers; }
+            set
+            {
+                _showOutputLineNumbers = value;
+                NotifyPropertyChanged();
+            }
         }
 
         private int _maxStatusMsgSize;
@@ -120,114 +160,168 @@
             set
             {
                 if (value > 0)
+                {
                     _maxStatusMsgSize = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
+        string _sourceDirectory;
         [Browsable(false)]
         [ChoPropertyInfo("sourceDirectory")]
         public string SourceDirectory
         {
-            get;
-            set;
+            get { return _sourceDirectory; }
+            set
+            {
+                _sourceDirectory = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _destDirectory;
         [Browsable(false)]
         [ChoPropertyInfo("destDirectory")]
         public string DestDirectory
         {
-            get;
-            set;
+            get { return _destDirectory; }
+            set
+            {
+                _destDirectory = value;
+                NotifyPropertyChanged();
+            }
         }
 
         #endregion Instance Data Members (Others)
 
         #region Instance Data Members (Common Options)
 
+        string _roboCopyFilePath;
         [Category("1. Common Options")]
         [Description("RoboCopy file path.")]
         [DisplayName("RoboCopyFilePath")]
         [ChoPropertyInfo("roboCopyFilePath", DefaultValue = "RoboCopy.exe")]
         public string RoboCopyFilePath
         {
-            get;
-            set;
+            get { return _roboCopyFilePath; }
+            set
+            {
+                _roboCopyFilePath = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _files;
         [Category("1. Common Options")]
         [Description("File(s) to copy (names/wildcards: default is \"*.*\").")]
         [DisplayName("Files")]
         [ChoPropertyInfo("files", DefaultValue = "*.*")]
         public string Files
         {
-            get;
-            set;
+            get { return _files; }
+            set
+            {
+                _files = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _additionalParams;
         [Category("1. Common Options")]
         [Description("Additional command line parameters (Optional).")]
         [DisplayName("AdditionalParams")]
         [ChoPropertyInfo("additionalParams", DefaultValue = "")]
         public string AdditionalParams
         {
-            get;
-            set;
+            get { return _additionalParams; }
+            set
+            {
+                _additionalParams = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _precommands;
         [Category("1. Common Options")]
         [Description("Specify MS-DOS commands to run before robocopy operations, separated by ; (Optional).")]
         [DisplayName("PreCommands")]
         [ChoPropertyInfo("precommands", DefaultValue = "")]
         public string Precommands
         {
-            get;
-            set;
+            get { return _precommands; }
+            set
+            {
+                _precommands = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _postcommands;
         [Category("1. Common Options")]
         [Description("Specify MS-DOS commands to run after robocopy operations, separated by ; (Optional).")]
         [DisplayName("Postcommands")]
         [ChoPropertyInfo("postcommands", DefaultValue = "")]
         public string Postcommands
         {
-            get;
-            set;
+            get { return _postcommands; }
+            set
+            {
+                _postcommands = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _comments;
         [Category("1. Common Options")]
         [Description("Short description of backup task.")]
         [DisplayName("Comments")]
         [ChoPropertyInfo("comments", DefaultValue = "")]
         public string Comments
         {
-            get;
-            set;
+            get { return _comments; }
+            set
+            {
+                _comments = value;
+                NotifyPropertyChanged();
+            }
         }
 
         #endregion Instance Data Members (Common Options)
 
         #region Instance Data Members (Source Options)
 
+        bool _copyNoEmptySubDirectories;
         [Category("2. Source Options")]
         [Description("Copy subdirectories, but not empty ones. (/S).")]
         [DisplayName("CopyNoEmptySubDirectories")]
         [ChoPropertyInfo("copyNoEmptySubDirectories")]
         public bool CopyNoEmptySubDirectories
         {
-            get;
-            set;
+            get { return _copyNoEmptySubDirectories; }
+            set
+            {
+                _copyNoEmptySubDirectories = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copySubDirectories;
         [Category("2. Source Options")]
         [Description("Copy subdirectories, including Empty ones. (/E).")]
         [DisplayName("CopySubDirectories")]
         [ChoPropertyInfo("copySubDirectories", DefaultValue = "true")]
         public bool CopySubDirectories
         {
-            get;
-            set;
+            get { return _copySubDirectories; }
+            set
+            {
+                _copySubDirectories = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _copyFlags;
         [Category("2. Source Options")]
         [Description("What to copy for files (default is /COPY:DAT). (copyflags : D=Data, A=Attributes, T=Timestamps, S=Security=NTFS ACLs, O=Owner info, U=aUditing info). (/COPY:flags).")]
         [DisplayName("CopyFlags")]
@@ -235,124 +329,184 @@
         [Editor(typeof(CopyFlagsEditor), typeof(CopyFlagsEditor))]
         public string CopyFlags
         {
-            get;
-            set;
+            get { return _copyFlags; }
+            set
+            {
+                _copyFlags = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copyFilesWithSecurity;
         [Category("2. Source Options")]
         [Description("Copy files with security (equivalent to /COPY:DATS). (/SEC).")]
         [DisplayName("CopyFilesWithSecurity")]
         [ChoPropertyInfo("copyFilesWithSecurity")]
         public bool CopyFilesWithSecurity
         {
-            get;
-            set;
+            get { return _copyFilesWithSecurity; }
+            set
+            {
+                _copyFilesWithSecurity = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copyDirTimestamp;
         [Category("2. Source Options")]
         [Description("Copy Directory Timestamps. (/DCOPY:T).")]
         [DisplayName("CopyDirTimestamp")]
         [ChoPropertyInfo("copyDirTimestamp")]
         public bool CopyDirTimestamp
         {
-            get;
-            set;
+            get { return _copyDirTimestamp; }
+            set
+            {
+                _copyDirTimestamp = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copyFilesWithFileInfo;
         [Category("2. Source Options")]
         [Description("Copy all file info (equivalent to /COPY:DATSOU). (/COPYALL).")]
         [DisplayName("CopyFilesWithFileInfo")]
         [ChoPropertyInfo("copyFilesWithFileInfo")]
         public bool CopyFilesWithFileInfo
         {
-            get;
-            set;
+            get { return _copyFilesWithFileInfo; }
+            set
+            {
+                _copyFilesWithFileInfo = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copyFilesWithNoFileInfo;
         [Category("2. Source Options")]
         [Description("Copy no file info (useful with /PURGE). (/NOCOPY).")]
         [DisplayName("CopyFilesWithNoFileInfo")]
         [ChoPropertyInfo("copyFilesWithNoFileInfo")]
         public bool CopyFilesWithNoFileInfo
         {
-            get;
-            set;
+            get { return _copyFilesWithNoFileInfo; }
+            set
+            {
+                _copyFilesWithNoFileInfo = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copyOnlyFilesWithArchiveAttributes;
         [Category("2. Source Options")]
         [Description("Copy only files with the Archive attribute set. (/A).")]
         [DisplayName("CopyOnlyFilesWithArchiveAttributes")]
         [ChoPropertyInfo("copyOnlyFilesWithArchiveAttributes")]
         public bool CopyOnlyFilesWithArchiveAttributes
         {
-            get;
-            set;
+            get { return _copyOnlyFilesWithArchiveAttributes; }
+            set
+            {
+                _copyOnlyFilesWithArchiveAttributes = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copyOnlyFilesWithArchiveAttributesAndReset;
         [Category("2. Source Options")]
         [Description("Copy only files with the Archive attribute and reset it. (/M).")]
         [DisplayName("CopyOnlyFilesWithArchiveAttributesAndReset")]
         [ChoPropertyInfo("copyOnlyFilesWithArchiveAttributesAndReset")]
         public bool CopyOnlyFilesWithArchiveAttributesAndReset
         {
-            get;
-            set;
+            get { return _copyOnlyFilesWithArchiveAttributesAndReset; }
+            set
+            {
+                _copyOnlyFilesWithArchiveAttributesAndReset = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        uint _onlyCopyNLevels;
         [Category("2. Source Options")]
         [Description("Only copy the top n levels of the source directory tree. 0 - all levels. (/LEV:n).")]
         [DisplayName("OnlyCopyNLevels")]
         [ChoPropertyInfo("onlyCopyNLevels")]
         public uint OnlyCopyNLevels
         {
-            get;
-            set;
+            get { return _onlyCopyNLevels; }
+            set
+            {
+                _onlyCopyNLevels = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        uint _excludeFilesOlderThanNDays;
         [Category("2. Source Options")]
         [Description("MAXimum file AGE - exclude files older than n days/date. (/MAXAGE:n).")]
         [DisplayName("ExcludeFilesOlderThanNDays")]
         [ChoPropertyInfo("excludeFilesOlderThanNDays")]
         public uint ExcludeFilesOlderThanNDays
         {
-            get;
-            set;
+            get { return _excludeFilesOlderThanNDays; }
+            set
+            {
+                _excludeFilesOlderThanNDays = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        uint _excludeFilesNewerThanNDays;
         [Category("2. Source Options")]
         [Description("MINimum file AGE - exclude files newer than n days/date. (/MINAGE:n).")]
         [DisplayName("ExcludeFilesNewerThanNDays")]
         [ChoPropertyInfo("excludeFilesNewerThanNDays")]
         public uint ExcludeFilesNewerThanNDays
         {
-            get;
-            set;
+            get { return _excludeFilesNewerThanNDays; }
+            set
+            {
+                _excludeFilesNewerThanNDays = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _assumeFATFileTimes;
         [Category("2. Source Options")]
         [Description("assume FAT File Times (2-second granularity). (/FFT).")]
         [DisplayName("AssumeFATFileTimes")]
         [ChoPropertyInfo("assumeFATFileTimes")]
         public bool AssumeFATFileTimes
         {
-            get;
-            set;
+            get { return _assumeFATFileTimes; }
+            set
+            {
+                _assumeFATFileTimes = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _turnOffLongPath;
         [Category("2. Source Options")]
         [Description("Turn off very long path (> 256 characters) support. (/256).")]
         [DisplayName("TurnOffLongPath")]
         [ChoPropertyInfo("turnOffLongPath")]
         public bool TurnOffLongPath
         {
-            get;
-            set;
+            get { return _turnOffLongPath; }
+            set
+            {
+                _turnOffLongPath = value;
+                NotifyPropertyChanged();
+            }
         }
 
         #endregion Instance Data Members (Source Options)
 
         #region Instance Data Members (Destination Options)
 
+        string _addFileAttributes;
         [Category("3. Destination Options")]
         [Description("Add the given attributes to copied files. (/A+:[RASHCNET]).")]
         [DisplayName("AddFileAttributes")]
@@ -360,10 +514,15 @@
         [Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
         public string AddFileAttributes
         {
-            get;
-            set;
+            get { return _addFileAttributes; }
+            set
+            {
+                _addFileAttributes = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _removeFileAttributes;
         [Category("3. Destination Options")]
         [Description("Remove the given Attributes from copied files. (/A-:[RASHCNET]).")]
         [DisplayName("RemoveFileAttributes")]
@@ -371,54 +530,79 @@
         [Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
         public string RemoveFileAttributes
         {
-            get;
-            set;
+            get { return _removeFileAttributes; }
+            set
+            {
+                _removeFileAttributes = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _createFATFileNames;
         [Category("3. Destination Options")]
         [Description("Create destination files using 8.3 FAT file names only. (/FAT).")]
         [DisplayName("CreateFATFileNames")]
         [ChoPropertyInfo("createFATFileNames")]
         public bool CreateFATFileNames
         {
-            get;
-            set;
+            get { return _createFATFileNames; }
+            set
+            {
+                _createFATFileNames = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _createDirTree;
         [Category("3. Destination Options")]
         [Description("Create directory tree and zero-length files only. (/CREATE).")]
         [DisplayName("CreateDirTree")]
         [ChoPropertyInfo("createDirTree")]
         public bool CreateDirTree
         {
-            get;
-            set;
+            get { return _createDirTree; }
+            set
+            {
+                _createDirTree = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _compensateOneHourDSTTimeDiff;
         [Category("3. Destination Options")]
         [Description("Compensate for one-hour DST time differences. (/DST).")]
         [DisplayName("CompensateOneHourDSTTimeDiff")]
         [ChoPropertyInfo("compensateOneHourDSTTimeDiff")]
         public bool CompensateOneHourDSTTimeDiff
         {
-            get;
-            set;
+            get { return _compensateOneHourDSTTimeDiff; }
+            set
+            {
+                _compensateOneHourDSTTimeDiff = value;
+                NotifyPropertyChanged();
+            }
         }
 
         #endregion Instance Data Members (Destination Options)
 
         #region Instance Data Members (Copy Options)
 
+        bool _listOnly;
         [Category("4. Copy Options")]
         [Description("List only - don't copy, timestamp or delete any files. (/L).")]
         [DisplayName("ListOnly")]
         [ChoPropertyInfo("listOnly")]
         public bool ListOnly
         {
-            get;
-            set;
+            get { return _listOnly; }
+            set
+            {
+                _listOnly = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _moveFilesAndDirectories;
         [Category("4. Copy Options")]
         [Description("Move files and dirs (delete from source after copying). (/MOV or /MOVE).")]
         [DisplayName("MoveFilesAndDirectories")]
@@ -426,120 +610,180 @@
         [Editor(typeof(FileMoveSelectionAttributesEditor), typeof(FileMoveSelectionAttributesEditor))]
         public string MoveFilesAndDirectories
         {
-            get;
-            set;
+            get { return _moveFilesAndDirectories; }
+            set
+            {
+                _moveFilesAndDirectories = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copySymbolicLinks;
         [Category("4. Copy Options")]
         [Description("Copy symbolic links versus the target. (/SL).")]
         [DisplayName("CopySymbolicLinks")]
         [ChoPropertyInfo("copySymbolicLinks")]
         public bool CopySymbolicLinks
         {
-            get;
-            set;
+            get { return _copySymbolicLinks; }
+            set
+            {
+                _copySymbolicLinks = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copyFilesRestartableMode;
         [Category("4. Copy Options")]
         [Description("Copy files in restartable mode. (/Z).")]
         [DisplayName("CopyFilesRestartableMode")]
         [ChoPropertyInfo("copyFilesRestartableMode")]
         public bool CopyFilesRestartableMode
         {
-            get;
-            set;
+            get { return _copyFilesRestartableMode; }
+            set
+            {
+                _copyFilesRestartableMode = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copyFilesBackupMode;
         [Category("4. Copy Options")]
         [Description("Copy files in Backup mode. (/B).")]
         [DisplayName("CopyFilesBackupMode")]
         [ChoPropertyInfo("copyFilesBackupMode")]
         public bool CopyFilesBackupMode
         {
-            get;
-            set;
+            get { return _copyFilesBackupMode; }
+            set
+            {
+                _copyFilesBackupMode = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _unbufferredIOCopy;
         [Category("4. Copy Options")]
         [Description("Copy using unbuffered I/O (recommended for large files). (/J)")]
         [DisplayName("UnbufferredIOCopy")]
         [ChoPropertyInfo("unbufferredIOCopy")]
         public bool UnbufferredIOCopy
         {
-            get;
-            set;
+            get { return _unbufferredIOCopy; }
+            set
+            {
+                _unbufferredIOCopy = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _copyWithoutWindowsCopyOffload;
         [Category("4. Copy Options")]
         [Description("Copy files without using the Windows Copy Offload mechanism. (/NOOFFLOAD).")]
         [DisplayName("CopyWithoutWindowsCopyOffload")]
         [ChoPropertyInfo("copyWithoutWindowsCopyOffload")]
         public bool CopyWithoutWindowsCopyOffload
         {
-            get;
-            set;
+            get { return _copyWithoutWindowsCopyOffload; }
+            set
+            {
+                _copyWithoutWindowsCopyOffload = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _encrptFileEFSRawMode;
         [Category("4. Copy Options")]
         [Description("Copy all encrypted files in EFS RAW mode. (/EFSRAW).")]
         [DisplayName("EncrptFileEFSRawMode")]
         [ChoPropertyInfo("encrptFileEFSRawMode")]
         public bool EncrptFileEFSRawMode
         {
-            get;
-            set;
+            get { return _encrptFileEFSRawMode; }
+            set
+            {
+                _encrptFileEFSRawMode = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _fixFileTimeOnFiles;
         [Category("4. Copy Options")]
         [Description("Fix file times on all files, even skipped files. (/TIMFIX).")]
         [DisplayName("FixFileTimeOnFiles")]
         [ChoPropertyInfo("fixFileTimeOnFiles")]
         public bool FixFileTimeOnFiles
         {
-            get;
-            set;
+            get { return _fixFileTimeOnFiles; }
+            set
+            {
+                _fixFileTimeOnFiles = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _excludeOlderFiles;
         [Category("4. Copy Options")]
         [Description("eXclude Older files. (/XO).")]
         [DisplayName("ExcludeOlderFiles")]
         [ChoPropertyInfo("excludeOlderFiles")]
         public bool ExcludeOlderFiles
         {
-            get;
-            set;
+            get { return _excludeOlderFiles; }
+            set
+            {
+                _excludeOlderFiles = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _excludeChangedFiles;
         [Category("4. Copy Options")]
         [Description("eXclude Changed files. (/XC).")]
         [DisplayName("ExcludeChangedFiles")]
         [ChoPropertyInfo("excludeChangedFiles")]
         public bool ExcludeChangedFiles
         {
-            get;
-            set;
+            get { return _excludeChangedFiles; }
+            set
+            {
+                _excludeChangedFiles = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _excludeNewerFiles;
         [Category("4. Copy Options")]
         [Description("eXclude Newer files. (/XN).")]
         [DisplayName("ExcludeNewerFiles")]
         [ChoPropertyInfo("excludeNewerFiles")]
         public bool ExcludeNewerFiles
         {
-            get;
-            set;
+            get { return _excludeNewerFiles; }
+            set
+            {
+                _excludeNewerFiles = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _excludeExtraFilesAndDirs;
         [Category("4. Copy Options")]
         [Description("eXclude eXtra files and directories. (/XX).")]
         [DisplayName("ExcludeExtraFilesAndDirs")]
         [ChoPropertyInfo("excludeExtraFilesAndDirs")]
         public bool ExcludeExtraFilesAndDirs
         {
-            get;
-            set;
+            get { return _excludeExtraFilesAndDirs; }
+            set
+            {
+                _excludeExtraFilesAndDirs = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _excludeFilesWithGivenNames;
         [Category("4. Copy Options")]
         [Description("eXclude Files matching given names/paths/wildcards. Separate names with ;. (/XF).")]
         [DisplayName("ExcludeFilesWithGivenNames")]
@@ -547,10 +791,15 @@
         [Editor(typeof(ChoPropertyGridFilePicker), typeof(ChoPropertyGridFilePicker))]
         public string ExcludeFilesWithGivenNames
         {
-            get;
-            set;
+            get { return _excludeFilesWithGivenNames; }
+            set
+            {
+                _excludeFilesWithGivenNames = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _excludeDirsWithGivenNames;
         [Category("4. Copy Options")]
         [Description("eXclude Directories matching given names/paths. Separate names with ;. (/XD).")]
         [DisplayName("ExcludeDirsWithGivenNames")]
@@ -558,10 +807,15 @@
         [Editor(typeof(ChoPropertyGridFolderPicker), typeof(ChoPropertyGridFolderPicker))]
         public string ExcludeDirsWithGivenNames
         {
-            get;
-            set;
+            get { return _excludeDirsWithGivenNames; }
+            set
+            {
+                _excludeDirsWithGivenNames = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _includeFilesWithGivenAttributes;
         [Category("4. Copy Options")]
         [Description("Include only files with any of the given Attributes set. (/IA:[RASHCNETO]).")]
         [DisplayName("IncludeFilesWithGivenAttributes")]
@@ -569,10 +823,15 @@
         [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
         public string IncludeFilesWithGivenAttributes
         {
-            get;
-            set;
+            get { return _includeFilesWithGivenAttributes; }
+            set
+            {
+                _includeFilesWithGivenAttributes = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        string _excludeFilesWithGivenAttributes;
         [Category("4. Copy Options")]
         [Description("eXclude files with any of the given Attributes set. (/XA:[RASHCNETO]).")]
         [DisplayName("ExcludeFilesWithGivenAttributes")]
@@ -580,175 +839,259 @@
         [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
         public string ExcludeFilesWithGivenAttributes
         {
-            get;
-            set;
+            get { return _excludeFilesWithGivenAttributes; }
+            set
+            {
+                _excludeFilesWithGivenAttributes = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _overrideModifiedFiles;
         [Category("4. Copy Options")]
         [Description("Include Modified files (differing change times). Otherwise the same. These files are not copied by default;. (/IM).")]
         [DisplayName("OverrideModifiedFiles")]
         [ChoPropertyInfo("overrideModifiedFiles")]
         public bool OverrideModifiedFiles
         {
-            get;
-            set;
+            get { return _overrideModifiedFiles; }
+            set
+            {
+                _overrideModifiedFiles = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _includeSameFiles;
         [Category("4. Copy Options")]
         [Description("Include Same files. Overwrite files even if they are already the same. (/IS).")]
         [DisplayName("IncludeSameFiles")]
         [ChoPropertyInfo("includeSameFiles")]
         public bool IncludeSameFiles
         {
-            get;
-            set;
+            get { return _includeSameFiles; }
+            set
+            {
+                _includeSameFiles = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _includeTweakedFiles;
         [Category("4. Copy Options")]
         [Description("Include Tweaked files. (/IT).")]
         [DisplayName("IncludeTweakedFiles")]
         [ChoPropertyInfo("includeTweakedFiles")]
         public bool IncludeTweakedFiles
         {
-            get;
-            set;
+            get { return _includeTweakedFiles; }
+            set
+            {
+                _includeTweakedFiles = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _excludeJunctionPoints;
         [Category("4. Copy Options")]
         [Description("eXclude Junction points and symbolic links. (normally included by default). (/XJ).")]
         [DisplayName("ExcludeJunctionPoints")]
         [ChoPropertyInfo("excludeJunctionPoints")]
         public bool ExcludeJunctionPoints
         {
-            get;
-            set;
+            get { return _excludeJunctionPoints; }
+            set
+            {
+                _excludeJunctionPoints = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _excludeJunctionPointsForDirs;
         [Category("4. Copy Options")]
         [Description("eXclude Junction points and symbolic links for source directories. (/XJD).")]
         [DisplayName("ExcludeJunctionPointsForDirs")]
         [ChoPropertyInfo("excludeJunctionPointsForDirs")]
         public bool ExcludeJunctionPointsForDirs
         {
-            get;
-            set;
+            get { return _excludeJunctionPointsForDirs; }
+            set
+            {
+                _excludeJunctionPointsForDirs = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _excludeJunctionPointsForFiles;
         [Category("4. Copy Options")]
         [Description("eXclude symbolic links for source files. (/XJF).")]
         [DisplayName("ExcludeJunctionPointsForFiles")]
         [ChoPropertyInfo("excludeJunctionPointsForFiles")]
         public bool ExcludeJunctionPointsForFiles
         {
-            get;
-            set;
+            get { return _excludeJunctionPointsForFiles; }
+            set
+            {
+                _excludeJunctionPointsForFiles = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        uint _excludeFilesBiggerThanNBytes;
         [Category("4. Copy Options")]
         [Description("MAXimum file size - exclude files bigger than n bytes. (/MAX:n).")]
         [DisplayName("ExcludeFilesBiggerThanNBytes")]
         [ChoPropertyInfo("excludeFilesBiggerThanNBytes")]
         public uint ExcludeFilesBiggerThanNBytes
         {
-            get;
-            set;
+            get { return _excludeFilesBiggerThanNBytes; }
+            set
+            {
+                _excludeFilesBiggerThanNBytes = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        uint _excludeFilesSmallerThanNBytes;
         [Category("4. Copy Options")]
         [Description("MINimum file size - exclude files smaller than n bytes. (/MIN:n).")]
         [DisplayName("ExcludeFilesSmallerThanNBytes")]
         [ChoPropertyInfo("excludeFilesSmallerThanNBytes")]
         public uint ExcludeFilesSmallerThanNBytes
         {
-            get;
-            set;
+            get { return _excludeFilesSmallerThanNBytes; }
+            set
+            {
+                _excludeFilesSmallerThanNBytes = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        uint _excludeFilesUnusedSinceNDays;
         [Category("4. Copy Options")]
         [Description("MAXimum Last Access Date - exclude files unused since n. (/MAXLAD:n).")]
         [DisplayName("ExcludeFilesUnusedSinceNDays")]
         [ChoPropertyInfo("excludeFilesUnusedSinceNDays")]
         public uint ExcludeFilesUnusedSinceNDays
         {
-            get;
-            set;
+            get { return _excludeFilesUnusedSinceNDays; }
+            set
+            {
+                _excludeFilesUnusedSinceNDays = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        uint _excludeFilesUsedSinceNDays;
         [Category("4. Copy Options")]
         [Description("MINimum Last Access Date - exclude files used since n. (If n < 1900 then n = n days, else n = YYYYMMDD date). (/MINLAD:n).")]
         [DisplayName("ExcludeFilesUsedSinceNDays")]
         [ChoPropertyInfo("excludeFilesUsedSinceNDays")]
         public uint ExcludeFilesUsedSinceNDays
         {
-            get;
-            set;
+            get { return _excludeFilesUsedSinceNDays; }
+            set
+            {
+                _excludeFilesUsedSinceNDays = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _mirrorDirTree;
         [Category("4. Copy Options")]
         [Description("Mirror a directory tree (equivalent to /E plus /PURGE). (/MIR).")]
         [DisplayName("MirrorDirTree")]
         [ChoPropertyInfo("mirrorDirTree")]
         public bool MirrorDirTree
         {
-            get;
-            set;
+            get { return _mirrorDirTree; }
+            set
+            {
+                _mirrorDirTree = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _delDestFileDirIfNotExistsInSource;
         [Category("4. Copy Options")]
         [Description("Delete dest files/dirs that no longer exist in source. (/PURGE).")]
         [DisplayName("DelDestFileDirIfNotExistsInSource")]
         [ChoPropertyInfo("delDestFileDirIfNotExistsInSource")]
         public bool DelDestFileDirIfNotExistsInSource
         {
-            get;
-            set;
+            get { return _delDestFileDirIfNotExistsInSource; }
+            set
+            {
+                _delDestFileDirIfNotExistsInSource = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _excludeLonelyFilesAndDirs;
         [Category("4. Copy Options")]
         [Description("eXclude Lonely files and directories. (/XL).")]
         [DisplayName("ExcludeLonelyFilesAndDirs")]
         [ChoPropertyInfo("excludeLonelyFilesAndDirs")]
         public bool ExcludeLonelyFilesAndDirs
         {
-            get;
-            set;
+            get { return _excludeLonelyFilesAndDirs; }
+            set
+            {
+                _excludeLonelyFilesAndDirs = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _fixFileSecurityOnFiles;
         [Category("4. Copy Options")]
         [Description("Fix file security on all files, even skipped files. (/SECFIX).")]
         [DisplayName("FixFileSecurityOnFiles")]
         [ChoPropertyInfo("fixFileSecurityOnFiles")]
         public bool FixFileSecurityOnFiles
         {
-            get;
-            set;
+            get { return _fixFileSecurityOnFiles; }
+            set
+            {
+                _fixFileSecurityOnFiles = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _fallbackCopyFilesMode;
         [Category("4. Copy Options")]
         [Description("Use restartable mode; if access denied use Backup mode. (/ZB).")]
         [DisplayName("FallbackCopyFilesMode")]
         [ChoPropertyInfo("fallbackCopyFilesMode")]
         public bool FallbackCopyFilesMode
         {
-            get;
-            set;
+            get { return _fallbackCopyFilesMode; }
+            set
+            {
+                _fallbackCopyFilesMode = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        uint _interPacketGapInMS;
         [Category("4. Copy Options")]
         [Description("Inter-Packet Gap (ms), to free bandwidth on slow lines. (/IPG:n).")]
         [DisplayName("InterPacketGapInMS")]
         [ChoPropertyInfo("interPacketGapInMS")]
         public uint InterPacketGapInMS
         {
-            get;
-            set;
+            get { return _interPacketGapInMS; }
+            set
+            {
+                _interPacketGapInMS = value;
+                NotifyPropertyChanged();
+            }
         }
 
         private uint _multithreadCopy;
         [Category("4. Copy Options")]
         [Description("Do multi-threaded copies with n threads (default 8). n must be at least 1 and not greater than 128. This option is incompatible with the /IPG and /EFSRAW options. Redirect output using /LOG option for better performance. (/MT[:n]).")]
         [DisplayName("MultithreadCopy")]
-        [ChoPropertyInfo("multithreadCopy")]
+        [ChoPropertyInfo("multithreadCopy", DefaultValue = "8")]
         public uint MultithreadCopy
         {
             get { return _multithreadCopy; }
@@ -758,17 +1101,23 @@
                     _multithreadCopy = 0;
                 else
                     _multithreadCopy = value;
+                NotifyPropertyChanged();
             }
         }
 
+        bool _copyNODirInfo;
         [Category("4. Copy Options")]
         [Description("COPY NO directory info (by default /DCOPY:DA is done). (/NODCOPY).")]
         [DisplayName("CopyNODirInfo")]
         [ChoPropertyInfo("copyNODirInfo")]
         public bool CopyNODirInfo
         {
-            get;
-            set;
+            get { return _copyNODirInfo; }
+            set
+            {
+                _copyNODirInfo = value;
+                NotifyPropertyChanged();
+            }
         }
         #endregion Instance Data Members (Copy Options)
 
@@ -776,76 +1125,111 @@
 
         const string DefaultNoOfRetries = "1000000";
 
+        uint _noOfRetries;
         [Category("5. Monitoring Options")]
         [Description("Number of Retries on failed copies: default 1 million. (/R:n).")]
         [DisplayName("NoOfRetries")]
         [ChoPropertyInfo("noOfRetries", DefaultValue = DefaultNoOfRetries)]
         public uint NoOfRetries
         {
-            get;
-            set;
+            get { return _noOfRetries; }
+            set
+            {
+                _noOfRetries = value;
+                NotifyPropertyChanged();
+            }
         }
 
         const string DefaultWaitTimeBetweenRetries = "30";
 
+        uint _waitTimeBetweenRetries;
         [Category("5. Monitoring Options")]
         [Description("Wait time between retries: default is 30 seconds. (/W:n).")]
         [DisplayName("WaitTimeBetweenRetries")]
         [ChoPropertyInfo("waitTimeBetweenRetries", DefaultValue = DefaultWaitTimeBetweenRetries)]
         public uint WaitTimeBetweenRetries
         {
-            get;
-            set;
+            get { return _waitTimeBetweenRetries; }
+            set
+            {
+                _waitTimeBetweenRetries = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _saveRetrySettingsToRegistry;
         [Category("5. Monitoring Options")]
         [Description("Save /R:n and /W:n in the Registry as default settings. (/REG).")]
         [DisplayName("SaveRetrySettingsToRegistry")]
         [ChoPropertyInfo("saveRetrySettingsToRegistry")]
         public bool SaveRetrySettingsToRegistry
         {
-            get;
-            set;
+            get { return _saveRetrySettingsToRegistry; }
+            set
+            {
+                _saveRetrySettingsToRegistry = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _waitForSharenames;
         [Category("5. Monitoring Options")]
         [Description("Wait for sharenames to be defined (retry error 67). (/TBD).")]
         [DisplayName("WaitForSharenames")]
         [ChoPropertyInfo("waitForSharenames")]
         public bool WaitForSharenames
         {
-            get;
-            set;
+            get { return _waitForSharenames; }
+            set
+            {
+                _waitForSharenames = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        uint _runAgainWithNoChangesSeen;
         [Category("5. Monitoring Options")]
         [Description("Monitor source; run again when more than n changes seen. (/MON:n).")]
         [DisplayName("RunAgainWithNoChangesSeen")]
         [ChoPropertyInfo("runAgainWithNoChangesSeen")]
         public uint RunAgainWithNoChangesSeen
         {
-            get;
-            set;
+            get { return _runAgainWithNoChangesSeen; }
+            set
+            {
+                _runAgainWithNoChangesSeen = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        uint _runAgainWithChangesSeenInMin;
         [Category("5. Monitoring Options")]
         [Description("Monitor source; run again in m minutes time, if changed. (/MOT:m).")]
         [DisplayName("RunAgainWithChangesSeenInMin")]
         [ChoPropertyInfo("runAgainWithChangesSeenInMin")]
         public uint RunAgainWithChangesSeenInMin
         {
-            get;
-            set;
+            get { return _runAgainWithChangesSeenInMin; }
+            set
+            {
+                _runAgainWithChangesSeenInMin = value;
+                NotifyPropertyChanged();
+            }
         }
 
+        bool _checkRunHourPerFileBasis;
         [Category("5. Monitoring Options")]
         [Description("Check run hours on a Per File (not per pass) basis. (/PF).")]
         [DisplayName("CheckRunHourPerFileBasis")]
         [ChoPropertyInfo("checkRunHourPerFileBasis")]
         public bool CheckRunHourPerFileBasis
         {
-            get;
-            set;
+            get { return _checkRunHourPerFileBasis; }
+            set
+            {
+                _checkRunHourPerFileBasis = value;
+                NotifyPropertyChanged();
+            }
         }
 
         #endregion Instance Data Members (Monitoring Options)
@@ -861,7 +1245,7 @@
         public TimeSpan RunHourStartTime
         {
             get { return _runHourStartTime; }
-            set { _runHourStartTime = value; }
+            set { _runHourStartTime = value; NotifyPropertyChanged(); }
         }
 
         [Browsable(false)]
@@ -880,7 +1264,7 @@
         public TimeSpan RunHourEndTime
         {
             get { return _runHourEndTime; }
-            set { _runHourEndTime = value; }
+            set { _runHourEndTime = value; NotifyPropertyChanged(); }
         }
 
         [Browsable(false)]
@@ -895,124 +1279,136 @@
 
         #region Instance Data Members (Logging Options)
 
+        private bool _noProgress;
         [Category("7. Logging Options")]
         [Description("No Progress - don't display percentage copied. Suppresses the display of progress information. This can be useful when output is redirected to a file. (/NP).")]
         [DisplayName("NoProgress")]
         [ChoPropertyInfo("noProgress")]
         public bool NoProgress
         {
-            get;
-            set;
+            get { return _noProgress; }
+            set { _noProgress = value; NotifyPropertyChanged(); }
         }
 
+        private bool _unicode;
         [Category("7. Logging Options")]
         [Description("Display the status output as unicode text. (/unicode).")]
         [DisplayName("Unicode")]
         [ChoPropertyInfo("unicode")]
         public bool Unicode
         {
-            get;
-            set;
+            get { return _unicode; }
+            set { _unicode = value; NotifyPropertyChanged(); }
         }
 
+        private string _outputLogFilePath;
         [Category("7. Logging Options")]
         [Description("Output status to LOG file (overwrite existing log). (/LOG:file).")]
         [DisplayName("OutputLogFilePath")]
         [ChoPropertyInfo("outputLogFilePath", DefaultValue = "")]
         public string OutputLogFilePath
         {
-            get;
-            set;
+            get { return _outputLogFilePath; }
+            set { _outputLogFilePath = value; NotifyPropertyChanged(); }
         }
 
+        private string _unicodeOutputLogFilePath;
         [Category("7. Logging Options")]
         [Description("Output status to LOG file as UNICODE (overwrite existing log). (/UNILOG:file).")]
         [DisplayName("UnicodeOutputLogFilePath")]
         [ChoPropertyInfo("unicodeOutputLogFilePath", DefaultValue = "")]
         public string UnicodeOutputLogFilePath
         {
-            get;
-            set;
+            get { return _unicodeOutputLogFilePath; }
+            set { _unicodeOutputLogFilePath = value; NotifyPropertyChanged(); }
         }
 
+        private string _appendOutputLogFilePath;
         [Category("7. Logging Options")]
         [Description("Output status to LOG file (append to existing log). (/LOG+:file).")]
         [DisplayName("AppendOutputLogFilePath")]
         [ChoPropertyInfo("appendOutputLogFilePath", DefaultValue = "")]
         public string AppendOutputLogFilePath
         {
-            get;
-            set;
+            get { return _appendOutputLogFilePath; }
+            set { _appendOutputLogFilePath = value; NotifyPropertyChanged(); }
         }
 
+        private string _appendUnicodeOutputLogFilePath;
         [Category("7. Logging Options")]
         [Description("Output status to LOG file as UNICODE (append to existing log). (/UNILOG+:file).")]
         [DisplayName("AppendUnicodeOutputLogFilePath")]
         [ChoPropertyInfo("appendUnicodeOutputLogFilePath", DefaultValue = "")]
         public string AppendUnicodeOutputLogFilePath
         {
-            get;
-            set;
+            get { return _appendUnicodeOutputLogFilePath; }
+            set { _appendUnicodeOutputLogFilePath = value; NotifyPropertyChanged(); }
         }
 
+        private bool _includeSourceFileTimestamp;
         [Category("7. Logging Options")]
         [Description("Include source file timestamps in the output. (/TS).")]
         [DisplayName("IncludeSourceFileTimestamp")]
         [ChoPropertyInfo("includeSourceFileTimestamp")]
         public bool IncludeSourceFileTimestamp
         {
-            get;
-            set;
+            get { return _includeSourceFileTimestamp; }
+            set { _includeSourceFileTimestamp = value; NotifyPropertyChanged(); }
         }
 
+        private bool _includeFullPathName;
         [Category("7. Logging Options")]
         [Description("Include Full Pathname of files in the output. (/FP).")]
         [DisplayName("IncludeFullPathName")]
         [ChoPropertyInfo("includeFullPathName")]
         public bool IncludeFullPathName
         {
-            get;
-            set;
+            get { return _includeFullPathName; }
+            set { _includeFullPathName = value; NotifyPropertyChanged(); }
         }
 
+        private bool _noFileSizeLog;
         [Category("7. Logging Options")]
         [Description("No Size - don't log file sizes. (/NS).")]
         [DisplayName("NoFileSizeLog")]
         [ChoPropertyInfo("noFileSizeLog")]
         public bool NoFileSizeLog
         {
-            get;
-            set;
+            get { return _noFileSizeLog; }
+            set { _noFileSizeLog = value; NotifyPropertyChanged(); }
         }
 
+        private bool _noFileClassLog;
         [Category("7. Logging Options")]
         [Description("No Class - don't log file classes. (/NC).")]
         [DisplayName("NoFileClassLog")]
         [ChoPropertyInfo("noFileClassLog")]
         public bool NoFileClassLog
         {
-            get;
-            set;
+            get { return _noFileClassLog; }
+            set { _noFileClassLog = value; NotifyPropertyChanged(); }
         }
 
+        private bool _noFileNameLog;
         [Category("7. Logging Options")]
         [Description("No File List - don't log file names. Hides file names. Failures are still logged though. Any files files deleted or would be deleted if /L was omitted are always logged. (/NFL).")]
         [DisplayName("NoFileNameLog")]
         [ChoPropertyInfo("noFileNameLog")]
         public bool NoFileNameLog
         {
-            get;
-            set;
+            get { return _noFileNameLog; }
+            set { _noFileNameLog = value; NotifyPropertyChanged(); }
         }
 
+        private bool _noDirListLog;
         [Category("7. Logging Options")]
         [Description("No Directory List - don't log directory names. Hides output of the directory listing. Full file pathnames are output to more easily track down problematic files. (/NDL).")]
         [DisplayName("NoDirListLog")]
         [ChoPropertyInfo("noDirListLog")]
         public bool NoDirListLog
         {
-            get;
-            set;
+            get { return _noDirListLog; }
+            set { _noDirListLog = value; NotifyPropertyChanged(); }
         }
 
         //[Category("Logging Options")]
@@ -1025,77 +1421,86 @@
         //    set;
         //}
 
+        private bool _noJobHeader;
         [Category("7. Logging Options")]
         [Description("No Job Header. (/NJH).")]
         [DisplayName("NoJobHeader")]
         [ChoPropertyInfo("noJobHeader")]
         public bool NoJobHeader
         {
-            get;
-            set;
+            get { return _noJobHeader; }
+            set { _noJobHeader = value; NotifyPropertyChanged(); }
         }
 
+        private bool _noJobSummary;
         [Category("7. Logging Options")]
         [Description("No Job Summary. (/NJS).")]
         [DisplayName("NoJobSummary")]
         [ChoPropertyInfo("noJobSummary")]
         public bool NoJobSummary
         {
-            get;
-            set;
+            get { return _noJobSummary; }
+            set { _noJobSummary = value; NotifyPropertyChanged(); }
         }
 
+        private bool _printByteSizes;
         [Category("7. Logging Options")]
         [Description("Print sizes as bytes. (/BYTES).")]
         [DisplayName("PrintByteSizes")]
         [ChoPropertyInfo("printByteSizes")]
         public bool PrintByteSizes
         {
-            get;
-            set;
+            get { return _printByteSizes; }
+            set { _printByteSizes = value; NotifyPropertyChanged(); }
         }
 
+        private bool _reportExtraFiles;
         [Category("7. Logging Options")]
         [Description("Report all eXtra files, not just those selected. (/X).")]
         [DisplayName("ReportExtraFiles")]
         [ChoPropertyInfo("reportExtraFiles")]
         public bool ReportExtraFiles
         {
-            get;
-            set;
+            get { return _reportExtraFiles; }
+            set { _reportExtraFiles = value; NotifyPropertyChanged(); }
         }
 
+        private bool _verboseOutput;
         [Category("7. Logging Options")]
         [Description("Produce Verbose output, showing skipped files. (/V).")]
         [DisplayName("VerboseOutput")]
         [ChoPropertyInfo("verboseOutput")]
         public bool VerboseOutput
         {
-            get;
-            set;
+            get { return _verboseOutput; }
+            set { _verboseOutput = value; NotifyPropertyChanged(); }
         }
 
+        private bool _showEstTimeOfArrival;
         [Category("7. Logging Options")]
         [Description("Show Estimated Time of Arrival of copied files. (/ETA).")]
         [DisplayName("ShowEstTimeOfArrival")]
         [ChoPropertyInfo("showEstTimeOfArrival")]
         public bool ShowEstTimeOfArrival
         {
-            get;
-            set;
+            get { return _showEstTimeOfArrival; }
+            set { _showEstTimeOfArrival = value; NotifyPropertyChanged(); }
         }
 
+        private bool _showDebugVolumeInfo;
         [Category("7. Logging Options")]
         [Description("Show debug volume information. (/DEBUG).")]
         [DisplayName("ShowDebugVolumeInfo")]
         [ChoPropertyInfo("showDebugVolumeInfo")]
         public bool ShowDebugVolumeInfo
         {
-            get;
-            set;
+            get { return _showDebugVolumeInfo; }
+            set { _showDebugVolumeInfo = value; NotifyPropertyChanged(); }
         }
 
         #endregion Instance Data Members (Logging Options)
+
+        #region Commented
 
         //[Category("Copy Options")]
         //[Description("Move files (delete from source after copying). (/MOV).")]
@@ -1117,22 +1522,25 @@
         //    set;
         //}
 
+        #endregion Commented
+
         public void Reset()
         {
-            ChoObject.ResetObject(this);
-            Persist();
+            Copy(DefaultInstance, this);
+            //ChoObject.ResetObject(this);
+            //Persist();
             MultithreadCopy = 8;
             Precommands = null;
             Postcommands = null;
             Comments = null;
         }
         
-        internal string GetCmdLineText()
+        public string GetCmdLineText()
         {
             return "{0} {1}".FormatString(RoboCopyFilePath, GetCmdLineParams());
         }
 
-        internal string GetCmdLineTextEx()
+        public string GetCmdLineTextEx()
         {
             return "{0} {1} {2} {3}".FormatString(RoboCopyFilePath, GetCmdLineParams(), GetExCmdLineParams(), Comments);
         }
@@ -1399,10 +1807,97 @@
             return cmdText.ToString();
         }
 
-        protected override void OnAfterConfigurationObjectLoaded()
+        //TODO
+        //protected override void OnAfterConfigurationObjectLoaded()
+        //{
+        //    if (RoboCopyFilePath.IsNullOrWhiteSpace())
+        //        RoboCopyFilePath = "RoboCopy.exe";
+        //}
+
+        public void Persist()
         {
-            if (RoboCopyFilePath.IsNullOrWhiteSpace())
-                RoboCopyFilePath = "RoboCopy.exe";
+
+        }
+
+        //public string GetXml()
+        //{
+        //    StringBuilder xml = new StringBuilder();
+        //    using (StringWriter w = new StringWriter(xml))
+        //    {
+        //        _xmlSerializer.Serialize(w, this);
+        //        return xml.ToString();
+        //    }
+        //}
+
+        public void LoadXml(string xml)
+        {
+            using (StringReader reader = new StringReader(xml))
+            {
+                var appSettings = _xmlSerializer.Deserialize(reader) as ChoAppSettings;
+                Copy(appSettings, this);
+            }
+        }
+
+        public static void Copy(ChoAppSettings src, ChoAppSettings dest)
+        {
+            if (src == null || dest == null)
+                return;
+
+            foreach (var pi in _propInfos.Values)
+            {
+                SetPropertyValue(dest, pi, ChoType.GetPropertyValue(src, pi));
+            }
+        }
+        private static readonly Dictionary<IntPtr, Action<object, object>> _setterCache = new Dictionary<IntPtr, Action<object, object>>();
+        private static readonly object _padLock = new object();
+        public static void SetPropertyValue(object target, PropertyInfo propertyInfo, object val)
+        {
+            ChoGuard.ArgumentNotNull(target, "Target");
+            ChoGuard.ArgumentNotNull(propertyInfo, "PropertyInfo");
+
+            if ((val == null || (val is string && ((string)val).IsEmpty())) && propertyInfo.PropertyType.IsValueType)
+            {
+                if (propertyInfo.PropertyType.IsNullableType())
+                    val = null;
+                else
+                    val = propertyInfo.PropertyType.Default();
+            }
+
+            try
+            {
+                Action<object, object> setter;
+                var mi = propertyInfo.GetSetMethod();
+                if (mi != null)
+                {
+                    var key = mi.MethodHandle.Value;
+                    if (!_setterCache.TryGetValue(key, out setter))
+                    {
+                        lock (_padLock)
+                        {
+                            if (!_setterCache.TryGetValue(key, out setter))
+                                _setterCache.Add(key, setter = propertyInfo.CreateSetMethod());
+                        }
+                    }
+
+                    setter(target, val);
+                }
+            }
+            catch (TargetInvocationException ex)
+            {
+                throw new TargetInvocationException(String.Format("[Object: {0}, Member: {1}]:", target.GetType().FullName, propertyInfo.Name), ex.InnerException);
+            }
+        }
+
+        public ChoAppSettings Clone()
+        {
+            var obj = new ChoAppSettings();
+            Copy(this, obj);
+            return obj;
+        }
+
+        object ICloneable.Clone()
+        {
+            return Clone();
         }
     }
 

@@ -103,6 +103,7 @@ namespace ChoEazyCopy
 
         private void Load()
         {
+            Properties.Settings.Default.Reload();
             WindowTop = Properties.Settings.Default.WindowTop;
             WindowLeft = Properties.Settings.Default.WindowLeft;
             WindowHeight = Properties.Settings.Default.WindowHeight;
@@ -115,6 +116,7 @@ namespace ChoEazyCopy
 
         public void Save()
         {
+            Properties.Settings.Default.Reload();
             if (WindowState != System.Windows.WindowState.Minimized)
             {
                 Properties.Settings.Default.WindowTop = WindowTop;

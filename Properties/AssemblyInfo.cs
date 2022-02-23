@@ -14,7 +14,7 @@ using ChoEazyCopy;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ChoEazyCopy")]
-[assembly: AssemblyCopyright("Copyright ©  2015 Cinchoo Inc")]
+[assembly: AssemblyCopyright("Copyright ©  2015-2022 Cinchoo Inc")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -56,5 +56,5 @@ using ChoEazyCopy;
 [assembly: AssemblyVersion("2.0.0.0")]
 [assembly: AssemblyFileVersion("2.0.0.0")]
 [assembly: ChoShellFileAssociation(AppHost.AppFileExt)]
-[assembly: ChoAssemblyBetaVersion("beta4")]
+[assembly: ChoAssemblyBetaVersion("beta6")]
 

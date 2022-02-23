@@ -274,5 +274,17 @@ namespace ChoEazyCopy.Properties {
                 this["ControlPanelWidth"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool WatchForChanges {
+            get {
+                return ((bool)(this["WatchForChanges"]));
+            }
+            set {
+                this["WatchForChanges"] = value;
+            }
+        }
     }
 }

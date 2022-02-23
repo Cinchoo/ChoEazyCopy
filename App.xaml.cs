@@ -14,6 +14,7 @@ using System.Diagnostics;
 using ChoEazyCopy.Properties;
 using System.Reflection;
 using System.Security.Principal;
+using MahApps.Metro;
 
 namespace ChoEazyCopy
 {
@@ -59,6 +60,7 @@ namespace ChoEazyCopy
                 ChoAppCmdLineArgs cmdLineArgs = new ChoAppCmdLineArgs();
                 cmdLineArgs.StartFileCopy();
             }
+            
             base.OnStart(args);
         }
 
@@ -160,6 +162,12 @@ namespace ChoEazyCopy
             {
                 if (Application.Current == null)
                     new App();
+                ////ThemeManager.ChangeAppStyle(Application.Current,
+                ////                            ThemeManager.GetAccent("Blue"),
+                ////                            ThemeManager.GetAppTheme("BaseDark"));
+                //ThemeManager.ChangeAppStyle(Application.Current,
+                //                            ThemeManager.GetAccent("Brown"),
+                //                            ThemeManager.GetAppTheme("BaseDark"));
                 return Application.Current;
             }
         }

@@ -14,12 +14,12 @@
     MinWidth="500"
     AllowDrop="True"
     Closed="Window_Closed"
-    x:Name="MyWindow"
+    x:Name="ChoEazyCopyWindow"
     BorderBrush="{DynamicResource AccentColorBrush}"
     BorderThickness="1"
     TitleCaps="False"
     ResizeMode="CanResizeWithGrip"
-    Loaded="MyWindow_Loaded" Icon="App.ico" Closing="Window_Closing" ContentRendered="MyWindow_ContentRendered">
+    Loaded="Window_Loaded" Icon="App.ico" Closing="Window_Closing">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Controls:ToggleSwitch Margin="10, 0, 0, 0" Foreground="LightYellow" FontSize="16" ToolTip="Remember windows position/size."
@@ -28,6 +28,10 @@
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
     <Window.Resources>
+        <ContextMenu x:Key="expControlPanelContextMenu">
+            <MenuItem x:Name="mnuResetExpander" Header="Reset" Click="mnuResetExpander_Click" />
+        </ContextMenu>
+
         <ContextMenu x:Key="TextBoxContextMenu" Background="White">
             <MenuItem Command="ApplicationCommands.Copy">
                 <MenuItem.Icon>
@@ -151,7 +155,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="{Binding ControlPanelWidth, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" >
+                <ColumnDefinition Width="{Binding ControlPanelWidth, Mode=TwoWay}" >
                     <ColumnDefinition.Style>
                         <Style TargetType="{x:Type ColumnDefinition}">
                             <Setter Property="MinWidth" Value="350" />
@@ -163,7 +167,7 @@
                                     <Setter Property="MaxWidth" Value="40" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding ElementName=expControlPanel, Path=IsExpanded}" Value="True">
-                                    <Setter Property="MaxWidth" Value="{Binding ElementName=MyWindow, Path=Width, Converter={StaticResource MathConverter}, ConverterParameter=@VALUE/2 }" />
+                                    <Setter Property="MaxWidth" Value="{Binding ElementName=ChoEazyCopyWindow, Path=Width, Converter={StaticResource MathConverter}, ConverterParameter=@VALUE/2 }" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -171,7 +175,8 @@
                 </ColumnDefinition>
             </Grid.ColumnDefinitions>
             <DockPanel Grid.Column="0" LastChildFill="true">
-                <Ribbon DockPanel.Dock="Top" x:Name="RibbonWin" SelectedIndex="0" Loaded="RibbonWin_Loaded" MinWidth="500" ContextMenu="{x:Null}">
+                <Ribbon DockPanel.Dock="Top" x:Name="RibbonWin" SelectedIndex="0" Loaded="RibbonWin_Loaded" MinWidth="500" ContextMenu="{x:Null}"
+                        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro">
                     <Ribbon.ApplicationMenu>
                         <RibbonApplicationMenu Visibility="Collapsed"></RibbonApplicationMenu>
                     </Ribbon.ApplicationMenu>
@@ -189,7 +194,7 @@
                             <RibbonButton x:Name="btnSaveAsFile" SmallImageSource="Resources\SaveAsFile.png" Label="Save As" KeyTip="A" Click="btnSaveAsFile_Click"  ContextMenu="{x:Null}"/>
                         </RibbonGroup>
                         <RibbonGroup x:Name="DonateGroup" ContextMenu="{x:Null}">
-                            <RibbonButton x:Name="btnDonate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDonate_Click" ToolTip="Your supoort is much appreciated." ContextMenu="{x:Null}"/>
+                            <RibbonButton x:Name="btnDonate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDonate_Click" ToolTip="Your support is much appreciated." ContextMenu="{x:Null}"/>
                         </RibbonGroup>
                         <!--<RibbonGroup VerticalAlignment="Center" ContextMenu="{x:Null}">
                             <DockPanel LastChildFill="True">
@@ -225,7 +230,8 @@
                         <Border Margin="5,5,5,0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray" Background="LightSlateGray" >
                             <DockPanel LastChildFill="true">
                                 <Label FontWeight="Bold" Foreground="White">TASK FILE:</Label>
-                                <Label Foreground="White" Content="{Binding SettingsFileName}" ToolTip="{Binding SettingsFilePath}"></Label>
+                                <TextBlock Foreground="White" VerticalAlignment="Center" Text="{Binding SettingsFileName}" ToolTip="{Binding SettingsFilePath}"></TextBlock>
+                                
                             </DockPanel>
                         </Border>
 
@@ -280,7 +286,7 @@
                         TabIndex="0" Grid.ColumnSpan="3" 
                         Style="{StaticResource WaterMarkTextBoxStyle}" 
                         ToolTip="{Binding Path=SourceDirTooltip}"
-                            Text="{Binding Path=SourceDirectory}"
+                            Text="{Binding Path=AppSettings.SourceDirectory}"
                                     Background="{Binding SourceDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
                                     Foreground="{Binding SourceDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
                         >
@@ -313,7 +319,7 @@
                         TabIndex="2" Grid.ColumnSpan="3" 
                         Style="{StaticResource WaterMarkTextBoxStyle}"
                         ToolTip="Destination directory."
-                            Text="{Binding Path=DestDirectory, UpdateSourceTrigger=PropertyChanged}"
+                            Text="{Binding Path=AppSettings.DestDirectory}"
                             />
                                 <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                         Grid.Row="3"
@@ -359,7 +365,7 @@
                             VerticalAlignment="Stretch">
                             <GroupBox.Header>
                                 <DockPanel LastChildFill="True">
-                                    <CheckBox DockPanel.Dock="Right" Content="TEST RUN" IsChecked="{Binding ListOnly}"
+                                    <CheckBox DockPanel.Dock="Right" Content="TEST RUN" IsChecked="{Binding Path=AppSettings.ListOnly}"
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
                                         Style="{DynamicResource MetroCheckBox}">
@@ -389,13 +395,16 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Name="txtRoboCopyCmdEx"
-                                TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" TextChanged="txtRoboCopyCmdEx_TextChanged" />
+                                TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" 
+                                         IsReadOnly="True" 
+                                         />
                                 <TextBox
-                    Margin="0,3,0,2"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Name="txtRoboCopyCmd"
-                    TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" TextChanged="txtRoboCopyCmd_TextChanged" />
+                                    Margin="0,3,0,2"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Name="txtRoboCopyCmd"
+                                    TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" 
+                                    IsReadOnly="True"  />
                             </DockPanel>
                         </GroupBox>
                         <GridSplitter
@@ -410,7 +419,7 @@
                 VerticalAlignment="Stretch">
                             <GroupBox.Header>
                                 <DockPanel LastChildFill="True">
-                                    <CheckBox DockPanel.Dock="Right" Content="SHOW LINE NUMBERS" IsChecked="{Binding ShowOutputLineNo}"
+                                    <CheckBox DockPanel.Dock="Right" Content="SHOW LINE NUMBERS" IsChecked="{Binding Path=AppSettings.ShowOutputLineNumbers}"
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
                                         Style="{DynamicResource MetroCheckBox}">
@@ -441,7 +450,7 @@
                         FontSize="10pt"
                         IsReadOnly="true" 
                         TabIndex="25" 
-                        ShowLineNumbers="{Binding ShowOutputLineNo}"
+                        ShowLineNumbers="{Binding Path=AppSettings.ShowOutputLineNumbers}"
                         VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
                                 />
                             <!--TextBox
@@ -455,7 +464,8 @@
                 </DockPanel>
 
             </DockPanel>
-            <Expander Grid.Column="2" ExpandDirection="Left" IsExpanded="True" x:Name="expControlPanel">
+            <Expander Grid.Column="2" ExpandDirection="Left" IsExpanded="True" x:Name="expControlPanel"
+                      ContextMenu="{StaticResource expControlPanelContextMenu}">
                 <Expander.Header>
                     <TextBlock Text="Control Panel" Foreground="White" FontWeight="Bold">
                         <TextBlock.LayoutTransform>
@@ -480,7 +490,7 @@
                             </Setter>
                         </Style>
                     </TabControl.Resources>
-                    <TabItem Header="RoboCopy Options" ToolTip="" x:Name="tabRoboCopyOptionsItem" Selector.Selected="tabRoboCopyOptionsItem_Selected" >
+                    <TabItem Header="RoboCopy Options" ToolTip="" x:Name="tabRoboCopyOptionsItem" >
                         <DockPanel LastChildFill="True">
                             <TextBlock DockPanel.Dock="Top" x:Name="txtPropertyGridWaterMark" FontSize="20" TextWrapping="WrapWithOverflow" FontWeight="Bold" 
                                        Foreground="Red" Text="{Binding PropertyGridTooltip}" ToolTip="{Binding PropertyGridTooltip}"
@@ -491,7 +501,7 @@
                                                          ToolTip="{Binding PropertyGridTooltip}"/>
                         </DockPanel>
                     </TabItem>
-                    <TabItem Header="Backup Tasks" x:Name="tabBackupTasks" ToolTip="" Selector.Selected="tabBackupTasks_Selected">
+                    <TabItem Header="Backup Tasks" x:Name="tabBackupTasks" ToolTip="" >
                         <GroupBox Header="Backup Tasks" Margin="-3" x:Name="grpBackupTasks">
                             <DockPanel LastChildFill="True">
                                 <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
@@ -564,7 +574,7 @@
                                             <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Backup Task Comments</TextBlock>
                                             <TextBox x:Name="txtTaskComments" Margin="0,5,0,0" Height="55" VerticalScrollBarVisibility="Auto" 
                                                      TextWrapping="WrapWithOverflow"
-                                                     Text="{Binding TaskComments}" ToolTip="Backup Task Comments" />
+                                                     Text="{Binding Path=AppSettings.Comments}" ToolTip="Backup Task Comments" />
                                         </DockPanel>
                                     </DockPanel>
                                     <ListView x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
@@ -589,6 +599,7 @@
                                                 <MenuItem x:Name="mnuAllColumnsToFit" Header="Size All Columns to Fit" Click="mnuAllColumnsToFit_Click" />
                                                 <Separator />
                                                 <MenuItem Header="Confirm on Delete Task" IsCheckable="True" IsChecked="{Binding ConfirmOnDelete}" />
+                                                <MenuItem Header="Watch for Changes" IsCheckable="True" IsChecked="{Binding WatchForChanges}" />
                                             </ContextMenu>
                                             <ContextMenu x:Key="grdItemContextMenu">
                                                 <MenuItem x:Name="mnuCloneTask" Header="Clone Task" Click="mnuCloneTask_Click" InputGestureText="Ctrl+V" />
@@ -601,6 +612,7 @@
                                                 </MenuItem>
                                                 <Separator />
                                                 <MenuItem Header="Confirm on Delete Task" IsCheckable="True" IsChecked="{Binding ConfirmOnDelete, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+                                                <MenuItem Header="Watch for Changes" IsCheckable="True" IsChecked="{Binding WatchForChanges, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
                                             </ContextMenu>
                                         </ListView.Resources>
                                         <ListView.ItemContainerStyle>

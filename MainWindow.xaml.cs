@@ -1140,9 +1140,11 @@ namespace ChoEazyCopy
                     up.ScrollOutput = ScrollOutput;
                     up.BackupTaskDirectory = BackupTaskDirectory;
                     up.Save();
+
                 }
                 catch { }
             }
+            ChoApplication.NotifyIcon.Dispose();
         }
 
         private void RibbonWin_Loaded(object sender, RoutedEventArgs e)
@@ -1302,9 +1304,9 @@ namespace ChoEazyCopy
                         //    selectedBackupTaskInfo = fi != null ? fi.FilePath : null;
                         //}
                         if (!settingsFilePath.IsNullOrWhiteSpace() &&
-                            BackupTaskInfos.Select(f => f.FilePath == settingsFilePath).Any())
+                            BackupTaskInfos.Where(f => f.FilePath == settingsFilePath).Any())
                         {
-                            SelectedBackupTaskFilePath = settingsFilePath;
+                            SelectedBackupTaskFilePath = BackupTaskInfos.Where(f => f.FilePath == settingsFilePath).First().FilePath;
                         }
                         //WatchBackupTasksDirectory();
                     }

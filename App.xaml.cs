@@ -29,6 +29,11 @@ namespace ChoEazyCopy
         {
             ChoApplication.Run(args);
         }
+        public override void OnTrayAppExitMenuClicked(object sender, EventArgs e)
+        {
+            ChoApplication.NotifyIcon.Dispose();
+            base.OnTrayAppExitMenuClicked(sender, e);
+        }
 
         protected override void ApplyGlobalApplicationSettingsOverrides(ChoGlobalApplicationSettings obj)
         {
@@ -168,6 +173,8 @@ namespace ChoEazyCopy
                 //ThemeManager.ChangeAppStyle(Application.Current,
                 //                            ThemeManager.GetAccent("Blue"),
                 //                            ThemeManager.GetAppTheme("BaseDark"));
+
+                Application.Current.Exit += (o, e) => ChoApplication.NotifyIcon.Dispose();
                 return Application.Current;
             }
         }

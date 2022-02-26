@@ -3,6 +3,7 @@ using Cinchoo.Core.Configuration;
 using Cinchoo.Core.Diagnostics;
 using Cinchoo.Core.Win32.Dialogs;
 using Cinchoo.Core.WPF;
+using MahApps.Metro;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using System;
@@ -60,6 +61,42 @@ namespace ChoEazyCopy
             }
         }
 
+        public bool IsAdminMode
+        {
+            get;
+            set;
+        }
+        public object ControlMouseOverBackgroundBrush
+        {
+            get
+            {
+                return ChoAppTheme.ControlMouseOverBackgroundBrush;
+            }
+        }
+
+        public object ControlBackgroundBrush
+        {
+            get 
+            {
+                return ChoAppTheme.ControlBackgroundBrush;
+            }
+        }
+
+        public object ControlForegroundBrush
+        {
+            get
+            {
+                return ChoAppTheme.ControlForegroundBrush;
+            }
+        }
+
+        public object TextBoxFocusBorderBrush
+        {
+            get
+            {
+                return ChoAppTheme.TextBoxFocusBorderBrush;
+            }
+        }
         private bool _isDirty = false;
         private bool IsDirty
         {
@@ -451,6 +488,11 @@ namespace ChoEazyCopy
                 RaisePropertyChanged(nameof(SourceDirStatus));
             }
         }
+        public bool DestDirStatus
+        {
+            get;
+            set;
+        } = true;
         private string _cmdLineText = null;
         public string CmdLineText
         {
@@ -581,6 +623,19 @@ namespace ChoEazyCopy
                 txtRoboCopyCmd.Text = _appSettings.GetCmdLineText();
                 txtRoboCopyCmdEx.Text = _appSettings.GetCmdLineTextEx();
             };
+            IsAdminMode = AppHost.IsRunAsAdmin();
+            if (IsAdminMode)
+            {
+                mnuRunasAdministrator.Visibility = Visibility.Collapsed;
+                mnuRegisterShellExtensions.Visibility = Visibility.Visible;
+                mnuUnregisterShellExtensions.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                mnuRunasAdministrator.Visibility = Visibility.Visible;
+                mnuRegisterShellExtensions.Visibility = Visibility.Collapsed;
+                mnuUnregisterShellExtensions.Visibility = Visibility.Collapsed;
+            }
         }
         private void SetTitle()
         {
@@ -595,6 +650,17 @@ namespace ChoEazyCopy
 
         private void Window_Loaded(object sender1, RoutedEventArgs e1)
         {
+        }
+
+        public void RefreshWindow()
+        {
+            RaisePropertyChanged(nameof(ControlMouseOverBackgroundBrush));
+            RaisePropertyChanged(nameof(ControlBackgroundBrush));
+            RaisePropertyChanged(nameof(ControlForegroundBrush));
+            RaisePropertyChanged(nameof(TextBoxFocusBorderBrush));
+            RaisePropertyChanged(nameof(SourceDirStatus));
+            RaisePropertyChanged(nameof(DestDirStatus));
+            RaisePropertyChanged(nameof(BackupTaskDirStatus));
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
@@ -1091,13 +1157,14 @@ namespace ChoEazyCopy
 
         private void BtnDonate_Click(object sender, RoutedEventArgs e)
         {
-            string url = "https://www.paypal.com/cgi-bin/webscr" +
-    "?cmd=" + "_donations" +
-    "&business=" + "cinchoofrx@gmail.com" +
-    "&lc=" + "US" +
-    "&item_name=" + "ChoEazyCopy Donation" +
-    "&currency_code=" + "USD" +
-    "&bn=" + "PP%2dDonationsBF";
+            string url = "https://www.paypal.com/donate/?hosted_button_id=HB6J7QG73HMK8";
+    //        string url = "https://www.paypal.com/cgi-bin/webscr" +
+    //"?cmd=" + "_donations" +
+    //"&business=" + "cinchoofrx@gmail.com" +
+    //"&lc=" + "US" +
+    //"&item_name=" + "ChoEazyCopy Donation" +
+    //"&currency_code=" + "USD" +
+    //"&bn=" + "PP%2dDonationsBF";
 
             System.Diagnostics.Process.Start(url);
         }
@@ -1167,22 +1234,25 @@ namespace ChoEazyCopy
 
             if (WatchForChanges)
             {
-                _watcher = new FileSystemWatcher();
-                _watcher.Path = BackupTaskDirectory;
-                _watcher.NotifyFilter = NotifyFilters.Attributes |
-                    NotifyFilters.CreationTime |
-                    NotifyFilters.FileName |
-                    NotifyFilters.LastAccess |
-                    NotifyFilters.LastWrite |
-                    NotifyFilters.Size |
-                    NotifyFilters.Security;
+                if (Directory.Exists(BackupTaskDirectory))
+                {
+                    _watcher = new FileSystemWatcher();
+                    _watcher.Path = BackupTaskDirectory;
+                    _watcher.NotifyFilter = NotifyFilters.Attributes |
+                        NotifyFilters.CreationTime |
+                        NotifyFilters.FileName |
+                        NotifyFilters.LastAccess |
+                        NotifyFilters.LastWrite |
+                        NotifyFilters.Size |
+                        NotifyFilters.Security;
 
-                _watcher.Filter = "*.*";
-                _watcher.Deleted += (o, e) => ReloadBackupTasks();
-                _watcher.Created += (o, e) => ReloadBackupTasks();
-                _watcher.Changed += (o, e) => ReloadBackupTasks();
-                _watcher.Renamed += (o, e) => ReloadBackupTasks();
-                _watcher.EnableRaisingEvents = true;
+                    _watcher.Filter = "*.*";
+                    _watcher.Deleted += (o, e) => ReloadBackupTasks();
+                    _watcher.Created += (o, e) => ReloadBackupTasks();
+                    _watcher.Changed += (o, e) => ReloadBackupTasks();
+                    _watcher.Renamed += (o, e) => ReloadBackupTasks();
+                    _watcher.EnableRaisingEvents = true;
+                }
             }
         }
 
@@ -1469,6 +1539,51 @@ namespace ChoEazyCopy
         {
             ControlPanelWidth = new GridLength(300);
         }
+
+        private void btnApplicationCmds_Click(object sender, RoutedEventArgs e)
+        {
+            var addButton = sender as FrameworkElement;
+            if (addButton != null)
+            {
+                addButton.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private void mnuLaunchNewInstance_Click(object sender, RoutedEventArgs e)
+        {
+            var info = new System.Diagnostics.ProcessStartInfo(ChoApplication.EntryAssemblyLocation);
+            System.Diagnostics.Process.Start(info);
+        }
+
+        private void mnuRunasAdministrator_Click(object sender, RoutedEventArgs e)
+        {
+            AppHost.RunAsAdmin();
+        }
+
+        private void mnuRegisterShellExtensions_Click(object sender, RoutedEventArgs e)
+        {
+            AppHost.RegisterShellExtensions();
+        }
+
+        private void mnuUnregisterShellExtensions_Click(object sender, RoutedEventArgs e)
+        {
+            AppHost.UnregisterShellExtensions();
+        }
+
+        private void mnuLightTheme_Click(object sender, RoutedEventArgs e)
+        {
+            ThemeManager.ChangeAppStyle(Application.Current,
+                            ThemeManager.GetAccent("Steel"),
+                            ThemeManager.GetAppTheme("BaseLight"));
+
+        }
+
+        private void mnuDarkTheme_Click(object sender, RoutedEventArgs e)
+        {
+            ThemeManager.ChangeAppStyle(Application.Current,
+                            ThemeManager.GetAccent("Steel"),
+                            ThemeManager.GetAppTheme("BaseLight"));
+        }
     }
 
     public class BackupTaskInfo
@@ -1523,7 +1638,7 @@ namespace ChoEazyCopy
         {
             var val = (bool)value;
             if (val)
-                return SystemColors.WindowBrush;
+                return SystemColors.WindowBrush; // ChoAppTheme.ControlBackgroundBrush;
             else
                 return Brushes.Red;
         }
@@ -1539,7 +1654,7 @@ namespace ChoEazyCopy
         {
             var val = (bool)value;
             if (val)
-                return SystemColors.WindowTextBrush;
+                return SystemColors.WindowTextBrush; // ChoAppTheme.ControlBackgroundBrush;
             else
                 return Brushes.White;
         }
@@ -1719,4 +1834,76 @@ namespace ChoEazyCopy
             Version = text;
         }
     }
+    public class ThemeMenuItem : MenuItem
+    {
+        protected override void OnClick()
+        {
+            var ic = Parent as ItemsControl;
+            if (null != ic)
+            {
+                var rmi = ic.Items.OfType<ThemeMenuItem>().FirstOrDefault(i => i.IsChecked);
+                if (null != rmi) rmi.IsChecked = false;
+
+                IsChecked = true;
+                ChoApplicationThemeManager.Theme = this.Tag as string;
+            }
+            base.OnClick();
+        }
+    }
+    public class AccentMenuItem : MenuItem
+    {
+        protected override void OnClick()
+        {
+            var ic = Parent as ItemsControl;
+            if (null != ic)
+            {
+                var rmi = ic.Items.OfType<AccentMenuItem>().FirstOrDefault(i => i.IsChecked);
+                if (null != rmi) rmi.IsChecked = false;
+
+                IsChecked = true;
+                ChoApplicationThemeManager.Accent = this.Header as string;
+            }
+            base.OnClick();
+        }
+    }
+
+    public static class ChoApplicationThemeManager
+    {
+        static ChoApplicationThemeManager()
+        {
+            _theme = "BaseLight";
+            _accent = "Steel";
+        }
+        private static string _theme;
+        public static string Theme 
+        { 
+            get { return _theme; }
+            set
+            {
+                _theme = value;
+                ApplyTheme();
+            }
+        }
+        private static string _accent;
+        public static string Accent
+        {
+            get { return _accent; }
+            set
+            {
+                _accent = value;
+                ApplyTheme();
+            }
+        }
+
+        public static void ApplyTheme()
+        {
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
+
+            ThemeManager.ChangeAppStyle(wnd,
+                            ThemeManager.GetAccent(Accent),
+                            ThemeManager.GetAppTheme(Theme));
+            wnd.RefreshWindow();
+        }
+    }
+
 }

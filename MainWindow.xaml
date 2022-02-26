@@ -4,8 +4,10 @@
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:local="clr-namespace:ChoEazyCopy"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib" 
     xmlns:Properties="clr-namespace:ChoEazyCopy.Properties"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"   
+    xmlns:themes="clr-namespace:Xceed.Wpf.Toolkit.Themes;assembly=Xceed.Wpf.Toolkit"
     x:Class="ChoEazyCopy.MainWindow"
     Title="ChoEazyCopy - Cinchoo Inc."
     Height="600"
@@ -27,6 +29,33 @@
                                    />
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
+    <Controls:MetroWindow.LeftWindowCommands>
+        <Controls:WindowCommands>
+            <Button x:Name="btnApplicationCmds" ToolTip="Application Commands" Click="btnApplicationCmds_Click"  >
+                <Image Source="{iconPacks:FontAwesomeImage Kind=CogSolid}" />
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem x:Name="mnuLaunchNewInstance" Header="Launch New Instance" Click="mnuLaunchNewInstance_Click" />
+                        <MenuItem x:Name="mnuRunasAdministrator" Header="Run as Administrator" Click="mnuRunasAdministrator_Click" >
+                            <MenuItem.Icon>
+                                <iconPacks:FontAwesome Kind="ShieldAltSolid"></iconPacks:FontAwesome>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="mnuRegisterShellExtensions" Header="Register Shell Extensions" Click="mnuRegisterShellExtensions_Click">
+                            <!--<MenuItem.Icon>
+                                <iconPacks:FontAwesome Kind="HandshakeRegular"></iconPacks:FontAwesome>
+                            </MenuItem.Icon>-->
+                        </MenuItem>
+                        <MenuItem x:Name="mnuUnregisterShellExtensions" Header="Unregister Shell Extensions" Click="mnuUnregisterShellExtensions_Click" >
+                            <!--<MenuItem.Icon>
+                                <iconPacks:FontAwesome Kind="HandshakeSlashSolid"></iconPacks:FontAwesome>
+                            </MenuItem.Icon>-->
+                        </MenuItem>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.LeftWindowCommands>
     <Window.Resources>
         <ContextMenu x:Key="expControlPanelContextMenu">
             <MenuItem x:Name="mnuResetExpander" Header="Reset" Click="mnuResetExpander_Click" />
@@ -79,6 +108,8 @@
         </Style>
         <Style x:Key="GridViewColumnHeaderStyle1" TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Background" Value="{Binding ControlBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{Binding ControlForegroundBrush}"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter Property="Background" Value="LightSlateGray"/>
@@ -107,14 +138,15 @@
                             </Border>
                         </Grid>
                         <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="{Binding TextBoxFocusBorderBrush}">
+                                </Setter>
+                            </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
-                                    <Condition Property="Text"
-                                       Value="" />
+                                    <Condition Property="Text" Value="" />
                                 </MultiTrigger.Conditions>
-                                <Setter Property="Visibility"
-                                TargetName="textBlock"
-                                Value="Visible" />
+                                <Setter Property="Visibility" TargetName="textBlock" Value="Visible" />
                             </MultiTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -176,7 +208,8 @@
             </Grid.ColumnDefinitions>
             <DockPanel Grid.Column="0" LastChildFill="true">
                 <Ribbon DockPanel.Dock="Top" x:Name="RibbonWin" SelectedIndex="0" Loaded="RibbonWin_Loaded" MinWidth="500" ContextMenu="{x:Null}"
-                        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro">
+                        Background="{Binding ControlBackgroundBrush}"
+                        Foreground="{Binding ControlForegroundBrush}">
                     <Ribbon.ApplicationMenu>
                         <RibbonApplicationMenu Visibility="Collapsed"></RibbonApplicationMenu>
                     </Ribbon.ApplicationMenu>
@@ -229,8 +262,8 @@
                         </Grid.ColumnDefinitions>
                         <Border Margin="5,5,5,0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray" Background="LightSlateGray" >
                             <DockPanel LastChildFill="true">
-                                <Label FontWeight="Bold" Foreground="White">TASK FILE:</Label>
-                                <TextBlock Foreground="White" VerticalAlignment="Center" Text="{Binding SettingsFileName}" ToolTip="{Binding SettingsFilePath}"></TextBlock>
+                                <Label FontWeight="Bold" Foreground="{Binding ControlBackgroundBrush}">TASK FILE:</Label>
+                                <TextBlock Foreground="{Binding ControlBackgroundBrush}" VerticalAlignment="Center" Text="{Binding SettingsFileName}" ToolTip="{Binding SettingsFilePath}"></TextBlock>
                                 
                             </DockPanel>
                         </Border>
@@ -286,7 +319,7 @@
                         TabIndex="0" Grid.ColumnSpan="3" 
                         Style="{StaticResource WaterMarkTextBoxStyle}" 
                         ToolTip="{Binding Path=SourceDirTooltip}"
-                            Text="{Binding Path=AppSettings.SourceDirectory}"
+                            Text="{Binding Path=AppSettings.SourceDirectory, UpdateSourceTrigger=PropertyChanged}"
                                     Background="{Binding SourceDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
                                     Foreground="{Binding SourceDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
                         >
@@ -319,7 +352,9 @@
                         TabIndex="2" Grid.ColumnSpan="3" 
                         Style="{StaticResource WaterMarkTextBoxStyle}"
                         ToolTip="Destination directory."
-                            Text="{Binding Path=AppSettings.DestDirectory}"
+                            Text="{Binding Path=AppSettings.DestDirectory, UpdateSourceTrigger=PropertyChanged}"
+                                    Background="{Binding DestDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
+                                    Foreground="{Binding DestDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
                             />
                                 <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                         Grid.Row="3"
@@ -452,6 +487,8 @@
                         TabIndex="25" 
                         ShowLineNumbers="{Binding Path=AppSettings.ShowOutputLineNumbers}"
                         VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                Background="{Binding ControlBackgroundBrush}"
+                                Foreground="{Binding ControlForegroundBrush}"
                                 />
                             <!--TextBox
                     Margin="0,3,0,2"
@@ -561,13 +598,9 @@
                                     <DockPanel LastChildFill="True" DockPanel.Dock="Bottom">
                                         <StackPanel Margin="0,5,0,0" Orientation="Vertical" DockPanel.Dock="Right" VerticalAlignment="Bottom" >
                                             <Button Margin="5,0,0,0" x:Name="btnCloneTask" DockPanel.Dock="Right" Content="CLONE" IsEnabled="{Binding CloneTaskEnabled }"
-                                                xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                                                xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
                                                 Style="{DynamicResource MetroButton}" Click="btnCloneTask_Click" 
                                                     ToolTip="Clone task"/>
                                             <Button Margin="5,5,0,0" x:Name="btnDeleteTask" DockPanel.Dock="Right" Content="DELETE" IsEnabled="{Binding DeleteTaskEnabled }"
-                                                xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                                                xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
                                                 Style="{DynamicResource MetroButton}" Click="btnDeleteTask_Click" ToolTip="Delete task"/>
                                         </StackPanel>
                                         <DockPanel LastChildFill="True">
@@ -659,7 +692,8 @@
                 </TabControl>
             </Expander>
 
-            <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" ResizeDirection="Columns" />
+            <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" 
+                          ResizeDirection="Columns" Background="{Binding ControlBackgroundBrush}" />
         </Grid>
     </DockPanel>
 </Controls:MetroWindow>

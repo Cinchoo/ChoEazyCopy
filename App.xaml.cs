@@ -136,7 +136,7 @@ namespace ChoEazyCopy
             }
         }
 
-        private static bool IsRunAsAdmin()
+        internal static bool IsRunAsAdmin()
         {
             WindowsIdentity id = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new WindowsPrincipal(id);
@@ -166,7 +166,7 @@ namespace ChoEazyCopy
                 ////                            ThemeManager.GetAccent("Blue"),
                 ////                            ThemeManager.GetAppTheme("BaseDark"));
                 //ThemeManager.ChangeAppStyle(Application.Current,
-                //                            ThemeManager.GetAccent("Brown"),
+                //                            ThemeManager.GetAccent("Blue"),
                 //                            ThemeManager.GetAppTheme("BaseDark"));
                 return Application.Current;
             }

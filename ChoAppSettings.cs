@@ -1091,7 +1091,7 @@
         [Category("4. Copy Options")]
         [Description("Do multi-threaded copies with n threads (default 8). n must be at least 1 and not greater than 128. This option is incompatible with the /IPG and /EFSRAW options. Redirect output using /LOG option for better performance. (/MT[:n]).")]
         [DisplayName("MultithreadCopy")]
-        [ChoPropertyInfo("multithreadCopy", DefaultValue = "8")]
+        [ChoPropertyInfo("multithreadCopy", DefaultValue = "0")]
         public uint MultithreadCopy
         {
             get { return _multithreadCopy; }
@@ -1529,7 +1529,7 @@
             Copy(DefaultInstance, this);
             //ChoObject.ResetObject(this);
             //Persist();
-            MultithreadCopy = 8;
+            MultithreadCopy = 0;
             Precommands = null;
             Postcommands = null;
             Comments = null;

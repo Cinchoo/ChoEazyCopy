@@ -35,22 +35,39 @@
                 <Image Source="{iconPacks:FontAwesomeImage Kind=CogSolid}" />
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem x:Name="mnuLaunchNewInstance" Header="Launch New Instance" Click="mnuLaunchNewInstance_Click" />
+                        <MenuItem x:Name="mnuLaunchNewInstance" Header="Launch New Instance" Click="mnuLaunchNewInstance_Click" >
+                            <MenuItem.Icon>
+                                <Image Source="Resources/OpenNewWindow.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem x:Name="mnuRunasAdministrator" Header="Run as Administrator" Click="mnuRunasAdministrator_Click" >
                             <MenuItem.Icon>
-                                <iconPacks:FontAwesome Kind="ShieldAltSolid"></iconPacks:FontAwesome>
+                                <Image Source="Resources/Security.png" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem x:Name="mnuRegisterShellExtensions" Header="Register Shell Extensions" Click="mnuRegisterShellExtensions_Click">
+                            <MenuItem.Icon>
+                                <Image Source="Resources/Registry.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="mnuUnregisterShellExtensions" Header="Unregister Shell Extensions" Click="mnuUnregisterShellExtensions_Click" >
+                            <MenuItem.Icon>
+                                <Image Source="Resources/RemoveRegistry.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator></Separator>
+                        <MenuItem x:Name="mnuAlwaysOnTop" Header="Always on Top" IsCheckable="True" IsChecked="False" Click="mnuAlwaysOnTop_Click">
                             <!--<MenuItem.Icon>
                                 <iconPacks:FontAwesome Kind="HandshakeRegular"></iconPacks:FontAwesome>
                             </MenuItem.Icon>-->
                         </MenuItem>
-                        <MenuItem x:Name="mnuUnregisterShellExtensions" Header="Unregister Shell Extensions" Click="mnuUnregisterShellExtensions_Click" >
+                        <MenuItem x:Name="mnuRunatSystemsStartup" Header="Run at Systems Startup" IsCheckable="True" 
+                                  Click="mnuRunatSystemsStartup_Click">
                             <!--<MenuItem.Icon>
-                                <iconPacks:FontAwesome Kind="HandshakeSlashSolid"></iconPacks:FontAwesome>
+                                <iconPacks:FontAwesome Kind="ShieldAltSolid"></iconPacks:FontAwesome>
                             </MenuItem.Icon>-->
                         </MenuItem>
+
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>
@@ -544,11 +561,30 @@
                                 <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
                                     <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Directory</TextBlock>
                                     <DockPanel LastChildFill="True" DockPanel.Dock="Bottom" HorizontalAlignment="Stretch">
+                                        <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="20"  Width="20" DockPanel.Dock="Right"
+                                            x:Name="btnFindBackupTaskDirectoryInFileExplorer" 
+                                                ToolTip="Find backup task directory in file explorer" 
+                                                VerticalAlignment="Center"
+                                                Click="btnFindBackupTaskDirectoryInFileExplorer_Click" 
+                                                IsEnabled="{Binding BackupTaskDirStatus}">
+                                            <Image Source="{iconPacks:FontAwesomeImage Kind=SearchSolid}" >
+                                                <Image.Style>
+                                                    <Style TargetType="{x:Type Image}">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsEnabled" Value="False">
+                                                                <Setter Property="Opacity" Value="0.5" />
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                        </Button>
                                         <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="20" DockPanel.Dock="Right"
                                             Margin="1,0,1,2"
                                             x:Name="btnRefreshBackupTasks"
                                             ToolTip="Reload backup tasks..." VerticalAlignment="Bottom"
                                                 Click="btnRefreshBackupTasks_Click"
+                                                IsEnabled="{Binding BackupTaskDirStatus}"
                                                 >
                                             <Image Source="Resources/Refresh.png" >
                                                 <Image.Style>
@@ -607,7 +643,7 @@
                                             <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Backup Task Comments</TextBlock>
                                             <TextBox x:Name="txtTaskComments" Margin="0,5,0,0" Height="55" VerticalScrollBarVisibility="Auto" 
                                                      TextWrapping="WrapWithOverflow"
-                                                     Text="{Binding Path=AppSettings.Comments}" ToolTip="Backup Task Comments" />
+                                                     Text="{Binding Path=AppSettings.Comments, UpdateSourceTrigger=PropertyChanged}" ToolTip="Backup Task Comments" />
                                         </DockPanel>
                                     </DockPanel>
                                     <ListView x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"

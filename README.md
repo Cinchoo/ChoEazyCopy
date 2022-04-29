@@ -38,5 +38,5 @@ Features:
 
 If this project help you reduce time to develop, you can give me a cup of coffee :)
 
-[$10](https://buy.stripe.com/8wM7u54Gk2SQ4us001)/[$25](https://buy.stripe.com/6oEdStc8MfFCe52bII)/[$50](https://buy.stripe.com/28o5lX4Gk652e527su)/[$100](https://buy.stripe.com/eVa3dP2ycbpm0ec6or)
+[$10](https://buy.stripe.com/8wM7u54Gk2SQ4us001)/[$25](https://buy.stripe.com/8wMdSt5KogJGf969AE)/[$50](https://buy.stripe.com/28o5lX4Gk652e527su)/[$100](https://buy.stripe.com/eVa3dP2ycbpm0ec6or)
 

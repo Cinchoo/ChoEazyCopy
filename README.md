@@ -38,5 +38,5 @@ Features:
 
 If this project help you reduce time to develop, you can give me a cup of coffee :)
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=HB6J7QG73HMK8)
+[$10](https://buy.stripe.com/8wM7u54Gk2SQ4us001)/[$25](https://buy.stripe.com/8wMdSt5KogJGf969AE)/[$50](https://buy.stripe.com/28o5lX4Gk652e527su)/[$100](https://buy.stripe.com/eVa3dP2ycbpm0ec6or)
 

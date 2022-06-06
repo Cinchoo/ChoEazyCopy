@@ -10,32 +10,66 @@ namespace ChoEazyCopy
 {
     public class ChoGridViewColumnVisibilityManager
     {
-        private static Dictionary<GridViewColumn, double> _columns = null;
+        private static Dictionary<GridView, Dictionary<GridViewColumn, double>> _columns = null;
 
-        public static void ResizeAllColumnsToFit()
+        public static void ResizeAllColumnsToFit(DependencyObject obj)
         {
+            ListView lv = obj as ListView;
+            if (lv == null) return;
+
+            GridView gridview = lv.View as GridView;
+            if (gridview == null || gridview.Columns == null) return;
+
             var columns = _columns;
-            if (columns == null)
+            if (columns == null || !_columns.ContainsKey(gridview))
+                return;
+            if (_columns[gridview] == null)
                 return;
 
-            foreach (GridViewColumn gc in columns.Keys.ToArray())
+            foreach (GridViewColumn gc in _columns[gridview].Keys.ToArray())
             {
                 gc.Width = 0;
                 gc.Width = Double.NaN;
-                columns[gc] = gc.Width;
+                columns[gridview][gc] = gc.Width;
             }
 
         }
+        public static bool Contains(GridViewColumn col)
+        {
+            Dictionary<GridViewColumn, double> dict = null;
+            return Contains(col, out dict);
+        }
+
+        public static bool Contains(GridViewColumn col, out Dictionary<GridViewColumn, double> dict)
+        {
+            dict = null;
+            if (col == null)
+                return false;
+            if (_columns == null)
+                return false;
+
+            foreach (var gv in _columns.Keys.ToArray())
+            {
+                if (_columns[gv].ContainsKey(col))
+                {
+                    dict = _columns[gv];
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static void SetGridColumnWidth(GridViewColumnHeader colHeader)
         {
-            var col = colHeader.Column;
-            if (_columns.ContainsKey(col) && (col.Width > 0 || col.Width == double.NaN))
-                _columns[col] = col.Width;
+            SetGridColumnWidth(colHeader.Column);
         }
+
         public static void SetGridColumnWidth(GridViewColumn col)
         {
-            if (_columns.ContainsKey(col) && col.Width > 0)
-                _columns[col] = col.Width;
+            Dictionary<GridViewColumn, double> dict = null;
+            if (Contains(col, out dict) && (col.Width > 0 || col.Width == double.NaN))
+                dict[col] = col.Width;
         }
 
         static void UpdateListView(ListView lv)
@@ -44,10 +78,13 @@ namespace ChoEazyCopy
             if (gridview == null || gridview.Columns == null) return;
 
             if (_columns == null)
+                _columns = new Dictionary<GridView, Dictionary<GridViewColumn, double>>();
+
+            if (!_columns.ContainsKey(gridview))
             {
-                _columns = new Dictionary<GridViewColumn, double>();
+                _columns.Add(gridview, new Dictionary<GridViewColumn, double>());
                 foreach (GridViewColumn gc in gridview.Columns)
-                    _columns.Add(gc, gc.Width);
+                    _columns[gridview].Add(gc, gc.Width);
             }
 
             List<GridViewColumn> toRemove = new List<GridViewColumn>();
@@ -60,8 +97,12 @@ namespace ChoEazyCopy
                 }
                 else
                 {
-                    gc.Width = _columns[gc];
-                    ((GridViewColumnHeader)gc.Header).IsHitTestVisible = true;
+                    Dictionary<GridViewColumn, double> dict = null;
+                    if (Contains(gc, out dict))
+                    {
+                        gc.Width = dict[gc];
+                        ((GridViewColumnHeader)gc.Header).IsHitTestVisible = true;
+                    }
                 }
             }
         }
@@ -106,8 +147,12 @@ namespace ChoEazyCopy
                 }
                 else
                 {
-                    gc.Width = _columns[gc];
-                    ((GridViewColumnHeader)gc.Header).IsHitTestVisible = true;
+                    Dictionary<GridViewColumn, double> dict = null;
+                    if (Contains(gc, out dict))
+                    {
+                        gc.Width = dict[gc];
+                        ((GridViewColumnHeader)gc.Header).IsHitTestVisible = true;
+                    }
                 }
             }
         }

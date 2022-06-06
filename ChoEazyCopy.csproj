@@ -43,7 +43,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;_DELAY_RUN_1</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;_DELAY_RUN_1, _TEST_MODE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -168,16 +168,23 @@
       <DependentUpon>ChoPropertyGridFolderPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="ChoRoboCopyManager.cs" />
+    <Compile Include="ChoTaskQueueItem.cs" />
     <Compile Include="ChoUserPreferences.cs" />
     <Compile Include="ChoGridViewColumnVisibilityManager.cs" />
     <Compile Include="ChoGridViewSort.cs" />
     <Compile Include="ChoSortAdorner.cs" />
+    <Compile Include="ChoTaskQManager.cs" />
+    <Compile Include="ChoUtility.cs" />
+    <Compile Include="ChoObservableCollection.cs" />
+    <Compile Include="ChoTaskQueueItemLogInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChoMruComboBox.cs" />
+    <Compile Include="ChoObservableMruList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -309,6 +316,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Lib\MahApps.Metro.IconPacks.Core.dll" />
     <EmbeddedResource Include="Lib\MahApps.Metro.IconPacks.FontAwesome.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SyncJob.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\CopyJob.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -108,6 +108,16 @@
                     Value="Collapsed" />
                 </Trigger>
             </Style.Triggers>
+            <Style.Resources>
+                <Style TargetType="ContentPresenter">
+                    <Style.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextWrapping" Value="Wrap" />
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </Style.Resources>
+            <Setter Property="MaxWidth" Value="500" />
         </Style>
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="ContextMenu" Value="{StaticResource TextBoxContextMenu}" />
@@ -188,6 +198,19 @@
         <local:BoolToBackgroundColorConverter x:Key="BoolToBackgroundColorConverter1"/>
         <local:BoolToForegroundColorConverter x:Key="BoolToForegroundColorConverter1"/>
         <local:MathConverter x:Key="MathConverter"/>
+
+        <Style TargetType="{x:Type local:ChoMruComboBox}" >
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type local:ChoMruComboBox}">
+                        <ComboBox ItemsSource="{Binding MruSource, RelativeSource={RelativeSource TemplatedParent}}"
+                                Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                IsEditable="True" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
     <DockPanel>
         <StatusBar DockPanel.Dock="Bottom" Margin="5,0,5,5" Width="Auto">
@@ -197,7 +220,7 @@
                 Padding="0">
                 <TextBlock
                     Style="{StaticResource StatusBarTextBlock}"
-                    x:Name="sbAppStatus"><Run Text="Ready"/></TextBlock>
+                    x:Name="sbAppStatus"><Run Text="{Binding AppStatusText}"/></TextBlock>
             </StatusBarItem>
         </StatusBar>
         <Grid>
@@ -238,7 +261,23 @@
                             <RibbonCheckBox x:Name="btnScrollOutput" SmallImageSource="Resources\Scroll.png" Label="Scroll Output" KeyTip="L" IsChecked="{Binding ScrollOutput}"  ContextMenu="{x:Null}"/>
                         </RibbonGroup>
                         <RibbonGroup x:Name="FileGroup" Header="File" ContextMenu="{x:Null}">
-                            <RibbonButton x:Name="btnNewFile" LargeImageSource="Resources\NewFile.png" Label="New" KeyTip="N" Click="btnNewFile_Click"  ContextMenu="{x:Null}"/>
+                            <!--<RibbonButton x:Name="btnNewFile" LargeImageSource="Resources\NewFile.png" Label="New" KeyTip="N" Click="btnNewFile_Click"  ContextMenu="{x:Null}"/>-->
+                            <RibbonMenuButton x:Name="btnNewFile" 
+                                    Label="New"
+                                    SmallImageSource="Resources\NewFile.png"
+                                    LargeImageSource="Resources\NewFile.png" KeyTip="N" >
+                                <RibbonMenuItem 
+                                    Header="Empty Job"
+                                    ImageSource="Resources\NewFile.png" Click="btnNewFile_Click"  ContextMenu="{x:Null}"/>
+                                <RibbonMenuItem 
+                                    Header="Synchronization Job"
+                                    ImageSource="Resources\SyncJob.png" ToolTip="With the Synchronization job all new and modified files of source folder are mirrored to destination folder. Files and folders which don't exist anymore in the source folder when the job runs will be deleted in the destination folder."
+                                    Click="btnNewSyncFile_Click"  ContextMenu="{x:Null}" />
+                                <RibbonMenuItem 
+                                    Header="Copy Job"
+                                    ImageSource="Resources\CopyJob.png" ToolTip="With the Copy job all new and modified files of source folder are also copied to destination folder. However files and folders which previously has been copied to the destination folder but doesn't exist anymore when the job runs, will be kept in the destination folder."
+                                    Click="btnNewCopyFile_Click"  ContextMenu="{x:Null}"/>
+                            </RibbonMenuButton>
                             <RibbonButton x:Name="btnOpenFile" SmallImageSource="Resources\OpenFile.png" Label="Open" KeyTip="O" Click="btnOpenFile_Click"  ContextMenu="{x:Null}"/>
                             <RibbonButton x:Name="btnSaveFile" SmallImageSource="Resources\SaveFile.png" Label="Save" KeyTip="S" Click="btnSaveFile_Click"  ContextMenu="{x:Null}"/>
                             <RibbonButton x:Name="btnSaveAsFile" SmallImageSource="Resources\SaveAsFile.png" Label="Save As" KeyTip="A" Click="btnSaveAsFile_Click"  ContextMenu="{x:Null}"/>
@@ -616,7 +655,14 @@
                                                 </Image.Style>
                                             </Image>
                                         </Button>
-                                        <TextBox HorizontalAlignment="Stretch"
+                                        <local:ChoMruComboBox 
+                                            HorizontalAlignment="Stretch" MruSource="{Binding RecentNumbersList}" 
+                                            Text="{Binding Path=BackupTaskDirectory, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                            Background="{Binding BackupTaskDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
+                                            Foreground="{Binding BackupTaskDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
+                                        />
+
+                                        <!--TextBox HorizontalAlignment="Stretch"
                                             x:Name="txtBackupTasksDirectory"
                                             Margin="1"
                                             TabIndex="0" 
@@ -626,7 +672,7 @@
                                                         Background="{Binding BackupTaskDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
                                                         Foreground="{Binding BackupTaskDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
                                             >
-                                        </TextBox>
+                                        </TextBox-->
                                     </DockPanel>
                                 </DockPanel>
 
@@ -638,10 +684,12 @@
                                                     ToolTip="Clone task"/>
                                             <Button Margin="5,5,0,0" x:Name="btnDeleteTask" DockPanel.Dock="Right" Content="DELETE" IsEnabled="{Binding DeleteTaskEnabled }"
                                                 Style="{DynamicResource MetroButton}" Click="btnDeleteTask_Click" ToolTip="Delete task"/>
+                                            <Button Margin="5,5,0,0" x:Name="btnQueueTask" DockPanel.Dock="Right" Content="QUEUE" IsEnabled="{Binding QueueTaskEnabled }"
+                                                Style="{DynamicResource MetroButton}" Click="btnQueueTask_Click"  ToolTip="Queue task"/>
                                         </StackPanel>
                                         <DockPanel LastChildFill="True">
                                             <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Backup Task Comments</TextBlock>
-                                            <TextBox x:Name="txtTaskComments" Margin="0,5,0,0" Height="55" VerticalScrollBarVisibility="Auto" 
+                                            <TextBox x:Name="txtTaskComments" Margin="0,5,0,0" Height="70" VerticalScrollBarVisibility="Auto" 
                                                      TextWrapping="WrapWithOverflow"
                                                      Text="{Binding Path=AppSettings.Comments, UpdateSourceTrigger=PropertyChanged}" ToolTip="Backup Task Comments" />
                                         </DockPanel>
@@ -653,7 +701,7 @@
                                              local:ChoGridViewSort.AutoSort="True" 
                                              local:ChoGridViewColumnVisibilityManager.Enabled="True"
                                              FontFamily="Courier New" FontSize="12" ToolTip=""
-                                               PreviewKeyUp="mnuDeleteTask_PreviewKeyUp">
+                                               PreviewKeyUp="lstBackupTasks_PreviewKeyUp">
                                         <ListView.Resources>
                                             <ContextMenu x:Key="grdHeaderContextMenu">
                                                 <MenuItem x:Name="mnuDateCreated" Header="Date Created" IsCheckable="true" IsChecked="{Binding DateCreated}" />
@@ -672,8 +720,8 @@
                                             </ContextMenu>
                                             <ContextMenu x:Key="grdItemContextMenu">
                                                 <MenuItem x:Name="mnuCloneTask" Header="Clone Task" Click="mnuCloneTask_Click" InputGestureText="Ctrl+V" />
-                                                <MenuItem x:Name="mnuDeleteTask" Header="Delete Task" Click="mnuDeleteTask_Click" 
-                                                          InputGestureText="Del" />
+                                                <MenuItem x:Name="mnuDeleteTask" Header="Delete Task" Click="mnuDeleteTask_Click" InputGestureText="Del" />
+                                                <MenuItem x:Name="mnuQueueTask" Header="Queue Task" Click="mnuQueueTask_Click"  InputGestureText="Ctrl+Q" />
                                                 <Separator />
                                                 <MenuItem Header="Clone Options">
                                                     <MenuItem Header="Keep Date Created" IsCheckable="true" IsChecked="{Binding KeepDateCreated, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
@@ -696,23 +744,23 @@
                                                                 local:ChoGridViewSort.PropertyName="TaskName" >
                                                     <GridViewColumnHeader x:Name="grdTaskNameColumnHeader" Content="TASK NAME" ContextMenu="{StaticResource grdHeaderContextMenu}" 
                                                                           SizeChanged="TaskNameGridViewColumnHeader_SizeChanged" Tag="TaskName"
-                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grdTaskNameColumnHeader_Click" />
+                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grdBackupTaskColumnHeader_Click" />
                                                 </GridViewColumn>
                                                 <GridViewColumn x:Name="grdDateCreatedColumn" Width="{Binding DateCreatedColumnWidth}" 
                                                                 DisplayMemberBinding="{Binding Path=CreatedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
                                                                 local:ChoGridViewSort.PropertyName="CreatedDate" 
-                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateCreated}">
-                                                    <GridViewColumnHeader x:Name="grddDateCreatedColumnHeader" Content="DATE CREATED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
+                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateCreatedVisibility}">
+                                                    <GridViewColumnHeader x:Name="grdDateCreatedColumnHeader" Content="DATE CREATED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
                                                                           SizeChanged="DateCreatedGridViewColumnHeader_SizeChanged" Tag="CreatedDate"
-                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grddDateCreatedColumnHeader_Click" />
+                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grdBackupTaskColumnHeader_Click" />
                                                 </GridViewColumn>
                                                 <GridViewColumn x:Name="grdDateModifiedColumn" Width="{Binding DateModifiedColumnWidth}" 
                                                                 DisplayMemberBinding="{Binding Path=ModifiedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
                                                                 local:ChoGridViewSort.PropertyName="ModifiedDate" 
-                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateModified}" >
-                                                    <GridViewColumnHeader x:Name="grddDateModifiedColumnHeader" Content="DATE MODIFIED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
+                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateModifiedVisibility}" >
+                                                    <GridViewColumnHeader x:Name="grdDateModifiedColumnHeader" Content="DATE MODIFIED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
                                                                           SizeChanged="DateModifiedGridViewColumnHeader_SizeChanged" Tag="ModifiedDate"
-                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grddDateModifiedColumnHeader_Click"/>
+                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grdBackupTaskColumnHeader_Click"/>
                                                 </GridViewColumn>
                                             </GridView>
                                         </ListView.View>
@@ -722,6 +770,132 @@
                                              ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName" 
                                              SelectedValue="{Binding SelectedBackupTaskFilePath}" >-->
                                 </DockPanel>
+                            </DockPanel>
+                        </GroupBox>
+                    </TabItem>
+                    <TabItem Header="Task Queue" x:Name="tabTaskQueue" ToolTip="" >
+                        <GroupBox Header="Task Queue" Margin="-3" x:Name="grpTaskQueue">
+                            <DockPanel LastChildFill="True">
+                                <StackPanel Margin="0,5,0,0" DockPanel.Dock="Bottom" Orientation="Horizontal" >
+                                    <Button Margin="0,0,0,0" x:Name="btnTaskQStopTask" Content="STOP" IsEnabled="{Binding TaskQStopTaskEnabled }"
+                                            Style="{DynamicResource MetroButton}" Click="btnTaskQStopTask_Click" ToolTip="Stop task"/>
+                                    <!--<Button Margin="5,0,0,0" x:Name="btnTaskQMoveUpTask" Content="MOVE UP" IsEnabled="{Binding TaskQMoveUpTaskEnabled }"
+                                            Style="{DynamicResource MetroButton}" Click="btnTaskQMoveUpTask_Click"  ToolTip="Move Up task"/>
+                                    <Button Margin="5,0,0,0" x:Name="btnTaskQMoveDownTask" Content="MOVE DOWN" IsEnabled="{Binding TaskQMoveDownTaskEnabled }"
+                                            Style="{DynamicResource MetroButton}" Click="btnTaskQMoveDownTask_Click"  ToolTip="Move Down task"/>-->
+                                    <Button Margin="5,0,0,0" x:Name="btnTaskQRemoveTask" Content="REMOVE" IsEnabled="{Binding TaskQRemoveTaskEnabled }"
+                                            Style="{DynamicResource MetroButton}" Click="btnTaskQRemoveTask_Click"  ToolTip="Remove task"/>
+                                    <Button Margin="5,0,0,0" x:Name="btnOpenTaskLogFile" DockPanel.Dock="Right" Content="OPEN LOG FILE" IsEnabled="{Binding OpenTaskLogFileEnabled }"
+                                                Style="{DynamicResource MetroButton}" Click="btnOpenTaskLogFile_Click"  ToolTip="Open task log file"/>
+                                    <Button Margin="5,0,0,0" x:Name="btnOpenTaskLogFolder" DockPanel.Dock="Right" Content="OPEN LOG FOLDER" IsEnabled="{Binding OpenTaskLogFolderEnabled }"
+                                                Style="{DynamicResource MetroButton}" Click="btnOpenTaskLogFolder_Click"  ToolTip="Open task log folder"/>
+                                </StackPanel>
+                                <ListView x:Name="lstTaskQueue" Margin="0,0,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
+                                             ItemsSource="{Binding TaskQueueItems}" SelectedValuePath="Id" 
+                                             SelectedValue="{Binding SelectedTaskQueueItemId}"
+                                             SelectedItem="{Binding SelectedTaskQueueItem}"
+                                             local:ChoGridViewSort.AutoSort="True" 
+                                             local:ChoGridViewColumnVisibilityManager.Enabled="True"
+                                             FontFamily="Courier New" FontSize="12" ToolTip=""
+                                               PreviewKeyUp="lstTaskQueue_PreviewKeyUp">
+                                    <ListView.Resources>
+                                        <ContextMenu x:Key="grdTaskQueueHeaderContextMenu">
+                                            <MenuItem x:Name="mnuTaskQColumnToFit" Header="Size Column to Fit" Click="mnuTaskQColumnToFit_Click" />
+                                            <MenuItem x:Name="mnuTaskQAllColumnsToFit" Header="Size All Columns to Fit" Click="mnuTaskQAllColumnsToFit_Click" />
+                                            <Separator />
+                                            <MenuItem Header="Confirm on Delete Task" IsCheckable="True" IsChecked="{Binding ConfirmOnDelete}" />
+                                        </ContextMenu>
+                                        <ContextMenu x:Key="grdTaskQueueItemContextMenu">
+                                            <MenuItem x:Name="mnuTaskQStopTask" Header="Stop Task" Click="mnuCloneTask_Click" InputGestureText="Ctrl+S" IsEnabled="{Binding TaskQStopTaskEnabled }"/>
+                                            <!--<MenuItem x:Name="mnuTaskQMoveUpTask" Header="Move Up Task" Click="mnuDeleteTask_Click" InputGestureText="Ctrl+Up" IsEnabled="{Binding TaskQMoveUpTaskEnabled }"/>
+                                            <MenuItem x:Name="mnuTaskQMoveDownTask" Header="Move Down Task" Click="mnuDeleteTask_Click" InputGestureText="Ctrl+Down" IsEnabled="{Binding TaskQMoveDownTaskEnabled }"/>-->
+                                            <MenuItem x:Name="mnuTaskQRemoveTask" Header="Remove Task" Click="mnuDeleteTask_Click" InputGestureText="Del" IsEnabled="{Binding TaskQRemoveTaskEnabled }"/>
+                                            <MenuItem x:Name="mnuTaskQOpenLogFile" Header="Open log file" Click="mnuTaskQOpenLogFile_Click" InputGestureText="Ctrl+O" IsEnabled="{Binding OpenTaskLogFileEnabled }"/>
+                                            <Separator />
+                                            <MenuItem Header="Confirm on Delete Task" IsCheckable="True" IsChecked="{Binding ConfirmOnDelete, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+                                        </ContextMenu>
+                                    </ListView.Resources>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListBoxItem}">
+                                            <!--<EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListViewItem_PreviewMouseLeftButtonDown" />-->
+                                            <Setter Property="ContextMenu" Value="{StaticResource grdTaskQueueItemContextMenu}"/>
+                                            <Setter Property="Padding" Value="0,0,0,0"/>
+                                            <Setter Property="Margin" Value="0,0,0,0"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Status}" Value="3">
+                                                    <Setter Property="Background" Value="LightGreen" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="2">
+                                                    <Setter Property="Background" Value="Red" />
+                                                    <Setter Property="Foreground" Value="White" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="1">
+                                                    <Setter Property="Background" Value="Yellow" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.View>
+                                        <GridView AllowsColumnReorder="true" ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle1}">
+                                            <GridViewColumn x:Name="grdTaskQIdColumn" Width="{Binding TaskQIdColumnWidth}" DisplayMemberBinding="{Binding Path=Id}" 
+                                                                local:ChoGridViewSort.PropertyName="Id" >
+                                                <GridViewColumnHeader x:Name="grdTaskQTaskIdColumnHeader" Content="ID" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
+                                                                          SizeChanged="grdTaskQIdColumnHeader_SizeChanged"  Tag="TaskName"
+                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click" />
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="grdTaskQNameColumn" Width="{Binding TaskQNameColumnWidth}" DisplayMemberBinding="{Binding Path=TaskName}" 
+                                                                local:ChoGridViewSort.PropertyName="TaskName" >
+                                                <GridViewColumnHeader x:Name="grdTaskQTaskNameColumnHeader" Content="TASK NAME" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
+                                                                          SizeChanged="grdTaskQNameColumnHeader_SizeChanged"  Tag="TaskName"
+                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click" />
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="grdTaskQQueueTimeColumn" Width="{Binding TaskQQueueTimeColumnWidth}" 
+                                                                DisplayMemberBinding="{Binding Path=QueueTime, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
+                                                                local:ChoGridViewSort.PropertyName="QueueTime" 
+                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding QueueTime}">
+                                                <GridViewColumnHeader x:Name="grdTaskQQueueTimeColumnHeader" Content="QUEUE TIME" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
+                                                                          SizeChanged="grdTaskQQueueTimeColumnHeader_SizeChanged"  Tag="QueueTime"
+                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click" />
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="grdTaskQStartTimeColumn" Width="{Binding TaskQStartTimeColumnWidth}" 
+                                                                DisplayMemberBinding="{Binding Path=StartTime, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
+                                                                local:ChoGridViewSort.PropertyName="StartTime" 
+                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding StartTime}">
+                                                <GridViewColumnHeader x:Name="grdTaskQStartTimeColumnHeader" Content="START TIME" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
+                                                                          SizeChanged="grdTaskQStartTimeColumnHeader_SizeChanged"  Tag="StartTime"
+                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click" />
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="grdTaskQEndTimeColumn" Width="{Binding DateModifiedColumnWidth}" 
+                                                                DisplayMemberBinding="{Binding Path=EndTime, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
+                                                                local:ChoGridViewSort.PropertyName="EndTime" 
+                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding EndTime}" >
+                                                <GridViewColumnHeader x:Name="grdTaskQEndTimeColumnHeader" Content="END TIME" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
+                                                                          SizeChanged="grdTaskQEndTimeColumnHeader_SizeChanged"  Tag="EndTime"
+                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click"/>
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="grdTaskQStatusColumn" Width="{Binding DateModifiedColumnWidth}" 
+                                                                DisplayMemberBinding="{Binding Path=Status}" 
+                                                                local:ChoGridViewSort.PropertyName="Status" 
+                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding Status}" >
+                                                <GridViewColumnHeader x:Name="grdTaskQStatusColumnHeader" Content="STATUS" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
+                                                                          SizeChanged="grdTaskQStatusColumnHeader_SizeChanged" Tag="Status"
+                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click"/>
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="grdTaskQErrorMsgColumn" Width="{Binding DateModifiedColumnWidth}" 
+                                                                DisplayMemberBinding="{Binding Path=ErrorMessage}" 
+                                                                local:ChoGridViewSort.PropertyName="Status" 
+                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding ErrorMessage}" >
+                                                <GridViewColumnHeader x:Name="grdTaskQErrorMsgColumnHeader" Content="ERROR MSG" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
+                                                                          SizeChanged="grdTaskQErrorMsgColumnHeader_SizeChanged" Tag="ErrorMessage"
+                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click"/>
+                                            </GridViewColumn>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+
+                                <!--<ListBox x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
+                                             ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName" 
+                                             SelectedValue="{Binding SelectedBackupTaskFilePath}" >-->
                             </DockPanel>
                         </GroupBox>
                     </TabItem>

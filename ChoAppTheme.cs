@@ -41,5 +41,21 @@ namespace ChoEazyCopy
                 return (Brush)MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current.MainWindow).Item1.Resources["TextBrush"];
             }
         }
+
+        public static Brush ControlBorderBrush
+        {
+            get
+            {
+                return (Brush)MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current.MainWindow).Item1.Resources["ControlBorderBrush"];
+            }
+        }
+
+        public static Brush WindowTitleColorBrush
+        {
+            get
+            {
+                return (Brush)MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current.MainWindow).Item1.Resources["WindowTitleColorBrush"];
+            }
+        }
     }
 }

@@ -138,6 +138,34 @@
 
         #region Instance Data Members (Others)
 
+        private bool _showRoboCopyProgress;
+        [Browsable(false)]
+        [ChoPropertyInfo("ShowRoboCopyProgress")]
+        [XmlIgnore]
+        public bool ShowRoboCopyProgress
+        {
+            get { return _showRoboCopyProgress; }
+            set
+            {
+                if (value)
+                {
+                    //CopySubDirectories = false;
+                    //CopyFlags = String.Empty;
+
+                    //MirrorDirTree = true; //MIR = Mirror mode
+                    NoProgress = true; //NP  = Don't show progress percentage in log
+                    NoDirListLog = true; // NDL - No directory list log
+                    NoFileClassLog = true; //NC  = Don't log file classes (existing, new file, etc.)
+                    PrintByteSizes = true; //BYTES = Show file sizes in bytes
+                    NoJobHeader = true; //NJH = Do not display robocopy job header (JH)
+                    NoJobSummary = true; //NJS = Do not display robocopy job summary (JS)
+                }
+
+                _showRoboCopyProgress = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private bool _showOutputLineNumbers;
         [Browsable(false)]
         [ChoPropertyInfo("showOutputLineNumbers")]
@@ -247,6 +275,7 @@
         [Description("Specify MS-DOS commands to run before robocopy operations, separated by ; (Optional).")]
         [DisplayName("PreCommands")]
         [ChoPropertyInfo("precommands", DefaultValue = "")]
+        [Editor(typeof(ChoMultilineTextBoxEditor), typeof(ChoMultilineTextBoxEditor))]
         public string Precommands
         {
             get { return _precommands; }
@@ -262,6 +291,7 @@
         [Description("Specify MS-DOS commands to run after robocopy operations, separated by ; (Optional).")]
         [DisplayName("Postcommands")]
         [ChoPropertyInfo("postcommands", DefaultValue = "")]
+        [Editor(typeof(ChoMultilineTextBoxEditor), typeof(ChoMultilineTextBoxEditor))]
         public string Postcommands
         {
             get { return _postcommands; }
@@ -317,6 +347,7 @@
             set
             {
                 _copySubDirectories = value;
+                if (!value) ShowRoboCopyProgress = false;
                 NotifyPropertyChanged();
             }
         }
@@ -617,6 +648,13 @@
                 NotifyPropertyChanged();
             }
         }
+
+        internal void SetMoveFilesAndDirectories(string value)
+        {
+            _moveFilesAndDirectories = value;
+            NotifyPropertyChanged(nameof(Comments));
+        }
+
 
         bool _copySymbolicLinks;
         [Category("4. Copy Options")]
@@ -1287,7 +1325,12 @@
         public bool NoProgress
         {
             get { return _noProgress; }
-            set { _noProgress = value; NotifyPropertyChanged(); }
+            set 
+            { 
+                _noProgress = value;
+                if (!value) ShowRoboCopyProgress = false;
+                NotifyPropertyChanged(); 
+            }
         }
 
         private bool _unicode;
@@ -1386,7 +1429,12 @@
         public bool NoFileClassLog
         {
             get { return _noFileClassLog; }
-            set { _noFileClassLog = value; NotifyPropertyChanged(); }
+            set 
+            { 
+                _noFileClassLog = value;
+                if (!value) ShowRoboCopyProgress = false;
+                NotifyPropertyChanged(); 
+            }
         }
 
         private bool _noFileNameLog;
@@ -1408,7 +1456,12 @@
         public bool NoDirListLog
         {
             get { return _noDirListLog; }
-            set { _noDirListLog = value; NotifyPropertyChanged(); }
+            set 
+            { 
+                _noDirListLog = value;
+                if (!value) ShowRoboCopyProgress = false;
+                NotifyPropertyChanged(); 
+            }
         }
 
         //[Category("Logging Options")]
@@ -1429,7 +1482,12 @@
         public bool NoJobHeader
         {
             get { return _noJobHeader; }
-            set { _noJobHeader = value; NotifyPropertyChanged(); }
+            set 
+            { 
+                _noJobHeader = value;
+                if (!value) ShowRoboCopyProgress = false;
+                NotifyPropertyChanged(); 
+            }
         }
 
         private bool _noJobSummary;
@@ -1440,7 +1498,12 @@
         public bool NoJobSummary
         {
             get { return _noJobSummary; }
-            set { _noJobSummary = value; NotifyPropertyChanged(); }
+            set 
+            { 
+                _noJobSummary = value;
+                if (!value) ShowRoboCopyProgress = false;
+                NotifyPropertyChanged(); 
+            }
         }
 
         private bool _printByteSizes;
@@ -1451,7 +1514,12 @@
         public bool PrintByteSizes
         {
             get { return _printByteSizes; }
-            set { _printByteSizes = value; NotifyPropertyChanged(); }
+            set 
+            { 
+                _printByteSizes = value;
+                if (!value) ShowRoboCopyProgress = false;
+                NotifyPropertyChanged(); 
+            }
         }
 
         private bool _reportExtraFiles;
@@ -2016,6 +2084,22 @@
                 }
             }
             base.OnSelectionChanged(e);
+        }
+    }
+    public class ChoMultilineTextBoxEditor : Xceed.Wpf.Toolkit.PropertyGrid.Editors.ITypeEditor
+    {
+        public FrameworkElement ResolveEditor(Xceed.Wpf.Toolkit.PropertyGrid.PropertyItem propertyItem)
+        {
+            System.Windows.Controls.TextBox textBox = new System.Windows.Controls.TextBox();
+            textBox.AcceptsReturn = true;
+            //create the binding from the bound property item to the editor
+            var _binding = new Binding("Value"); //bind to the Value property of the PropertyItem
+            _binding.Source = propertyItem;
+            _binding.ValidatesOnExceptions = true;
+            _binding.ValidatesOnDataErrors = true;
+            _binding.Mode = propertyItem.IsReadOnly ? BindingMode.OneWay : BindingMode.TwoWay;
+            BindingOperations.SetBinding(textBox, System.Windows.Controls.TextBox.TextProperty, _binding);
+            return textBox;
         }
     }
 }

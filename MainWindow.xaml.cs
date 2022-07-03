@@ -87,6 +87,17 @@ namespace ChoEazyCopy
             {
                 _isRunning = value;
                 RaisePropertyChanged(nameof(IsRunning));
+                RaisePropertyChanged(nameof(IsNotRunning));
+            }
+        }
+        public bool IsNotRunning
+        {
+            get { return !_isRunning; }
+            set
+            {
+                _isRunning = !value;
+                RaisePropertyChanged(nameof(IsRunning));
+                RaisePropertyChanged(nameof(IsNotRunning));
             }
         }
 
@@ -105,7 +116,7 @@ namespace ChoEazyCopy
 
         public object ControlBackgroundBrush
         {
-            get 
+            get
             {
                 return ChoAppTheme.ControlBackgroundBrush;
             }
@@ -558,7 +569,8 @@ namespace ChoEazyCopy
                             null
                         );
                     }
-                }finally
+                }
+                finally
                 {
                 }
             }
@@ -732,6 +744,39 @@ namespace ChoEazyCopy
             }
         }
 
+        private bool _showRoboCopyProgress = false;
+        public bool ShowRoboCopyProgress
+        {
+            get { return _showRoboCopyProgress; }
+            set
+            {
+                _showRoboCopyProgress = value;
+                RaisePropertyChanged(nameof(ShowRoboCopyProgress));
+            }
+        }
+
+        private string _robocopyProgresssText = String.Empty;
+        public string RobocopyProgresssText
+        {
+            get { return _robocopyProgresssText; }
+            set
+            {
+                _robocopyProgresssText = value;
+                RaisePropertyChanged(nameof(RobocopyProgresssText));
+            }
+        }
+
+        private int _robocopyProgresssBarValue = 0;
+        public int RobocopyProgresssBarValue
+        {
+            get { return _robocopyProgresssBarValue; }
+            set
+            {
+                _robocopyProgresssBarValue = value;
+                RaisePropertyChanged(nameof(RobocopyProgresssBarValue));
+            }
+        }
+
         public MainWindow() :
             this(null)
         {
@@ -856,7 +901,7 @@ namespace ChoEazyCopy
             tabBackupTasks.IsSelected = BackupTaskTabActiveAtOpen;
             tabTaskQueue.IsSelected = TaskQueueTabActiveAtOpen;
             expControlPanel.IsExpanded = ControlPanelMinimized;
-            
+
             IsDirty = false;
 
             if (WatchForChanges)
@@ -930,7 +975,7 @@ namespace ChoEazyCopy
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            if (!AppStatusText.IsNullOrWhiteSpace() && AppStatusText != _defaultAppStatusText)
+            if (!AppStatusText.IsNullOrWhiteSpace() && AppStatusText != _defaultAppStatusText && !IsRunning)
             {
                 _appStatusResetTimer += 30;
                 if (_appStatusResetTimer % (30 * 100) == 0)
@@ -1023,6 +1068,7 @@ namespace ChoEazyCopy
             OpenTaskLogFileEnabled = selectedTaskQueueItem != null && File.Exists(selectedTaskQueueItem.LogFilePath) ? true : false;
 
             //tabControlPanel.IsEnabled = !IsRunning;
+            dpRoboCopyProgress.IsEnabled = !IsRunning;
             grpBackupTasks.IsEnabled = !IsRunning;
             pgAppSettings.Visibility = IsRunning ? Visibility.Collapsed : Visibility.Visible;
             txtPropertyGridWaterMark.Visibility = !IsRunning ? Visibility.Collapsed : Visibility.Visible;
@@ -1120,6 +1166,9 @@ namespace ChoEazyCopy
 
             try
             {
+                RobocopyProgresssBarValue = 0;
+                RobocopyProgresssText = "Analyzing RoboCopy operation...";
+
                 IsRunning = true;
 #if _DELAY_RUN_
                 Thread.Sleep(10 * 1000);
@@ -1127,8 +1176,13 @@ namespace ChoEazyCopy
                 _roboCopyManager = new ChoRoboCopyManager();
                 _roboCopyManager.Status += (sender, e) => SetStatusMsg(e.Message);
                 _roboCopyManager.AppStatus += (sender, e) => UpdateStatus(e.Message, e.Tag.ToNString());
+                _roboCopyManager.Progress += (sender, e) =>
+                {
+                    RobocopyProgresssBarValue = (int)(((double)e._runningBytes / e._totalBytes) * 100);
+                    RobocopyProgresssText = $"Copied {e._runningFileCount:N0} of {e._totalFileCount:N0} files; Copied {FileSizeFormatter.FormatSize(e._runningBytes)} of {FileSizeFormatter.FormatSize(e._totalBytes)}";
+                };
 
-                _roboCopyManager.Process(appSettings.RoboCopyFilePath, appSettings.GetCmdLineParams(), appSettings);
+                _roboCopyManager.Process(appSettings);
             }
             catch (ThreadAbortException)
             {
@@ -1142,6 +1196,8 @@ namespace ChoEazyCopy
             {
                 IsRunning = false;
                 _roboCopyManager = null;
+                if (RobocopyProgresssText == "Analyzing roboopy operation...")
+                    RobocopyProgresssText = String.Empty;
             }
         }
 
@@ -1305,6 +1361,8 @@ namespace ChoEazyCopy
 
         private bool SaveSettings(bool newFile)
         {
+            DisposeBackupTasksDirectoryWatcher();
+
             if (newFile || SettingsFilePath.IsNullOrWhiteSpace())
             {
                 SaveFileDialog dlg = new SaveFileDialog();
@@ -1331,6 +1389,10 @@ namespace ChoEazyCopy
             {
                 MessageBox.Show("Failed saving settings to file. {0}".FormatString(ex.Message), Caption, MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
+            }
+            finally
+            {
+                WatchBackupTasksDirectory();
             }
         }
 
@@ -1415,11 +1477,38 @@ namespace ChoEazyCopy
 
                 _appSettings.CopyFlags = String.Empty;
                 _appSettings.CopySubDirectories = false;
-               
+
                 _appSettings.MirrorDirTree = true;
                 _appSettings.CopyFilesWithFileInfo = true;
 
                 _appSettings.ExcludeExtraFilesAndDirs = true;
+                _appSettings.FallbackCopyFilesMode = true;
+                _appSettings.WaitTimeBetweenRetries = 1;
+                _appSettings.NoOfRetries = 2;
+
+                IsDirty = false;
+                SelectedBackupTaskItem = null;
+            }
+        }
+
+        private void btnNewMoveFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (SaveSettings())
+                return;
+
+            using (var x = new ChoWPFWaitCursor())
+            {
+                SettingsFilePath = null;
+                txtSourceDirectory.Text = String.Empty;
+                txtDestDirectory.Text = String.Empty;
+                txtStatus.Text = String.Empty;
+                _appSettings.Reset();
+
+                _appSettings.CopyFlags = String.Empty;
+                _appSettings.CopySubDirectories = false;
+
+                _appSettings.SetMoveFilesAndDirectories(ChoFileMoveAttributes.MoveDirectoriesAndFiles.ToString());
+
                 _appSettings.FallbackCopyFilesMode = true;
                 _appSettings.WaitTimeBetweenRetries = 1;
                 _appSettings.NoOfRetries = 2;
@@ -1458,7 +1547,7 @@ namespace ChoEazyCopy
             //_wndClosing = true;
             if (IsRunning)
             {
-                if (MessageBox.Show("File operation is in progress. Are you sure want to close the application?", Caption, MessageBoxButton.YesNo, 
+                if (MessageBox.Show("File operation is in progress. Are you sure want to close the application?", Caption, MessageBoxButton.YesNo,
                     MessageBoxImage.Stop) == MessageBoxResult.No)
                 {
                     e.Cancel = true;
@@ -1477,7 +1566,7 @@ namespace ChoEazyCopy
             e.Cancel = SaveSettings();
 
             if (!e.Cancel)
-            { 
+            {
                 try
                 {
                     BackupTaskTabActiveAtOpen = tabBackupTasks.IsSelected;
@@ -1502,7 +1591,7 @@ namespace ChoEazyCopy
                     SaveTaskQTaskItems();
                 }
                 catch { }
-            
+
                 ChoApplication.NotifyIcon.Dispose();
             }
         }
@@ -1520,13 +1609,13 @@ namespace ChoEazyCopy
         private void BtnDonate_Click(object sender, RoutedEventArgs e)
         {
             string url = "https://buy.stripe.com/8wMdSt5KogJGf969AE"; // "https://www.paypal.com/donate/?hosted_button_id=HB6J7QG73HMK8";
-    //        string url = "https://www.paypal.com/cgi-bin/webscr" +
-    //"?cmd=" + "_donations" +
-    //"&business=" + "cinchoofrx@gmail.com" +
-    //"&lc=" + "US" +
-    //"&item_name=" + "ChoEazyCopy Donation" +
-    //"&currency_code=" + "USD" +
-    //"&bn=" + "PP%2dDonationsBF";
+                                                                      //        string url = "https://www.paypal.com/cgi-bin/webscr" +
+                                                                      //"?cmd=" + "_donations" +
+                                                                      //"&business=" + "cinchoofrx@gmail.com" +
+                                                                      //"&lc=" + "US" +
+                                                                      //"&item_name=" + "ChoEazyCopy Donation" +
+                                                                      //"&currency_code=" + "USD" +
+                                                                      //"&bn=" + "PP%2dDonationsBF";
 
             System.Diagnostics.Process.Start(url);
         }
@@ -1592,6 +1681,15 @@ namespace ChoEazyCopy
         }
 
         private FileSystemWatcher _watcher;
+
+        private void DisposeBackupTasksDirectoryWatcher()
+        {
+            if (_watcher != null)
+                _watcher.Dispose();
+
+            _watcher = null;
+        }
+
         private void WatchBackupTasksDirectory()
         {
             if (_watcher != null)
@@ -1662,19 +1760,19 @@ namespace ChoEazyCopy
                             {
                                 BackupTaskInfos.Add(fi);
                             }
-                        //if (selectedBackupTaskInfo.IsNullOrWhiteSpace()
-                        //    || !BackupTaskInfos.Select(f => f.FilePath == selectedBackupTaskInfo).Any())
-                        //{
-                        //    var fi = BackupTaskInfos.FirstOrDefault();
-                        //    selectedBackupTaskInfo = fi != null ? fi.FilePath : null;
-                        //}
-                        if (!settingsFilePath.IsNullOrWhiteSpace() &&
-                                BackupTaskInfos.Where(f => f.FilePath == settingsFilePath).Any())
+                            //if (selectedBackupTaskInfo.IsNullOrWhiteSpace()
+                            //    || !BackupTaskInfos.Select(f => f.FilePath == selectedBackupTaskInfo).Any())
+                            //{
+                            //    var fi = BackupTaskInfos.FirstOrDefault();
+                            //    selectedBackupTaskInfo = fi != null ? fi.FilePath : null;
+                            //}
+                            if (!settingsFilePath.IsNullOrWhiteSpace() &&
+                                    BackupTaskInfos.Where(f => f.FilePath == settingsFilePath).Any())
                             {
                                 SelectedBackupTaskFilePath = BackupTaskInfos.Where(f => f.FilePath == settingsFilePath).First().FilePath;
                             }
-                        //WatchBackupTasksDirectory();
-                    }
+                            //WatchBackupTasksDirectory();
+                        }
                         finally
                         {
                             _isBackupTasksLoading = false;
@@ -2626,7 +2724,66 @@ namespace ChoEazyCopy
             return tmp;
         }
     }
+    public class BooleanToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is Boolean && (bool)value)
+            {
+                return Visibility.Visible;
+            }
+            return Visibility.Collapsed;
+        }
 
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is Visibility && (Visibility)value == Visibility.Visible)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+    public class BooleanToVisibilityInverterConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is Boolean && (bool)value)
+            {
+                return Visibility.Collapsed;
+            }
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is Visibility && (Visibility)value == Visibility.Visible)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
+    public class BooleanToVisibilityInverterConverterEx : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is Boolean && (bool)value)
+            {
+                return Visibility.Hidden;
+            }
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is Visibility && (Visibility)value == Visibility.Visible)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
     public class ExtendedPropertyGrid : PropertyGrid
     {
         protected override void OnFilterChanged(string oldValue, string newValue)
@@ -2689,8 +2846,8 @@ namespace ChoEazyCopy
             _accent = "Steel";
         }
         private static string _theme;
-        public static string Theme 
-        { 
+        public static string Theme
+        {
             get { return _theme; }
             set
             {
@@ -2720,4 +2877,19 @@ namespace ChoEazyCopy
         }
     }
 
+    public static class FileSizeFormatter
+    {
+        static readonly string[] suffixes = { "Bytes", "KB", "MB", "GB", "TB", "PB" };
+        public static string FormatSize(Int64 bytes)
+        {
+            int counter = 0;
+            decimal number = (decimal)bytes;
+            while (Math.Round(number / 1024) >= 1)
+            {
+                number = number / 1024;
+                counter++;
+            }
+            return string.Format("{0:n1}{1}", number, suffixes[counter]);
+        }
+    }
 }

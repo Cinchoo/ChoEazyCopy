@@ -197,6 +197,9 @@
         <local:BoolInverterConverter x:Key="BoolInverterConverter2"/>
         <local:BoolToBackgroundColorConverter x:Key="BoolToBackgroundColorConverter1"/>
         <local:BoolToForegroundColorConverter x:Key="BoolToForegroundColorConverter1"/>
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter1"/>
+        <local:BooleanToVisibilityInverterConverter x:Key="BooleanToVisibilityInverterConverter1"/>
+        <local:BooleanToVisibilityInverterConverterEx x:Key="BooleanToVisibilityInverterConverterEx1"/>
         <local:MathConverter x:Key="MathConverter"/>
 
         <Style TargetType="{x:Type local:ChoMruComboBox}" >
@@ -247,7 +250,7 @@
                 </ColumnDefinition>
             </Grid.ColumnDefinitions>
             <DockPanel Grid.Column="0" LastChildFill="true">
-                <Ribbon DockPanel.Dock="Top" x:Name="RibbonWin" SelectedIndex="0" Loaded="RibbonWin_Loaded" MinWidth="500" ContextMenu="{x:Null}"
+                <Ribbon DockPanel.Dock="Top" x:Name="RibbonWin" SelectedIndex="0" Loaded="RibbonWin_Loaded" MinWidth="500" Margin="0,0,5,0" ContextMenu="{x:Null}"
                         Background="{Binding ControlBackgroundBrush}"
                         Foreground="{Binding ControlForegroundBrush}">
                     <Ribbon.ApplicationMenu>
@@ -277,6 +280,10 @@
                                     Header="Copy Job"
                                     ImageSource="Resources\CopyJob.png" ToolTip="With the Copy job all new and modified files of source folder are also copied to destination folder. However files and folders which previously has been copied to the destination folder but doesn't exist anymore when the job runs, will be kept in the destination folder."
                                     Click="btnNewCopyFile_Click"  ContextMenu="{x:Null}"/>
+                                <RibbonMenuItem 
+                                    Header="Move Job"
+                                    ImageSource="Resources\MoveJob.png" ToolTip="With the Move job, move all files/folders from source location to destination location. All successfull moved files/folders are removed from the source."
+                                    Click="btnNewMoveFile_Click"  ContextMenu="{x:Null}"/>
                             </RibbonMenuButton>
                             <RibbonButton x:Name="btnOpenFile" SmallImageSource="Resources\OpenFile.png" Label="Open" KeyTip="O" Click="btnOpenFile_Click"  ContextMenu="{x:Null}"/>
                             <RibbonButton x:Name="btnSaveFile" SmallImageSource="Resources\SaveFile.png" Label="Save" KeyTip="S" Click="btnSaveFile_Click"  ContextMenu="{x:Null}"/>
@@ -434,6 +441,43 @@
                             </Grid>
                         </GroupBox>
                     </Grid>
+                    <GroupBox DockPanel.Dock="Bottom" Visibility="{Binding Path=AppSettings.ListOnly, Converter={StaticResource BooleanToVisibilityInverterConverter1}}"
+                              IsEnabled="{Binding IsNotRunning}">
+                        <GroupBox.Header>
+                            <DockPanel LastChildFill="True">
+                                <CheckBox DockPanel.Dock="Right" Content="SHOW PROGRESS" IsChecked="{Binding Path=AppSettings.ShowRoboCopyProgress}"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                        Style="{DynamicResource MetroCheckBox}">
+                                    <CheckBox.Foreground>
+                                        <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                            <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                        </MultiBinding>
+                                    </CheckBox.Foreground>
+                                </CheckBox>
+                                <TextBlock Text="ROBOCOPY PROGRESS" VerticalAlignment="Center"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                    <TextBlock.Foreground>
+                                        <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                            <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                        </MultiBinding>
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+                            </DockPanel>
+                        </GroupBox.Header>
+
+                        <DockPanel x:Name="dpRoboCopyProgress" LastChildFill="true" >
+                            <TextBlock DockPanel.Dock="Top" Text="Robocopy progress disabled." Visibility="{Binding Path=AppSettings.ShowRoboCopyProgress, Converter={StaticResource BooleanToVisibilityInverterConverter1}}" ></TextBlock>
+                            <TextBlock DockPanel.Dock="Top" Text="{Binding RobocopyProgresssText}" Visibility="{Binding Path=AppSettings.ShowRoboCopyProgress, Converter={StaticResource BooleanToVisibilityConverter1}}" ></TextBlock>
+                            <Grid Visibility="{Binding Path=AppSettings.ShowRoboCopyProgress, Converter={StaticResource BooleanToVisibilityConverter1}}">
+                                <ProgressBar x:Name="pbar" Margin="0,5,0,5" Minimum="0" Maximum="100" Value="{Binding RobocopyProgresssBarValue}" Height="15" HorizontalAlignment="Stretch" />
+                                <TextBlock HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center" Text="{Binding ElementName=pbar, Path=Value, StringFormat={}{0:0}%}"></TextBlock>
+                            </Grid>
+                        </DockPanel>
+                    </GroupBox>
                     <Grid
             Width="Auto">
                         <Grid.ColumnDefinitions>
@@ -447,7 +491,7 @@
                     Height="Auto" />
                             <RowDefinition
                     Height="*"
-                    MinHeight="100" />
+                                />
                         </Grid.RowDefinitions>
                         <GroupBox
                             Margin="5,0,5,0"
@@ -902,8 +946,8 @@
                 </TabControl>
             </Expander>
 
-            <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" 
-                          ResizeDirection="Columns" Background="{Binding ControlBackgroundBrush}" />
+            <GridSplitter Grid.Column="1" Width="1" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" 
+                          ResizeDirection="Columns" Background="{Binding TextBoxFocusBorderBrush}" />
         </Grid>
     </DockPanel>
 </Controls:MetroWindow>

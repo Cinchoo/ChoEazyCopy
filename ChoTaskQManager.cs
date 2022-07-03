@@ -77,7 +77,7 @@ namespace ChoEazyCopy
                     _roboCopyManager.Status += (sender, e) => log.Write(e.Message);
                     //_roboCopyManager.AppStatus += (sender, e) => UpdateStatus(e.Message, e.Tag.ToNString());
 
-                    _roboCopyManager.Process(appSettings.RoboCopyFilePath, appSettings.GetCmdLineParams(), appSettings);
+                    _roboCopyManager.Process(appSettings);
                 }
 
                 taskQueueItem.Status = TaskStatus.Completed;

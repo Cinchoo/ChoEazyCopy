@@ -56,5 +56,5 @@ using ChoEazyCopy;
 [assembly: AssemblyVersion("2.0.0.2")]
 [assembly: AssemblyFileVersion("2.0.0.2")]
 [assembly: ChoShellFileAssociation(AppHost.AppFileExt)]
-[assembly: ChoAssemblyBetaVersion("beta1")]
+[assembly: ChoAssemblyBetaVersion("beta2")]
 

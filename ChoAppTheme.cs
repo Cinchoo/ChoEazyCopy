@@ -1,6 +1,9 @@
-﻿using System;
+﻿using MahApps.Metro;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -8,53 +11,166 @@ using System.Windows.Media;
 
 namespace ChoEazyCopy
 {
-    public static class ChoAppTheme
+    public class ChoAppTheme : INotifyPropertyChanged
     {
-        public static Brush TextBoxFocusBorderBrush
+        public static readonly ChoAppTheme Instance = new ChoAppTheme();
+
+        private Accent _accent = ThemeManager.GetAccent("Blue");
+        private AppTheme _appTheme = ThemeManager.GetAppTheme("BaseDark");
+        private bool _isDarkMode = false;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void Refresh(Accent accent, AppTheme appTheme, bool isDarkMode)
+        {
+            _accent = accent;
+            _appTheme = appTheme;
+            _isDarkMode = isDarkMode;
+
+            RaisePropertyChanged(nameof(ControlBackgroundBrush));
+            RaisePropertyChanged(nameof(ControlForegroundBrush));
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public Brush TextBoxFocusBorderBrush
         {
             get
             {
-                return (Brush)MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current.MainWindow).Item1.Resources["TextBoxFocusBorderBrush"];
+                return (Brush)_appTheme.Resources["TextBoxFocusBorderBrush"];
             }
         }
 
-        public static Brush ControlMouseOverBackgroundBrush
+        public Brush ControlMouseOverBackgroundBrush
         {
             get
             {
-                return (Brush)MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current.MainWindow).Item1.Resources["GrayHoverBrush"];
+                return (Brush)_appTheme.Resources["GrayHoverBrush"];
             }
         }
 
-        public static Brush ControlBackgroundBrush
+        public Brush ControlBackgroundBrush
         {
             get
             {
-                return (Brush)MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current.MainWindow).Item1.Resources["ControlBackgroundBrush"];
+                if (_isDarkMode)
+                    return (Brush)_appTheme.Resources["BlackBrush"];
+                else
+                    return (Brush)_appTheme.Resources["WhiteBrush"];
             }
         }
 
-        public static Brush ControlForegroundBrush
+        public Brush ControlForegroundBrush
         {
             get
             {
-                return (Brush)MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current.MainWindow).Item1.Resources["TextBrush"];
+                if (_isDarkMode)
+                    return new SolidColorBrush(Colors.White);
+                else
+                    return new SolidColorBrush(Colors.Black);
+                if (!_isDarkMode)
+                    return (Brush)_appTheme.Resources["BlackBrush"];
+                else
+                    return (Brush)_appTheme.Resources["WhiteBrush"];
             }
         }
 
-        public static Brush ControlBorderBrush
+        public Brush PGControlBackgroundBrush
         {
             get
             {
-                return (Brush)MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current.MainWindow).Item1.Resources["ControlBorderBrush"];
+                //if (_isDarkMode)
+                //    return (Brush)_appTheme.Resources["WhiteBrush"];
+                //else
+                return System.Windows.SystemColors.ControlLightBrush;
             }
         }
 
-        public static Brush WindowTitleColorBrush
+        public Brush PGControlForegroundBrush
         {
             get
             {
-                return (Brush)MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current.MainWindow).Item1.Resources["WindowTitleColorBrush"];
+                if (_isDarkMode)
+                    return (Brush)_appTheme.Resources["WhiteBrush"];
+                else
+                    return (Brush)_appTheme.Resources["BlackBrush"];
+            }
+        }
+
+        public Brush PGControlBorderBrush
+        {
+            get
+            {
+                return (Brush)_appTheme.Resources["ControlBorderBrush"];
+            }
+        }
+
+        public Brush ControlBorderBrush
+        {
+            get
+            {
+                return (Brush)_appTheme.Resources["ControlBorderBrush"];
+            }
+        }
+
+        public Brush WindowTitleColorBrush
+        {
+            get
+            {
+                return (Brush)_appTheme.Resources["WindowTitleColorBrush"];
+            }
+        }
+
+        public Brush ThemeForegroundBrush
+        {
+            get
+            {
+                return (Brush)_appTheme.Resources["BlackBrush"];
+            }
+        }
+
+        public Brush ThemeBackgroundBrush
+        {
+            get
+            {
+                return (Brush)_accent.Resources["AccentColorBrush"];
+            }
+        }
+
+        public Brush WindowTitleBrush
+        {
+            get
+            {
+                return (Brush)_appTheme.Resources["WindowTitleColorBrush"];
+            }
+        }
+        public Brush MouseOverBrush
+        {
+            get
+            {
+                return (Brush)_appTheme.Resources["ButtonMouseOverBorderBrush"];
+            }
+        }
+
+        public Brush TabControlBackgroundBrush
+        {
+            get
+            {
+                return (Brush)_accent.Resources["AccentColorBrush"];
+            }
+        }
+
+        public Brush TabControlForegroundBrush
+        {
+            get
+            {
+                //if (!_isDarkMode)
+                //    return (Brush)_appTheme.Resources["BlackBrush"];
+                //else
+                    return (Brush)_appTheme.Resources["WhiteBrush"];
             }
         }
     }

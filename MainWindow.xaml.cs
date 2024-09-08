@@ -4,6 +4,7 @@ using Cinchoo.Core.Diagnostics;
 using Cinchoo.Core.Reflection;
 using Cinchoo.Core.Win32.Dialogs;
 using Cinchoo.Core.WPF;
+using ICSharpCode.AvalonEdit.Rendering;
 using MahApps.Metro;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
@@ -32,7 +33,8 @@ using System.Windows.Navigation;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
-using Xceed.Wpf.Toolkit.PropertyGrid;
+//using Xceed.Wpf.Toolkit.PropertyGrid;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace ChoEazyCopy
 {
@@ -45,7 +47,15 @@ namespace ChoEazyCopy
 
         #region Instance Members (Private)
 
-        internal static string Caption;
+        private static string _caption;
+        internal static string Caption
+        {
+            get { return _caption; }
+            set
+            {
+                _caption = value;
+            }
+        }
         private ChoObservableMruList<string> _recentNumbersList;
         private ChoRoboCopyManager _roboCopyManager = null;
         private DispatcherTimer _dispatcherTimer;
@@ -106,35 +116,134 @@ namespace ChoEazyCopy
             get;
             set;
         }
-        public object ControlMouseOverBackgroundBrush
+        private Brush _controlMouseOverBackgroundBrush;
+        public Brush ControlMouseOverBackgroundBrush
         {
-            get
-            {
-                return ChoAppTheme.ControlMouseOverBackgroundBrush;
+            get { return _controlMouseOverBackgroundBrush; }
+            set 
+            { 
+                _controlMouseOverBackgroundBrush = value; 
+                RaisePropertyChanged(nameof(ControlMouseOverBackgroundBrush));
             }
         }
 
-        public object ControlBackgroundBrush
+        private Brush _controlBackgroundBrush;
+        public Brush ControlBackgroundBrush
         {
-            get
+            get { return _controlBackgroundBrush; }
+            set
             {
-                return ChoAppTheme.ControlBackgroundBrush;
+                _controlBackgroundBrush = value;
+                RaisePropertyChanged(nameof(ControlBackgroundBrush));
             }
         }
 
-        public object ControlForegroundBrush
+        private Brush _controlForegroundBrush;
+        public Brush ControlForegroundBrush
         {
-            get
+            get { return _controlForegroundBrush; }
+            set
             {
-                return ChoAppTheme.ControlForegroundBrush;
+                _controlForegroundBrush = value;
+                RaisePropertyChanged(nameof(ControlForegroundBrush));
             }
         }
 
-        public object TextBoxFocusBorderBrush
+        private Brush _tabControlBackgroundBrush;
+        public Brush TabControlBackgroundBrush
         {
-            get
+            get { return _tabControlBackgroundBrush; }
+            set
             {
-                return ChoAppTheme.TextBoxFocusBorderBrush;
+                _tabControlBackgroundBrush = value;
+                RaisePropertyChanged(nameof(TabControlBackgroundBrush));
+            }
+        }
+
+        private Brush _tabControlForegroundBrush;
+        public Brush TabControlForegroundBrush
+        {
+            get { return _tabControlForegroundBrush; }
+            set
+            {
+                _tabControlForegroundBrush = value;
+                RaisePropertyChanged(nameof(TabControlForegroundBrush));
+            }
+        }
+
+        private Brush _PGControlBackgroundBrush;
+        public Brush PGControlBackgroundBrush
+        {
+            get { return _PGControlBackgroundBrush; }
+            set
+            {
+                _PGControlBackgroundBrush = value;
+                RaisePropertyChanged(nameof(PGControlBackgroundBrush));
+            }
+        }
+
+        private Brush _PGControlForegroundBrush;
+        public Brush PGControlForegroundBrush
+        {
+            get { return _PGControlForegroundBrush; }
+            set
+            {
+                _PGControlForegroundBrush = value;
+                RaisePropertyChanged(nameof(PGControlForegroundBrush));
+            }
+        }
+
+        private Brush _PGControlBorderBrush;
+        public Brush PGControlBorderBrush
+        {
+            get { return _PGControlBorderBrush; }
+            set
+            {
+                _PGControlBorderBrush = value;
+                RaisePropertyChanged(nameof(PGControlBorderBrush));
+            }
+        }
+
+        private Brush _textBoxFocusBorderBrush;
+        public Brush TextBoxFocusBorderBrush
+        {
+            get { return _textBoxFocusBorderBrush; }
+            set
+            {
+                _textBoxFocusBorderBrush = value;
+                RaisePropertyChanged(nameof(TextBoxFocusBorderBrush));
+            }
+        }
+
+        private Brush _themeForegroundBrush;
+        public Brush ThemeForegroundBrush
+        {
+            get { return _themeForegroundBrush; }
+            set
+            {
+                _themeForegroundBrush = value;
+                RaisePropertyChanged(nameof(ThemeForegroundBrush));
+            }
+        }
+
+        private Brush _themeBackgroundBrush;
+        public Brush ThemeBackgroundBrush
+        {
+            get { return _themeBackgroundBrush; }
+            set
+            {
+                _themeBackgroundBrush = value;
+                RaisePropertyChanged(nameof(ThemeBackgroundBrush));
+            }
+        }
+        private Brush _mouseOverBrush;
+        public Brush MouseOverBrush
+        {
+            get { return _mouseOverBrush; }
+            set
+            {
+                _mouseOverBrush = value;
+                RaisePropertyChanged(nameof(MouseOverBrush));
             }
         }
         private bool _isDirty = false;
@@ -520,8 +629,8 @@ namespace ChoEazyCopy
 
         #endregion Instance Members (Private)
 
-        private BackupTaskInfo _selectedBackupTaskItem;
-        public BackupTaskInfo SelectedBackupTaskItem
+        private ChoBackupTaskInfo _selectedBackupTaskItem;
+        public ChoBackupTaskInfo SelectedBackupTaskItem
         {
             get { return _selectedBackupTaskItem; }
             set
@@ -608,8 +717,8 @@ namespace ChoEazyCopy
             }
         }
 
-        private ObservableCollection<BackupTaskInfo> _backupTaskInfos = new ObservableCollection<BackupTaskInfo>();
-        public ObservableCollection<BackupTaskInfo> BackupTaskInfos
+        private ObservableCollection<ChoBackupTaskInfo> _backupTaskInfos = new ObservableCollection<ChoBackupTaskInfo>();
+        public ObservableCollection<ChoBackupTaskInfo> BackupTaskInfos
         {
             get { return _backupTaskInfos; }
             set
@@ -958,6 +1067,7 @@ namespace ChoEazyCopy
 
         private void Window_Loaded(object sender1, RoutedEventArgs e1)
         {
+            ChangeTheme();
         }
 
         public void RefreshWindow()
@@ -1105,12 +1215,31 @@ namespace ChoEazyCopy
 
         private void btnSourceDirBrowse_Click(object sender, RoutedEventArgs e)
         {
+            if (CommonFileDialog.IsPlatformSupported)
+            {
+                var dialog = new CommonOpenFileDialog();
+                dialog.Title = "Choose source folder...";
+                dialog.IsFolderPicker = true;
+                dialog.InitialDirectory = (System.IO.Directory.Exists(txtSourceDirectory.Text)) ? txtSourceDirectory.Text : "";
+
+                CommonFileDialogResult result1 = dialog.ShowDialog();
+                if (result1 == CommonFileDialogResult.Ok)
+                {
+                    if (Directory.Exists(dialog.FileName))
+                        txtSourceDirectory.Text = dialog.FileName;
+                    else
+                        txtSourceDirectory.Text = System.IO.Path.GetDirectoryName(dialog.FileName);
+                }
+
+                return;
+            }
+
             ChoFolderBrowserDialog dlg1 = new ChoFolderBrowserDialog
             {
                 Description = "Choose source folder...",
                 ShowNewFolderButton = true,
                 ShowEditBox = true,
-                ShowBothFilesAndFolders = false,
+                ShowBothFilesAndFolders = true,
                 NewStyle = true,
                 SelectedPath = (System.IO.Directory.Exists(txtSourceDirectory.Text)) ? txtSourceDirectory.Text : "",
                 ShowFullPathInEditBox = false,
@@ -1130,6 +1259,25 @@ namespace ChoEazyCopy
 
         private void btnDestDirBrowse_Click(object sender, RoutedEventArgs e)
         {
+            if (CommonFileDialog.IsPlatformSupported)
+            {
+                var dialog = new CommonOpenFileDialog();
+                dialog.Title = "Choose copy/move folder to...";
+                dialog.IsFolderPicker = true;
+                dialog.InitialDirectory = (System.IO.Directory.Exists(txtDestDirectory.Text)) ? txtDestDirectory.Text : "";
+
+                CommonFileDialogResult result1 = dialog.ShowDialog();
+                if (result1 == CommonFileDialogResult.Ok)
+                {
+                    if (Directory.Exists(dialog.FileName))
+                        txtDestDirectory.Text = dialog.FileName;
+                    else
+                        txtDestDirectory.Text = System.IO.Path.GetDirectoryName(dialog.FileName);
+                }
+
+                return;
+            }
+
             ChoFolderBrowserDialog dlg1 = new ChoFolderBrowserDialog
             {
                 Description = "Choose copy/move folder to...",
@@ -1179,7 +1327,7 @@ namespace ChoEazyCopy
                 _roboCopyManager.Progress += (sender, e) =>
                 {
                     RobocopyProgresssBarValue = (int)(((double)e._runningBytes / e._totalBytes) * 100);
-                    RobocopyProgresssText = $"Copied {e._runningFileCount:N0} of {e._totalFileCount:N0} files; Copied {FileSizeFormatter.FormatSize(e._runningBytes)} of {FileSizeFormatter.FormatSize(e._totalBytes)}";
+                    RobocopyProgresssText = $"Copied {e._runningFileCount:N0} of {e._totalFileCount:N0} files; Copied {ChoFileSizeFormatter.FormatSize(e._runningBytes)} of {ChoFileSizeFormatter.FormatSize(e._totalBytes)}";
                 };
 
                 _roboCopyManager.Process(appSettings);
@@ -1415,16 +1563,27 @@ namespace ChoEazyCopy
 
         private void OpenSettingsFile(string settingsFileName)
         {
-            using (var x = new ChoWPFWaitCursor())
+            try
             {
-                SettingsFilePath = settingsFileName;
-                //_appSettings.Reset();
-                if (File.Exists(SettingsFilePath))
-                    _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
-                //else
-                //    btnNewFile_Click(null, null);
-                txtStatus.Text = String.Empty;
-                IsDirty = false;
+                using (var x = new ChoWPFWaitCursor())
+                {
+                    SettingsFilePath = settingsFileName;
+                    //_appSettings.Reset();
+                    if (File.Exists(SettingsFilePath))
+                        _appSettings.LoadXml(File.ReadAllText(SettingsFilePath));
+                    //else
+                    //    btnNewFile_Click(null, null);
+                    txtStatus.Text = String.Empty;
+                    IsDirty = false;
+                }
+            } 
+            catch (Exception ex)
+            {
+                string errMsg = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                MessageBox.Show($"Failed to load `{Path.GetFileName(settingsFileName)}` task. {errMsg}",
+                    Caption, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                NewSettingsFile();
             }
         }
 
@@ -1448,7 +1607,8 @@ namespace ChoEazyCopy
                 txtDestDirectory.Text = String.Empty;
                 txtStatus.Text = String.Empty;
                 _appSettings.Reset();
-                _appSettings.CopyFlags = String.Empty;
+                _appSettings.CopyFileFlags = ChoCopyFileFlags.None;
+                _appSettings.CopyDirFlags = ChoCopyDirFlags.None;
                 _appSettings.CopySubDirectories = false;
 
                 _appSettings.MirrorDirTree = true;
@@ -1475,7 +1635,8 @@ namespace ChoEazyCopy
                 txtStatus.Text = String.Empty;
                 _appSettings.Reset();
 
-                _appSettings.CopyFlags = String.Empty;
+                _appSettings.CopyFileFlags = ChoCopyFileFlags.None;
+                _appSettings.CopyDirFlags = ChoCopyDirFlags.None;
                 _appSettings.CopySubDirectories = false;
 
                 _appSettings.MirrorDirTree = true;
@@ -1504,10 +1665,11 @@ namespace ChoEazyCopy
                 txtStatus.Text = String.Empty;
                 _appSettings.Reset();
 
-                _appSettings.CopyFlags = String.Empty;
+                _appSettings.CopyFileFlags = ChoCopyFileFlags.None;
+                _appSettings.CopyDirFlags = ChoCopyDirFlags.None;
                 _appSettings.CopySubDirectories = false;
 
-                _appSettings.SetMoveFilesAndDirectories(ChoFileMoveAttributes.MoveDirectoriesAndFiles.ToString());
+                _appSettings.SetMoveFilesAndDirectories(ChoFileMoveAttributes.MoveDirectoriesAndFiles);
 
                 _appSettings.FallbackCopyFilesMode = true;
                 _appSettings.WaitTimeBetweenRetries = 1;
@@ -1569,8 +1731,8 @@ namespace ChoEazyCopy
             {
                 try
                 {
-                    BackupTaskTabActiveAtOpen = tabBackupTasks.IsSelected;
-                    TaskQueueTabActiveAtOpen = tabTaskQueue.IsSelected;
+                    //BackupTaskTabActiveAtOpen = tabBackupTasks.IsSelected;
+                    //TaskQueueTabActiveAtOpen = tabTaskQueue.IsSelected;
                     ControlPanelMinimized = expControlPanel.IsExpanded;
 
                     var up = new ChoUserPreferences();
@@ -1622,6 +1784,11 @@ namespace ChoEazyCopy
 
         private void btnHelp_Click(object sender, RoutedEventArgs e)
         {
+//#if DEBUG
+//            ChoSystemColorsWindow wnd = new ChoSystemColorsWindow();
+//            wnd.Show();
+//            return;
+//#endif
             try
             {
                 System.Diagnostics.Process.Start("https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy");
@@ -1650,6 +1817,30 @@ namespace ChoEazyCopy
         {
             if (!SaveSettings())
             {
+                if (CommonFileDialog.IsPlatformSupported)
+                {
+                    var dialog = new CommonOpenFileDialog();
+                    dialog.Title = "Choose Backup Tasks folder...";
+                    dialog.IsFolderPicker = true;
+                    dialog.InitialDirectory = (System.IO.Directory.Exists(BackupTaskDirectory)) ? BackupTaskDirectory : "";
+
+                    CommonFileDialogResult result1 = dialog.ShowDialog();
+                    if (result1 == CommonFileDialogResult.Ok)
+                    {
+                        if (Directory.Exists(dialog.FileName))
+                            BackupTaskDirectory = dialog.FileName;
+                        else
+                            BackupTaskDirectory = System.IO.Path.GetDirectoryName(dialog.FileName);
+
+                        var up = new ChoUserPreferences();
+                        up.BackupTaskDirectory = BackupTaskDirectory;
+                        up.Save();
+
+                    }
+
+                    return;
+                }
+
                 ChoFolderBrowserDialog dlg1 = new ChoFolderBrowserDialog
                 {
                     Description = "Choose Backup Tasks folder...",
@@ -1756,7 +1947,7 @@ namespace ChoEazyCopy
                             }
 
                             foreach (var fi in Directory.GetFiles(backupTasksDir, $"*{AppHost.AppFileExt}").Take(1000)
-                                .Select(f => new BackupTaskInfo(f)))
+                                .Select(f => new ChoBackupTaskInfo(f)))
                             {
                                 BackupTaskInfos.Add(fi);
                             }
@@ -1909,7 +2100,7 @@ namespace ChoEazyCopy
                 var clonedTaskFilePath = GetNextCloneTaskFileName(SelectedBackupTaskFilePath);
                 try
                 {
-                    var bfi = new BackupTaskInfo(SelectedBackupTaskFilePath);
+                    var bfi = new ChoBackupTaskInfo(SelectedBackupTaskFilePath);
                     File.Copy(SelectedBackupTaskFilePath, clonedTaskFilePath, true);
                     if (KeepDateCreated)
                         File.SetCreationTime(clonedTaskFilePath, bfi.CreatedDate);
@@ -1917,7 +2108,7 @@ namespace ChoEazyCopy
                         File.SetLastWriteTime(clonedTaskFilePath, bfi.ModifiedDate);
 
                     //ReloadBackupTasks();
-                    BackupTaskInfos.Add(new BackupTaskInfo(clonedTaskFilePath));
+                    BackupTaskInfos.Add(new ChoBackupTaskInfo(clonedTaskFilePath));
                     SelectedBackupTaskFilePath = clonedTaskFilePath;
                 }
                 catch (Exception ex)
@@ -2118,9 +2309,47 @@ namespace ChoEazyCopy
 
         private void mnuDarkTheme_Click(object sender, RoutedEventArgs e)
         {
-            ThemeManager.ChangeAppStyle(Application.Current,
-                            ThemeManager.GetAccent("Steel"),
-                            ThemeManager.GetAppTheme("BaseLight"));
+            bool darkMode = mnuDarkTheme.IsChecked;
+
+            ChangeTheme(darkMode);
+            ChangeTheme(!darkMode);
+            ChangeTheme(darkMode);
+        }
+
+        private void ChangeTheme(bool darkMode = false)
+        {
+            MainWindow wnd = Application.Current.MainWindow as MainWindow;
+            Accent accent = null;
+            AppTheme appTheme = null;
+
+            if (!darkMode)
+            {
+                accent = ThemeManager.GetAccent("Steel");
+                appTheme = ThemeManager.GetAppTheme("BaseLight");
+            }
+            else
+            {
+                accent = ThemeManager.GetAccent("Steel");
+                appTheme = ThemeManager.GetAppTheme("BaseDark");
+            }
+            ChoAppTheme.Instance.Refresh(accent, appTheme, darkMode);
+            ThemeManager.ChangeAppStyle(wnd, accent, appTheme);
+
+            ControlMouseOverBackgroundBrush =  ChoAppTheme.Instance.ControlMouseOverBackgroundBrush;
+            ControlBackgroundBrush = ChoAppTheme.Instance.ControlBackgroundBrush;
+            ControlForegroundBrush = ChoAppTheme.Instance.ControlForegroundBrush;
+            PGControlBackgroundBrush = ChoAppTheme.Instance.PGControlBackgroundBrush;
+            PGControlForegroundBrush = ChoAppTheme.Instance.PGControlForegroundBrush;
+            PGControlBorderBrush = ChoAppTheme.Instance.PGControlBorderBrush;
+            TextBoxFocusBorderBrush = ChoAppTheme.Instance.TextBoxFocusBorderBrush;
+            ThemeForegroundBrush = ChoAppTheme.Instance.ThemeForegroundBrush;
+            ThemeBackgroundBrush = ChoAppTheme.Instance.ThemeBackgroundBrush;
+            MouseOverBrush = ChoAppTheme.Instance.MouseOverBrush;
+            TabControlBackgroundBrush = ChoAppTheme.Instance.TabControlBackgroundBrush;
+            TabControlForegroundBrush = ChoAppTheme.Instance.TabControlForegroundBrush;
+
+            //txtStatus.TextArea.TextView.Redraw();
+            txtStatus.TextArea.TextView.LineTransformers.Add(new LineColorizer(ControlForegroundBrush, null));
         }
 
         private void btnFindBackupTaskDirectoryInFileExplorer_Click(object sender, RoutedEventArgs e)
@@ -2496,315 +2725,25 @@ namespace ChoEazyCopy
             catch { }
 
         }
-    }
 
-    public class BackupTaskInfo
-    {
-        public string TaskName { get; set; }
-        public string FileName { get; set; }
-        public string FilePath { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
-
-        public BackupTaskInfo(string filePath)
+        private void txtStatus_KeyDown(object sender, KeyEventArgs e)
         {
-            var fi = new FileInfo(filePath);
-
-            TaskName = Path.GetFileNameWithoutExtension(filePath);
-            FilePath = filePath;
-            FileName = Path.GetFileName(filePath);
-            CreatedDate = fi.CreationTime;
-            ModifiedDate = fi.LastWriteTime;
+            e.Handled = true;
+            base.OnKeyDown(e);
         }
     }
 
-    public class BoolInverterConverter : IValueConverter
-    {
-        #region IValueConverter Members
+    //public class ExtendedPropertyGrid : PropertyGrid
+    //{
+    //    protected override void OnFilterChanged(string oldValue, string newValue)
+    //    {
+    //        newValue = newValue.ToLower();
+    //        CollectionViewSource.GetDefaultView((object)this.Properties).Filter
+    //            = (item => (item as PropertyItem).DisplayName.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0
+    //            || (item as PropertyItem).Description.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0);
+    //    }
+    //}
 
-        public object Convert(object value, Type targetType, object parameter,
-            System.Globalization.CultureInfo culture)
-        {
-            if (value is bool)
-            {
-                return !(bool)value;
-            }
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter,
-            System.Globalization.CultureInfo culture)
-        {
-            if (value is bool)
-            {
-                return !(bool)value;
-            }
-            return value;
-        }
-
-        #endregion
-    }
-    public class BoolToBackgroundColorConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var val = (bool)value;
-            if (val)
-                return SystemColors.WindowBrush; // ChoAppTheme.ControlBackgroundBrush;
-            else
-                return Brushes.Red;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    public class BoolToForegroundColorConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var val = (bool)value;
-            if (val)
-                return SystemColors.WindowTextBrush; // ChoAppTheme.ControlBackgroundBrush;
-            else
-                return Brushes.White;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    public class MathConverter : IValueConverter
-    {
-        private static readonly char[] _allOperators = new[] { '+', '-', '*', '/', '%', '(', ')' };
-
-        private static readonly List<string> _grouping = new List<string> { "(", ")" };
-        private static readonly List<string> _operators = new List<string> { "+", "-", "*", "/", "%" };
-
-        #region IValueConverter Members
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            // Parse value into equation and remove spaces
-            var mathEquation = parameter as string;
-            mathEquation = mathEquation.Replace(" ", "");
-            mathEquation = mathEquation.Replace("@VALUE", value.ToString());
-
-            // Validate values and get list of numbers in equation
-            var numbers = new List<double>();
-            double tmp;
-
-            foreach (string s in mathEquation.Split(_allOperators))
-            {
-                if (s != string.Empty)
-                {
-                    if (double.TryParse(s, out tmp))
-                    {
-                        numbers.Add(tmp);
-                    }
-                    else
-                    {
-                        // Handle Error - Some non-numeric, operator, or grouping character found in string
-                        throw new InvalidCastException();
-                    }
-                }
-            }
-
-            // Begin parsing method
-            EvaluateMathString(ref mathEquation, ref numbers, 0);
-
-            // After parsing the numbers list should only have one value - the total
-            return numbers[0];
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        // Evaluates a mathematical string and keeps track of the results in a List<double> of numbers
-        private void EvaluateMathString(ref string mathEquation, ref List<double> numbers, int index)
-        {
-            // Loop through each mathemtaical token in the equation
-            string token = GetNextToken(mathEquation);
-
-            while (token != string.Empty)
-            {
-                // Remove token from mathEquation
-                mathEquation = mathEquation.Remove(0, token.Length);
-
-                // If token is a grouping character, it affects program flow
-                if (_grouping.Contains(token))
-                {
-                    switch (token)
-                    {
-                        case "(":
-                            EvaluateMathString(ref mathEquation, ref numbers, index);
-                            break;
-
-                        case ")":
-                            return;
-                    }
-                }
-
-                // If token is an operator, do requested operation
-                if (_operators.Contains(token))
-                {
-                    // If next token after operator is a parenthesis, call method recursively
-                    string nextToken = GetNextToken(mathEquation);
-                    if (nextToken == "(")
-                    {
-                        EvaluateMathString(ref mathEquation, ref numbers, index + 1);
-                    }
-
-                    // Verify that enough numbers exist in the List<double> to complete the operation
-                    // and that the next token is either the number expected, or it was a ( meaning
-                    // that this was called recursively and that the number changed
-                    if (numbers.Count > (index + 1) &&
-                        (double.Parse(nextToken) == numbers[index + 1] || nextToken == "("))
-                    {
-                        switch (token)
-                        {
-                            case "+":
-                                numbers[index] = numbers[index] + numbers[index + 1];
-                                break;
-                            case "-":
-                                numbers[index] = numbers[index] - numbers[index + 1];
-                                break;
-                            case "*":
-                                numbers[index] = numbers[index] * numbers[index + 1];
-                                break;
-                            case "/":
-                                numbers[index] = numbers[index] / numbers[index + 1];
-                                break;
-                            case "%":
-                                numbers[index] = numbers[index] % numbers[index + 1];
-                                break;
-                        }
-                        numbers.RemoveAt(index + 1);
-                    }
-                    else
-                    {
-                        // Handle Error - Next token is not the expected number
-                        throw new FormatException("Next token is not the expected number");
-                    }
-                }
-
-                token = GetNextToken(mathEquation);
-            }
-        }
-
-        // Gets the next mathematical token in the equation
-        private string GetNextToken(string mathEquation)
-        {
-            // If we're at the end of the equation, return string.empty
-            if (mathEquation == string.Empty)
-            {
-                return string.Empty;
-            }
-
-            // Get next operator or numeric value in equation and return it
-            string tmp = "";
-            foreach (char c in mathEquation)
-            {
-                if (_allOperators.Contains(c))
-                {
-                    return (tmp == "" ? c.ToString() : tmp);
-                }
-                else
-                {
-                    tmp += c;
-                }
-            }
-
-            return tmp;
-        }
-    }
-    public class BooleanToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value is Boolean && (bool)value)
-            {
-                return Visibility.Visible;
-            }
-            return Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value is Visibility && (Visibility)value == Visibility.Visible)
-            {
-                return true;
-            }
-            return false;
-        }
-    }
-    public class BooleanToVisibilityInverterConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value is Boolean && (bool)value)
-            {
-                return Visibility.Collapsed;
-            }
-            return Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value is Visibility && (Visibility)value == Visibility.Visible)
-            {
-                return false;
-            }
-            return true;
-        }
-    }
-    public class BooleanToVisibilityInverterConverterEx : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value is Boolean && (bool)value)
-            {
-                return Visibility.Hidden;
-            }
-            return Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value is Visibility && (Visibility)value == Visibility.Visible)
-            {
-                return false;
-            }
-            return true;
-        }
-    }
-    public class ExtendedPropertyGrid : PropertyGrid
-    {
-        protected override void OnFilterChanged(string oldValue, string newValue)
-        {
-            newValue = newValue.ToLower();
-            CollectionViewSource.GetDefaultView((object)this.Properties).Filter
-                = (item => (item as PropertyItem).DisplayName.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0
-                || (item as PropertyItem).Description.IndexOf(newValue, StringComparison.InvariantCultureIgnoreCase) >= 0);
-        }
-    }
-
-
-    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = true)]
-    public class ChoAssemblyBetaVersionAttribute : Attribute
-    {
-        public string Version { get; set; }
-        public ChoAssemblyBetaVersionAttribute(string text)
-        {
-            Version = text;
-        }
-    }
     public class ThemeMenuItem : MenuItem
     {
         protected override void OnClick()
@@ -2838,58 +2777,29 @@ namespace ChoEazyCopy
         }
     }
 
-    public static class ChoApplicationThemeManager
+    public class LineColorizer : DocumentColorizingTransformer
     {
-        static ChoApplicationThemeManager()
+        private Brush _foregroundBrush;
+        private Brush _backgroundBrush;
+
+        public LineColorizer(Brush foregroundBrush, Brush backgroundBrush)
         {
-            _theme = "BaseLight";
-            _accent = "Steel";
-        }
-        private static string _theme;
-        public static string Theme
-        {
-            get { return _theme; }
-            set
-            {
-                _theme = value;
-                ApplyTheme();
-            }
-        }
-        private static string _accent;
-        public static string Accent
-        {
-            get { return _accent; }
-            set
-            {
-                _accent = value;
-                ApplyTheme();
-            }
+            _foregroundBrush = foregroundBrush;
+            _backgroundBrush = backgroundBrush;
         }
 
-        public static void ApplyTheme()
+        protected override void ColorizeLine(ICSharpCode.AvalonEdit.Document.DocumentLine line)
         {
-            MainWindow wnd = Application.Current.MainWindow as MainWindow;
-
-            ThemeManager.ChangeAppStyle(wnd,
-                            ThemeManager.GetAccent(Accent),
-                            ThemeManager.GetAppTheme(Theme));
-            wnd.RefreshWindow();
+            ChangeLinePart(line.Offset, line.EndOffset, ApplyChanges);
         }
-    }
 
-    public static class FileSizeFormatter
-    {
-        static readonly string[] suffixes = { "Bytes", "KB", "MB", "GB", "TB", "PB" };
-        public static string FormatSize(Int64 bytes)
+        void ApplyChanges(VisualLineElement element)
         {
-            int counter = 0;
-            decimal number = (decimal)bytes;
-            while (Math.Round(number / 1024) >= 1)
-            {
-                number = number / 1024;
-                counter++;
-            }
-            return string.Format("{0:n1}{1}", number, suffixes[counter]);
+            // This is where you do anything with the line
+            if (_foregroundBrush != null)
+                element.TextRunProperties.SetForegroundBrush(_foregroundBrush);
+            if (_backgroundBrush != null)
+                element.TextRunProperties.SetBackgroundBrush(_backgroundBrush);
         }
     }
 }

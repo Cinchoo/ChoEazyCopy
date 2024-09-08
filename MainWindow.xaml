@@ -1,70 +1,108 @@
 ﻿<Controls:MetroWindow
+    x:Class="ChoEazyCopy.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-    xmlns:local="clr-namespace:ChoEazyCopy"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib" 
     xmlns:Properties="clr-namespace:ChoEazyCopy.Properties"
-    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"   
-    xmlns:themes="clr-namespace:Xceed.Wpf.Toolkit.Themes;assembly=Xceed.Wpf.Toolkit"
-    x:Class="ChoEazyCopy.MainWindow"
-    Title="ChoEazyCopy - Cinchoo Inc."
-    Height="600"
-    Width="950"
-    MinHeight="400"
-    MinWidth="500"
-    AllowDrop="True"
-    Closed="Window_Closed"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:local="clr-namespace:ChoEazyCopy"
+    xmlns:sfw="clr-namespace:SoftFluent.Windows;assembly=SoftFluent.Windows"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:wpg="clr-namespace:System.Windows.Controls"
     x:Name="ChoEazyCopyWindow"
+    Title="ChoEazyCopy - Cinchoo Inc."
+    Width="950"
+    Height="600"
+    MinWidth="500"
+    MinHeight="400"
+    AllowDrop="True"
     BorderBrush="{DynamicResource AccentColorBrush}"
     BorderThickness="1"
-    TitleCaps="False"
+    Closed="Window_Closed"
+    Closing="Window_Closing"
+    Icon="App.ico"
+    Loaded="Window_Loaded"
     ResizeMode="CanResizeWithGrip"
-    Loaded="Window_Loaded" Icon="App.ico" Closing="Window_Closing">
+    TitleCaps="False">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Controls:ToggleSwitch Margin="10, 0, 0, 0" Foreground="LightYellow" FontSize="16" ToolTip="Remember windows position/size."
-                                   IsChecked="{Binding RememberWindowSizeAndPosition}"
-                                   />
+            <Controls:ToggleSwitch
+                Margin="10,0,0,0"
+                FontSize="16"
+                Foreground="LightYellow"
+                IsChecked="{Binding RememberWindowSizeAndPosition}"
+                ToolTip="Remember windows position/size." />
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
     <Controls:MetroWindow.LeftWindowCommands>
         <Controls:WindowCommands>
-            <Button x:Name="btnApplicationCmds" ToolTip="Application Commands" Click="btnApplicationCmds_Click"  >
+            <Button
+                x:Name="btnApplicationCmds"
+                Click="btnApplicationCmds_Click"
+                ToolTip="Application Commands">
                 <Image Source="{iconPacks:FontAwesomeImage Kind=CogSolid}" />
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem x:Name="mnuLaunchNewInstance" Header="Launch New Instance" Click="mnuLaunchNewInstance_Click" >
+                        <MenuItem
+                            x:Name="mnuLaunchNewInstance"
+                            Click="mnuLaunchNewInstance_Click"
+                            Header="Launch New Instance">
                             <MenuItem.Icon>
                                 <Image Source="Resources/OpenNewWindow.png" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem x:Name="mnuRunasAdministrator" Header="Run as Administrator" Click="mnuRunasAdministrator_Click" >
+                        <MenuItem
+                            x:Name="mnuRunasAdministrator"
+                            Click="mnuRunasAdministrator_Click"
+                            Header="Run as Administrator">
                             <MenuItem.Icon>
                                 <Image Source="Resources/Security.png" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem x:Name="mnuRegisterShellExtensions" Header="Register Shell Extensions" Click="mnuRegisterShellExtensions_Click">
+                        <MenuItem
+                            x:Name="mnuRegisterShellExtensions"
+                            Click="mnuRegisterShellExtensions_Click"
+                            Header="Register Shell Extensions">
                             <MenuItem.Icon>
                                 <Image Source="Resources/Registry.png" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem x:Name="mnuUnregisterShellExtensions" Header="Unregister Shell Extensions" Click="mnuUnregisterShellExtensions_Click" >
+                        <MenuItem
+                            x:Name="mnuUnregisterShellExtensions"
+                            Click="mnuUnregisterShellExtensions_Click"
+                            Header="Unregister Shell Extensions">
                             <MenuItem.Icon>
                                 <Image Source="Resources/RemoveRegistry.png" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <Separator></Separator>
-                        <MenuItem x:Name="mnuAlwaysOnTop" Header="Always on Top" IsCheckable="True" IsChecked="False" Click="mnuAlwaysOnTop_Click">
+                        <Separator />
+                        <MenuItem
+                            x:Name="mnuAlwaysOnTop"
+                            Click="mnuAlwaysOnTop_Click"
+                            Header="Always on Top"
+                            IsCheckable="True"
+                            IsChecked="False">
                             <!--<MenuItem.Icon>
                                 <iconPacks:FontAwesome Kind="HandshakeRegular"></iconPacks:FontAwesome>
                             </MenuItem.Icon>-->
                         </MenuItem>
-                        <MenuItem x:Name="mnuRunatSystemsStartup" Header="Run at Systems Startup" IsCheckable="True" 
-                                  Click="mnuRunatSystemsStartup_Click">
+                        <MenuItem
+                            x:Name="mnuRunatSystemsStartup"
+                            Click="mnuRunatSystemsStartup_Click"
+                            Header="Run at Systems Startup"
+                            IsCheckable="True">
                             <!--<MenuItem.Icon>
                                 <iconPacks:FontAwesome Kind="ShieldAltSolid"></iconPacks:FontAwesome>
+                            </MenuItem.Icon>-->
+                        </MenuItem>
+                        <MenuItem
+                            x:Name="mnuDarkTheme"
+                            Click="mnuDarkTheme_Click"
+                            Header="Enable Dark Theme"
+                            IsCheckable="True"
+                            IsChecked="False">
+                            <!--<MenuItem.Icon>
+                                <iconPacks:FontAwesome Kind="HandshakeRegular"></iconPacks:FontAwesome>
                             </MenuItem.Icon>-->
                         </MenuItem>
 
@@ -75,7 +113,10 @@
     </Controls:MetroWindow.LeftWindowCommands>
     <Window.Resources>
         <ContextMenu x:Key="expControlPanelContextMenu">
-            <MenuItem x:Name="mnuResetExpander" Header="Reset" Click="mnuResetExpander_Click" />
+            <MenuItem
+                x:Name="mnuResetExpander"
+                Click="mnuResetExpander_Click"
+                Header="Reset" />
         </ContextMenu>
 
         <ContextMenu x:Key="TextBoxContextMenu" Background="White">
@@ -84,12 +125,12 @@
                     <Image Source="Resources/Copy.png" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="ApplicationCommands.Cut" >
+            <MenuItem Command="ApplicationCommands.Cut">
                 <MenuItem.Icon>
                     <Image Source="Resources/Cut.png" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="ApplicationCommands.Paste" >
+            <MenuItem Command="ApplicationCommands.Paste">
                 <MenuItem.Icon>
                     <Image Source="Resources/Paste.png" />
                 </MenuItem.Icon>
@@ -97,15 +138,11 @@
         </ContextMenu>
         <Style TargetType="ToolTip">
             <Style.Triggers>
-                <Trigger Property="Content"
-                 Value="{x:Static sys:String.Empty}">
-                    <Setter Property="Visibility"
-                    Value="Collapsed" />
+                <Trigger Property="Content" Value="{x:Static sys:String.Empty}">
+                    <Setter Property="Visibility" Value="Collapsed" />
                 </Trigger>
-                <Trigger Property="Content"
-                 Value="{x:Null}">
-                    <Setter Property="Visibility"
-                    Value="Collapsed" />
+                <Trigger Property="Content" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Collapsed" />
                 </Trigger>
             </Style.Triggers>
             <Style.Resources>
@@ -135,80 +172,80 @@
         </Style>
         <Style x:Key="GridViewColumnHeaderStyle1" TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="Background" Value="{Binding ControlBackgroundBrush}"/>
-            <Setter Property="Foreground" Value="{Binding ControlForegroundBrush}"/>
+            <Setter Property="Background" Value="{Binding WindowTitleBrush}" />
+            <Setter Property="Foreground" Value="{Binding TitleForeground}" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="true">
-                    <Setter Property="Background" Value="LightSlateGray"/>
+                    <Setter Property="Background" Value="Transparent" />
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="WaterMarkTextBoxStyle" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}">
+        <Style
+            x:Key="WaterMarkTextBoxStyle"
+            BasedOn="{StaticResource {x:Type TextBox}}"
+            TargetType="{x:Type TextBox}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TextBox}">
                         <Grid>
-                            <Border x:Name="Bd" SnapsToDevicePixels="True" 
-                                  Background="{TemplateBinding Background}" 
-                                  BorderBrush="{TemplateBinding BorderBrush}"
-                                  BorderThickness="{TemplateBinding BorderThickness}" >
+                            <Border
+                                x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
                                 <Grid>
-                                    <ScrollViewer x:Name="PART_ContentHost"
-                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                    <TextBlock x:Name="textBlock"
-                               Opacity="0.5"
-                               Text="{TemplateBinding Tag}"
-                               Padding="2,0,0,0"
-                               TextWrapping="Wrap"
-                               Visibility="Hidden" />
+                                    <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    <TextBlock
+                                        x:Name="textBlock"
+                                        Padding="2,0,0,0"
+                                        Opacity="0.5"
+                                        Text="{TemplateBinding Tag}"
+                                        TextWrapping="Wrap"
+                                        Visibility="Hidden" />
                                 </Grid>
                             </Border>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="{Binding TextBoxFocusBorderBrush}">
-                                </Setter>
+                                <Setter Property="BorderBrush" Value="{Binding TextBoxFocusBorderBrush}" />
+                                <Setter Property="Background" Value="Transparent" />
                             </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
                                     <Condition Property="Text" Value="" />
                                 </MultiTrigger.Conditions>
-                                <Setter Property="Visibility" TargetName="textBlock" Value="Visible" />
+                                <Setter TargetName="textBlock" Property="Visibility" Value="Visible" />
                             </MultiTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style
-            TargetType="{x:Type TextBlock}"
-            x:Key="StatusBarTextBlock">
-            <Setter
-                Property="TextWrapping"
-                Value="NoWrap" />
-            <Setter
-                Property="TextTrimming"
-                Value="CharacterEllipsis" />
-            <Setter
-                Property="Padding"
-                Value="2,0" />
+        <Style x:Key="StatusBarTextBlock" TargetType="{x:Type TextBlock}">
+            <Setter Property="TextWrapping" Value="NoWrap" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="Padding" Value="2,0" />
         </Style>
-        <local:BoolInverterConverter x:Key="BoolInverterConverter1"/>
-        <local:BoolInverterConverter x:Key="BoolInverterConverter2"/>
-        <local:BoolToBackgroundColorConverter x:Key="BoolToBackgroundColorConverter1"/>
-        <local:BoolToForegroundColorConverter x:Key="BoolToForegroundColorConverter1"/>
-        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter1"/>
-        <local:BooleanToVisibilityInverterConverter x:Key="BooleanToVisibilityInverterConverter1"/>
-        <local:BooleanToVisibilityInverterConverterEx x:Key="BooleanToVisibilityInverterConverterEx1"/>
-        <local:MathConverter x:Key="MathConverter"/>
+        <local:BoolInverterConverter x:Key="BoolInverterConverter1" />
+        <local:BoolInverterConverter x:Key="BoolInverterConverter2" />
+        <local:BoolToBackgroundColorConverter x:Key="BoolToBackgroundColorConverter1" />
+        <local:BoolToForegroundColorConverter x:Key="BoolToForegroundColorConverter1" />
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter1" />
+        <local:BooleanToVisibilityInverterConverter x:Key="BooleanToVisibilityInverterConverter1" />
+        <local:BooleanToVisibilityInverterConverterEx x:Key="BooleanToVisibilityInverterConverterEx1" />
+        <local:MathConverter x:Key="MathConverter" />
 
-        <Style TargetType="{x:Type local:ChoMruComboBox}" >
+        <Style TargetType="{x:Type local:ChoMruComboBox}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type local:ChoMruComboBox}">
-                        <ComboBox ItemsSource="{Binding MruSource, RelativeSource={RelativeSource TemplatedParent}}"
-                                Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                IsEditable="True" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" />
+                        <ComboBox
+                            IsEditable="True"
+                            IsTextSearchCaseSensitive="False"
+                            IsTextSearchEnabled="True"
+                            ItemsSource="{Binding MruSource, RelativeSource={RelativeSource TemplatedParent}}"
+                            Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -216,33 +253,34 @@
 
     </Window.Resources>
     <DockPanel>
-        <StatusBar DockPanel.Dock="Bottom" Margin="5,0,5,5" Width="Auto">
+        <StatusBar
+            Width="Auto"
+            Margin="5,0,5,5"
+            DockPanel.Dock="Bottom">
             <StatusBarItem
+                Padding="0"
                 VerticalContentAlignment="Top"
-                Focusable="False"
-                Padding="0">
-                <TextBlock
-                    Style="{StaticResource StatusBarTextBlock}"
-                    x:Name="sbAppStatus"><Run Text="{Binding AppStatusText}"/></TextBlock>
+                Focusable="False">
+                <TextBlock x:Name="sbAppStatus" Style="{StaticResource StatusBarTextBlock}"><Run Text="{Binding AppStatusText}" /></TextBlock>
             </StatusBarItem>
         </StatusBar>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="{Binding ControlPanelWidth, Mode=TwoWay}" >
+                <ColumnDefinition Width="{Binding ControlPanelWidth, Mode=TwoWay}">
                     <ColumnDefinition.Style>
                         <Style TargetType="{x:Type ColumnDefinition}">
                             <Setter Property="MinWidth" Value="350" />
-                            <!-- Default MinHeight -->
+                            <!--  Default MinHeight  -->
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ElementName=expControlPanel, Path=IsExpanded}" Value="False">
                                     <Setter Property="MinWidth" Value="24" />
-                                    <!-- MinHeight when Collapsed -->
+                                    <!--  MinHeight when Collapsed  -->
                                     <Setter Property="MaxWidth" Value="40" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding ElementName=expControlPanel, Path=IsExpanded}" Value="True">
-                                    <Setter Property="MaxWidth" Value="{Binding ElementName=ChoEazyCopyWindow, Path=Width, Converter={StaticResource MathConverter}, ConverterParameter=@VALUE/2 }" />
+                                    <Setter Property="MaxWidth" Value="{Binding ElementName=ChoEazyCopyWindow, Path=Width, Converter={StaticResource MathConverter}, ConverterParameter=@VALUE/2}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -250,120 +288,218 @@
                 </ColumnDefinition>
             </Grid.ColumnDefinitions>
             <DockPanel Grid.Column="0" LastChildFill="true">
-                <Ribbon DockPanel.Dock="Top" x:Name="RibbonWin" SelectedIndex="0" Loaded="RibbonWin_Loaded" MinWidth="500" Margin="0,0,5,0" ContextMenu="{x:Null}"
-                        Background="{Binding ControlBackgroundBrush}"
-                        Foreground="{Binding ControlForegroundBrush}">
+                <Ribbon
+                    x:Name="RibbonWin"
+                    MinWidth="500"
+                    Margin="0,0,5,0"
+                    Background="{Binding ThemeBackgroundBrush}"
+                    ContextMenu="{x:Null}"
+                    DockPanel.Dock="Top"
+                    Foreground="Black"
+                    Loaded="RibbonWin_Loaded"
+                    SelectedIndex="0">
                     <Ribbon.ApplicationMenu>
-                        <RibbonApplicationMenu Visibility="Collapsed"></RibbonApplicationMenu>
+                        <RibbonApplicationMenu Visibility="Collapsed" />
                     </Ribbon.ApplicationMenu>
-                    <RibbonTab Header="Home" KeyTip="H" ContextMenu="{x:Null}">
-                        <RibbonGroup x:Name="HomeGroup" Header="Action" ContextMenu="{x:Null}">
-                            <RibbonButton x:Name="btnRun" LargeImageSource="Resources\Run.png" Label="Run" KeyTip="R" Click="btnRun_Click"  ContextMenu="{x:Null}"/>
-                            <RibbonButton x:Name="btnStop" SmallImageSource="Resources\Stop.png" Label="Stop" KeyTip="T" Click="btnStop_Click"  ContextMenu="{x:Null}"/>
-                            <RibbonButton x:Name="btnClear" SmallImageSource="Resources\Erase.png" Label="Clear Output" KeyTip="E" Click="btnClear_Click"  ContextMenu="{x:Null}"/>
-                            <RibbonCheckBox x:Name="btnScrollOutput" SmallImageSource="Resources\Scroll.png" Label="Scroll Output" KeyTip="L" IsChecked="{Binding ScrollOutput}"  ContextMenu="{x:Null}"/>
+                    <RibbonTab
+                        ContextMenu="{x:Null}"
+                        Header="Home"
+                        KeyTip="H">
+                        <RibbonGroup
+                            x:Name="HomeGroup"
+                            ContextMenu="{x:Null}"
+                            Header="Action">
+                            <RibbonButton
+                                x:Name="btnRun"
+                                Click="btnRun_Click"
+                                ContextMenu="{x:Null}"
+                                KeyTip="R"
+                                Label="Run"
+                                LargeImageSource="Resources\Run.png" />
+                            <RibbonButton
+                                x:Name="btnStop"
+                                Click="btnStop_Click"
+                                ContextMenu="{x:Null}"
+                                KeyTip="T"
+                                Label="Stop"
+                                SmallImageSource="Resources\Stop.png" />
+                            <RibbonButton
+                                x:Name="btnClear"
+                                Click="btnClear_Click"
+                                ContextMenu="{x:Null}"
+                                KeyTip="E"
+                                Label="Clear Output"
+                                SmallImageSource="Resources\Erase.png" />
+                            <RibbonCheckBox
+                                x:Name="btnScrollOutput"
+                                ContextMenu="{x:Null}"
+                                IsChecked="{Binding ScrollOutput}"
+                                KeyTip="L"
+                                Label="Scroll Output"
+                                SmallImageSource="Resources\Scroll.png" />
                         </RibbonGroup>
-                        <RibbonGroup x:Name="FileGroup" Header="File" ContextMenu="{x:Null}">
+                        <RibbonGroup
+                            x:Name="FileGroup"
+                            ContextMenu="{x:Null}"
+                            Header="File">
                             <!--<RibbonButton x:Name="btnNewFile" LargeImageSource="Resources\NewFile.png" Label="New" KeyTip="N" Click="btnNewFile_Click"  ContextMenu="{x:Null}"/>-->
-                            <RibbonMenuButton x:Name="btnNewFile" 
-                                    Label="New"
-                                    SmallImageSource="Resources\NewFile.png"
-                                    LargeImageSource="Resources\NewFile.png" KeyTip="N" >
-                                <RibbonMenuItem 
+                            <RibbonMenuButton
+                                x:Name="btnNewFile"
+                                KeyTip="N"
+                                Label="New"
+                                LargeImageSource="Resources\NewFile.png"
+                                SmallImageSource="Resources\NewFile.png">
+                                <RibbonMenuItem
+                                    Click="btnNewFile_Click"
+                                    ContextMenu="{x:Null}"
                                     Header="Empty Job"
-                                    ImageSource="Resources\NewFile.png" Click="btnNewFile_Click"  ContextMenu="{x:Null}"/>
-                                <RibbonMenuItem 
+                                    ImageSource="Resources\NewFile.png" />
+                                <RibbonMenuItem
+                                    Click="btnNewSyncFile_Click"
+                                    ContextMenu="{x:Null}"
                                     Header="Synchronization Job"
-                                    ImageSource="Resources\SyncJob.png" ToolTip="With the Synchronization job all new and modified files of source folder are mirrored to destination folder. Files and folders which don't exist anymore in the source folder when the job runs will be deleted in the destination folder."
-                                    Click="btnNewSyncFile_Click"  ContextMenu="{x:Null}" />
-                                <RibbonMenuItem 
+                                    ImageSource="Resources\SyncJob.png"
+                                    ToolTip="With the Synchronization job all new and modified files of source folder are mirrored to destination folder. Files and folders which don't exist anymore in the source folder when the job runs will be deleted in the destination folder." />
+                                <RibbonMenuItem
+                                    Click="btnNewCopyFile_Click"
+                                    ContextMenu="{x:Null}"
                                     Header="Copy Job"
-                                    ImageSource="Resources\CopyJob.png" ToolTip="With the Copy job all new and modified files of source folder are also copied to destination folder. However files and folders which previously has been copied to the destination folder but doesn't exist anymore when the job runs, will be kept in the destination folder."
-                                    Click="btnNewCopyFile_Click"  ContextMenu="{x:Null}"/>
-                                <RibbonMenuItem 
+                                    ImageSource="Resources\CopyJob.png"
+                                    ToolTip="With the Copy job all new and modified files of source folder are also copied to destination folder. However files and folders which previously has been copied to the destination folder but doesn't exist anymore when the job runs, will be kept in the destination folder." />
+                                <RibbonMenuItem
+                                    Click="btnNewMoveFile_Click"
+                                    ContextMenu="{x:Null}"
                                     Header="Move Job"
-                                    ImageSource="Resources\MoveJob.png" ToolTip="With the Move job, move all files/folders from source location to destination location. All successfull moved files/folders are removed from the source."
-                                    Click="btnNewMoveFile_Click"  ContextMenu="{x:Null}"/>
+                                    ImageSource="Resources\MoveJob.png"
+                                    ToolTip="With the Move job, move all files/folders from source location to destination location. All successfull moved files/folders are removed from the source." />
                             </RibbonMenuButton>
-                            <RibbonButton x:Name="btnOpenFile" SmallImageSource="Resources\OpenFile.png" Label="Open" KeyTip="O" Click="btnOpenFile_Click"  ContextMenu="{x:Null}"/>
-                            <RibbonButton x:Name="btnSaveFile" SmallImageSource="Resources\SaveFile.png" Label="Save" KeyTip="S" Click="btnSaveFile_Click"  ContextMenu="{x:Null}"/>
-                            <RibbonButton x:Name="btnSaveAsFile" SmallImageSource="Resources\SaveAsFile.png" Label="Save As" KeyTip="A" Click="btnSaveAsFile_Click"  ContextMenu="{x:Null}"/>
+                            <RibbonButton
+                                x:Name="btnOpenFile"
+                                Click="btnOpenFile_Click"
+                                ContextMenu="{x:Null}"
+                                KeyTip="O"
+                                Label="Open"
+                                SmallImageSource="Resources\OpenFile.png" />
+                            <RibbonButton
+                                x:Name="btnSaveFile"
+                                Click="btnSaveFile_Click"
+                                ContextMenu="{x:Null}"
+                                KeyTip="S"
+                                Label="Save"
+                                SmallImageSource="Resources\SaveFile.png" />
+                            <RibbonButton
+                                x:Name="btnSaveAsFile"
+                                Click="btnSaveAsFile_Click"
+                                ContextMenu="{x:Null}"
+                                KeyTip="A"
+                                Label="Save As"
+                                SmallImageSource="Resources\SaveAsFile.png" />
                         </RibbonGroup>
                         <RibbonGroup x:Name="DonateGroup" ContextMenu="{x:Null}">
-                            <RibbonButton x:Name="btnDonate" LargeImageSource="Resources\Donate.png" Label="Donate" KeyTip="D" Click="BtnDonate_Click" ToolTip="Your support is much appreciated." ContextMenu="{x:Null}"/>
+                            <RibbonButton
+                                x:Name="btnDonate"
+                                Click="BtnDonate_Click"
+                                ContextMenu="{x:Null}"
+                                KeyTip="D"
+                                Label="Donate"
+                                LargeImageSource="Resources\Donate.png"
+                                ToolTip="Your support is much appreciated." />
                         </RibbonGroup>
                         <!--<RibbonGroup VerticalAlignment="Center" ContextMenu="{x:Null}">
                             <DockPanel LastChildFill="True">
                                 <TextBlock DockPanel.Dock="Bottom">Settings File</TextBlock>
-                                <TextBlock x:Name="tbSettingsName" FontSize="24" FontWeight="Bold" Foreground="DarkBlue" 
+                                <TextBlock x:Name="tbSettingsName" FontSize="24" FontWeight="Bold" Foreground="DarkBlue"
                                             Width="Auto" VerticalAlignment="Stretch" FontFamily="Verdana"
                                            Text="{Binding SettingsFileName}" ToolTip="{Binding SettingsFilePath}"
                                            />
                             </DockPanel>
                         </RibbonGroup>-->
                         <RibbonGroup x:Name="HelpGroup" ContextMenu="{x:Null}">
-                            <RibbonButton x:Name="btnHelp" LargeImageSource="Resources\Help.png" Label="Help" KeyTip="D" Click="btnHelp_Click" ToolTip="RoboCopy offical help" ContextMenu="{x:Null}"/>
+                            <RibbonButton
+                                x:Name="btnHelp"
+                                Click="btnHelp_Click"
+                                ContextMenu="{x:Null}"
+                                KeyTip="D"
+                                Label="Help"
+                                LargeImageSource="Resources\Help.png"
+                                ToolTip="RoboCopy offical help" />
                         </RibbonGroup>
                     </RibbonTab>
                 </Ribbon>
 
                 <DockPanel
-        HorizontalAlignment="Stretch"
-        x:Name="dockPanel1"
-        VerticalAlignment="Stretch"
-        LastChildFill="True"
-        FocusManager.FocusedElement="{Binding ElementName=txtFolder}">
-                    <Grid
-            Width="Auto"
-            DockPanel.Dock="Top">
+                    x:Name="dockPanel1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FocusManager.FocusedElement="{Binding ElementName=txtFolder}"
+                    LastChildFill="True">
+                    <Grid Width="Auto" DockPanel.Dock="Top">
                         <Grid.RowDefinitions>
-                            <RowDefinition></RowDefinition>
-                            <RowDefinition></RowDefinition>
+                            <RowDefinition />
+                            <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Border Margin="5,5,5,0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray" Background="LightSlateGray" >
+                        <Border
+                            Grid.Row="0"
+                            Margin="5,5,5,0"
+                            Background="{Binding WindowTitleBrush}"
+                            BorderBrush="{Binding WindowTitleBrush}"
+                            BorderThickness="1">
                             <DockPanel LastChildFill="true">
-                                <Label FontWeight="Bold" Foreground="{Binding ControlBackgroundBrush}">TASK FILE:</Label>
-                                <TextBlock Foreground="{Binding ControlBackgroundBrush}" VerticalAlignment="Center" Text="{Binding SettingsFileName}" ToolTip="{Binding SettingsFilePath}"></TextBlock>
-                                
+                                <Label FontWeight="Bold" Foreground="{Binding TitleForeground}">TASK FILE:</Label>
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding TitleForeground}"
+                                    Text="{Binding SettingsFileName}"
+                                    ToolTip="{Binding SettingsFilePath}" />
+
                             </DockPanel>
                         </Border>
 
                         <GroupBox
-                    x:Name="grpFolders"
-                Margin="5"
-                Height="Auto" Grid.Row="1"
-                Grid.Column="0"
-                >
+                            x:Name="grpFolders"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Height="Auto"
+                            Margin="5">
                             <GroupBox.Header>
                                 <DockPanel LastChildFill="True">
-                                    <Button x:Name="btnSwapDir" DockPanel.Dock="Right" Content="Swap Directories" 
+                                    <Button
                                         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro" Click="btnSwapDir_Click"
-                                    Style="{DynamicResource MetroButton}" />
-                                    <TextBlock Text="CHOOSE FOLDERS" VerticalAlignment="Center"
+                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                        x:Name="btnSwapDir"
+                                        Click="btnSwapDir_Click"
+                                        Content="Swap Directories"
+                                        DockPanel.Dock="Right"
+                                        Style="{DynamicResource MetroButton}" />
+                                    <TextBlock
                                         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                        VerticalAlignment="Center"
+                                        Text="CHOOSE FOLDERS">
                                         <TextBlock.Foreground>
                                             <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="Background"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="(Controls:GroupBoxHelper.HeaderForeground)"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
                                             </MultiBinding>
                                         </TextBlock.Foreground>
                                     </TextBlock>
                                 </DockPanel>
                             </GroupBox.Header>
 
-                            <Grid
-                    Width="Auto"
-                    Height="Auto"
-                        >
+                            <Grid Width="Auto" Height="Auto">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="35*" />
-                                    <ColumnDefinition Width="145*"/>
-                                    <ColumnDefinition Width="368*"/>
+                                    <ColumnDefinition Width="145*" />
+                                    <ColumnDefinition Width="368*" />
                                     <ColumnDefinition Width="20" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
@@ -372,29 +508,34 @@
                                     <RowDefinition />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <Label FontWeight="Bold" Grid.Row="0" Grid.ColumnSpan="2">Source Directory</Label>
-                                <TextBox 
-                        x:Name="txtSourceDirectory"
-                        VerticalAlignment="Stretch"
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="1"
-                        TabIndex="0" Grid.ColumnSpan="3" 
-                        Style="{StaticResource WaterMarkTextBoxStyle}" 
-                        ToolTip="{Binding Path=SourceDirTooltip}"
-                            Text="{Binding Path=AppSettings.SourceDirectory, UpdateSourceTrigger=PropertyChanged}"
-                                    Background="{Binding SourceDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
-                                    Foreground="{Binding SourceDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
-                        >
-                                </TextBox>
-                                <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Grid.Row="1"
-                        Grid.Column="3"
-                        Margin="1,0,1,2"
-                        x:Name="btnSourceDirBrowse"
-                        Click="btnSourceDirBrowse_Click"
-                        TabIndex="1" ToolTip="Choose source directory..." VerticalAlignment="Bottom">
-                                    <Image Source="Resources/OpenFolder.png" >
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.ColumnSpan="2"
+                                    FontWeight="Bold">
+                                    Source Directory
+                                </Label>
+                                <TextBox
+                                    x:Name="txtSourceDirectory"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
+                                    Margin="1"
+                                    VerticalAlignment="Stretch"
+                                    BorderBrush="{Binding SourceDirStatus, Converter={local:SourceDirBorderColorConverter}}"
+                                    TabIndex="0"
+                                    Text="{Binding Path=AppSettings.SourceDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    ToolTip="{Binding Path=SourceDirTooltip}" />
+                                <Button
+                                    x:Name="btnSourceDirBrowse"
+                                    Grid.Row="1"
+                                    Grid.Column="3"
+                                    Margin="1,0,1,2"
+                                    VerticalAlignment="Bottom"
+                                    Click="btnSourceDirBrowse_Click"
+                                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                    TabIndex="1"
+                                    ToolTip="Choose source directory...">
+                                    <Image Source="Resources/OpenFolder.png">
                                         <Image.Style>
                                             <Style TargetType="{x:Type Image}">
                                                 <Style.Triggers>
@@ -406,27 +547,31 @@
                                         </Image.Style>
                                     </Image>
                                 </Button>
-                                <Label FontWeight="Bold" Grid.Row="2" Grid.ColumnSpan="2">Destination Directory</Label>
+                                <Label
+                                    Grid.Row="2"
+                                    Grid.ColumnSpan="2"
+                                    FontWeight="Bold">
+                                    Destination Directory
+                                </Label>
                                 <TextBox
-                        x:Name="txtDestDirectory" 
-                        Grid.Row="3" 
-                        Grid.Column="0"
-                        Margin="1"
-                        TabIndex="2" Grid.ColumnSpan="3" 
-                        Style="{StaticResource WaterMarkTextBoxStyle}"
-                        ToolTip="Destination directory."
-                            Text="{Binding Path=AppSettings.DestDirectory, UpdateSourceTrigger=PropertyChanged}"
-                                    Background="{Binding DestDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
-                                    Foreground="{Binding DestDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
-                            />
-                                <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Grid.Row="3"
-                        Grid.Column="3"
-                        Margin="1,2,1,1"
-                        x:Name="btnDestDirBrowse"
-                        TabIndex="3" ToolTip="Choose destination directory..."
-                                Click="btnDestDirBrowse_Click" >
-                                    <Image Source="Resources/OpenFolder.png" >
+                                    x:Name="txtDestDirectory"
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
+                                    Margin="1"
+                                    TabIndex="2"
+                                    Text="{Binding Path=AppSettings.DestDirectory, UpdateSourceTrigger=PropertyChanged}"
+                                    ToolTip="Destination directory." />
+                                <Button
+                                    x:Name="btnDestDirBrowse"
+                                    Grid.Row="3"
+                                    Grid.Column="3"
+                                    Margin="1,2,1,1"
+                                    Click="btnDestDirBrowse_Click"
+                                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                    TabIndex="3"
+                                    ToolTip="Choose destination directory...">
+                                    <Image Source="Resources/OpenFolder.png">
                                         <Image.Style>
                                             <Style TargetType="{x:Type Image}">
                                                 <Style.Triggers>
@@ -441,83 +586,130 @@
                             </Grid>
                         </GroupBox>
                     </Grid>
-                    <GroupBox DockPanel.Dock="Bottom" Visibility="{Binding Path=AppSettings.ListOnly, Converter={StaticResource BooleanToVisibilityInverterConverter1}}"
-                              IsEnabled="{Binding IsNotRunning}">
+                    <GroupBox
+                        DockPanel.Dock="Bottom"
+                        IsEnabled="{Binding IsNotRunning}"
+                        Visibility="{Binding Path=AppSettings.ListOnly, Converter={StaticResource BooleanToVisibilityInverterConverter1}}">
                         <GroupBox.Header>
                             <DockPanel LastChildFill="True">
-                                <CheckBox DockPanel.Dock="Right" Content="SHOW PROGRESS" IsChecked="{Binding Path=AppSettings.ShowRoboCopyProgress}"
-    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
-                                        Style="{DynamicResource MetroCheckBox}">
+                                <CheckBox
+                                    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                    Content="SHOW PROGRESS"
+                                    DockPanel.Dock="Right"
+                                    IsChecked="{Binding Path=AppSettings.ShowRoboCopyProgress}"
+                                    Style="{DynamicResource MetroCheckBox}">
                                     <CheckBox.Foreground>
                                         <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                            <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                            <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            <Binding
+                                                Mode="OneWay"
+                                                Path="Background"
+                                                RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            <Binding
+                                                Mode="OneWay"
+                                                Path="(Controls:GroupBoxHelper.HeaderForeground)"
+                                                RelativeSource="{RelativeSource AncestorType=GroupBox}" />
                                         </MultiBinding>
                                     </CheckBox.Foreground>
                                 </CheckBox>
-                                <TextBlock Text="ROBOCOPY PROGRESS" VerticalAlignment="Center"
-    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                <TextBlock
+                                    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                    VerticalAlignment="Center"
+                                    Text="ROBOCOPY PROGRESS">
                                     <TextBlock.Foreground>
                                         <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                            <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                            <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            <Binding
+                                                Mode="OneWay"
+                                                Path="Background"
+                                                RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            <Binding
+                                                Mode="OneWay"
+                                                Path="(Controls:GroupBoxHelper.HeaderForeground)"
+                                                RelativeSource="{RelativeSource AncestorType=GroupBox}" />
                                         </MultiBinding>
                                     </TextBlock.Foreground>
                                 </TextBlock>
                             </DockPanel>
                         </GroupBox.Header>
 
-                        <DockPanel x:Name="dpRoboCopyProgress" LastChildFill="true" >
-                            <TextBlock DockPanel.Dock="Top" Text="Robocopy progress disabled." Visibility="{Binding Path=AppSettings.ShowRoboCopyProgress, Converter={StaticResource BooleanToVisibilityInverterConverter1}}" ></TextBlock>
-                            <TextBlock DockPanel.Dock="Top" Text="{Binding RobocopyProgresssText}" Visibility="{Binding Path=AppSettings.ShowRoboCopyProgress, Converter={StaticResource BooleanToVisibilityConverter1}}" ></TextBlock>
+                        <DockPanel x:Name="dpRoboCopyProgress" LastChildFill="true">
+                            <TextBlock
+                                DockPanel.Dock="Top"
+                                Text="Robocopy progress disabled."
+                                Visibility="{Binding Path=AppSettings.ShowRoboCopyProgress, Converter={StaticResource BooleanToVisibilityInverterConverter1}}" />
+                            <TextBlock
+                                DockPanel.Dock="Top"
+                                Text="{Binding RobocopyProgresssText}"
+                                Visibility="{Binding Path=AppSettings.ShowRoboCopyProgress, Converter={StaticResource BooleanToVisibilityConverter1}}" />
                             <Grid Visibility="{Binding Path=AppSettings.ShowRoboCopyProgress, Converter={StaticResource BooleanToVisibilityConverter1}}">
-                                <ProgressBar x:Name="pbar" Margin="0,5,0,5" Minimum="0" Maximum="100" Value="{Binding RobocopyProgresssBarValue}" Height="15" HorizontalAlignment="Stretch" />
-                                <TextBlock HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center" Text="{Binding ElementName=pbar, Path=Value, StringFormat={}{0:0}%}"></TextBlock>
+                                <ProgressBar
+                                    x:Name="pbar"
+                                    Height="15"
+                                    Margin="0,5,0,5"
+                                    HorizontalAlignment="Stretch"
+                                    Maximum="100"
+                                    Minimum="0"
+                                    Value="{Binding RobocopyProgresssBarValue}" />
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="White"
+                                    Text="{Binding ElementName=pbar, Path=Value, StringFormat={}{0:0}%}" />
                             </Grid>
                         </DockPanel>
                     </GroupBox>
-                    <Grid
-            Width="Auto">
+                    <Grid Width="Auto">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition
-                    Height="100"
-                    MinHeight="100" />
-                            <RowDefinition
-                    Height="Auto" />
-                            <RowDefinition
-                    Height="*"
-                                />
+                            <RowDefinition Height="100" MinHeight="100" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <GroupBox
-                            Margin="5,0,5,0"
                             Grid.Row="0"
+                            Margin="5,0,5,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch">
                             <GroupBox.Header>
                                 <DockPanel LastChildFill="True">
-                                    <CheckBox DockPanel.Dock="Right" Content="TEST RUN" IsChecked="{Binding Path=AppSettings.ListOnly}"
-    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                    <CheckBox
+                                        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                        Content="TEST RUN"
+                                        DockPanel.Dock="Right"
+                                        IsChecked="{Binding Path=AppSettings.ListOnly}"
                                         Style="{DynamicResource MetroCheckBox}">
                                         <CheckBox.Foreground>
                                             <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="Background"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="(Controls:GroupBoxHelper.HeaderForeground)"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
                                             </MultiBinding>
                                         </CheckBox.Foreground>
                                     </CheckBox>
-                                    <TextBlock Text="ROBOCOPY COMMAND" VerticalAlignment="Center"
-    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                    <TextBlock
+                                        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                        VerticalAlignment="Center"
+                                        Text="ROBOCOPY COMMAND">
                                         <TextBlock.Foreground>
                                             <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="Background"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="(Controls:GroupBoxHelper.HeaderForeground)"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
                                             </MultiBinding>
                                         </TextBlock.Foreground>
                                     </TextBlock>
@@ -525,99 +717,178 @@
                             </GroupBox.Header>
 
                             <DockPanel LastChildFill="True">
-                                <TextBox Visibility="Collapsed"
-                                Margin="0,3,0,2"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Name="txtRoboCopyCmdEx"
-                                TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" 
-                                         IsReadOnly="True" 
-                                         />
                                 <TextBox
+                                    Name="txtRoboCopyCmdEx"
                                     Margin="0,3,0,2"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
+                                    IsReadOnly="True"
+                                    TabIndex="24"
+                                    TextWrapping="Wrap"
+                                    VerticalScrollBarVisibility="Auto"
+                                    Visibility="Collapsed" />
+                                <TextBox
                                     Name="txtRoboCopyCmd"
-                                    TabIndex="24" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" 
-                                    IsReadOnly="True"  />
+                                    Margin="0,3,0,2"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    IsReadOnly="True"
+                                    TabIndex="24"
+                                    TextWrapping="Wrap"
+                                    VerticalScrollBarVisibility="Auto" />
                             </DockPanel>
                         </GroupBox>
                         <GridSplitter
-                Margin="5,5,5,0"
-                ResizeDirection="Rows"
-                Grid.Row="1"
-                Height="1"
-                HorizontalAlignment="Stretch" IsTabStop="False" />
+                            Grid.Row="1"
+                            Height="1"
+                            Margin="5,5,5,0"
+                            HorizontalAlignment="Stretch"
+                            IsTabStop="False"
+                            ResizeDirection="Rows" />
                         <GroupBox
-                Margin="5,0,5,5"
-                Grid.Row="2"
-                VerticalAlignment="Stretch">
+                            Grid.Row="2"
+                            Margin="5,0,5,5"
+                            VerticalAlignment="Stretch">
                             <GroupBox.Header>
                                 <DockPanel LastChildFill="True">
-                                    <CheckBox DockPanel.Dock="Right" Content="SHOW LINE NUMBERS" IsChecked="{Binding Path=AppSettings.ShowOutputLineNumbers}"
-    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                    <CheckBox
+                                        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                        Content="SHOW LINE NUMBERS"
+                                        DockPanel.Dock="Right"
+                                        IsChecked="{Binding Path=AppSettings.ShowOutputLineNumbers}"
                                         Style="{DynamicResource MetroCheckBox}">
                                         <CheckBox.Foreground>
                                             <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="Background"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="(Controls:GroupBoxHelper.HeaderForeground)"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
                                             </MultiBinding>
                                         </CheckBox.Foreground>
                                     </CheckBox>
-                                    <TextBlock Text="OUTPUT" VerticalAlignment="Center"
-    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-    xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro">
+                                    <TextBlock
+                                        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                        VerticalAlignment="Center"
+                                        Text="OUTPUT">
                                         <TextBlock.Foreground>
                                             <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
-                                                <Binding Mode="OneWay" Path="Background" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
-                                                <Binding Mode="OneWay" Path="(Controls:GroupBoxHelper.HeaderForeground)" RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="Background"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="(Controls:GroupBoxHelper.HeaderForeground)"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
                                             </MultiBinding>
                                         </TextBlock.Foreground>
                                     </TextBlock>
                                 </DockPanel>
                             </GroupBox.Header>
                             <avalonEdit:TextEditor
-                        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
-                        Name="txtStatus"
-                        FontFamily="Courier New"
-                        SyntaxHighlighting="DOS"
-                        FontSize="10pt"
-                        IsReadOnly="true" 
-                        TabIndex="25" 
-                        ShowLineNumbers="{Binding Path=AppSettings.ShowOutputLineNumbers}"
-                        VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                                Background="{Binding ControlBackgroundBrush}"
+                                xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+                                Name="txtStatus"
+                                FontFamily="Courier New"
+                                FontSize="10pt"
                                 Foreground="{Binding ControlForegroundBrush}"
-                                />
-                            <!--TextBox
-                    Margin="0,3,0,2"
-                    VerticalAlignment="Stretch"
-                    x:Name="txtStatus"
-                    IsReadOnly="True"
-                    TabIndex="25" FontFamily="Courier New" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" /-->
+                                HorizontalScrollBarVisibility="Auto"
+                                KeyDown="txtStatus_KeyDown"
+                                ShowLineNumbers="{Binding Path=AppSettings.ShowOutputLineNumbers}"
+                                SyntaxHighlighting="DOS"
+                                TabIndex="25"
+                                VerticalScrollBarVisibility="Auto" />
+                            <!--
+                                TextBox
+                                Margin="0,3,0,2"
+                                VerticalAlignment="Stretch"
+                                x:Name="txtStatus"
+                                IsReadOnly="True"
+                                TabIndex="25" FontFamily="Courier New" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" /
+                            -->
                         </GroupBox>
                     </Grid>
                 </DockPanel>
 
             </DockPanel>
-            <Expander Grid.Column="2" ExpandDirection="Left" IsExpanded="True" x:Name="expControlPanel"
-                      ContextMenu="{StaticResource expControlPanelContextMenu}">
+            <Expander
+                x:Name="expControlPanel"
+                Grid.Column="2"
+                ContextMenu="{StaticResource expControlPanelContextMenu}"
+                ExpandDirection="Left"
+                IsExpanded="True">
                 <Expander.Header>
-                    <TextBlock Text="Control Panel" Foreground="White" FontWeight="Bold">
+                    <TextBlock
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="Control Panel">
                         <TextBlock.LayoutTransform>
-                            <RotateTransform Angle="90"/>
+                            <RotateTransform Angle="90" />
                         </TextBlock.LayoutTransform>
                     </TextBlock>
                 </Expander.Header>
 
-                <TabControl TabStripPlacement="Bottom" Grid.Column="2" x:Name="tabControlPanel" >
+                <TabControl
+                    x:Name="tabControlPanel"
+                    Grid.Column="2"
+                    TabStripPlacement="Bottom">
                     <TabControl.Resources>
+                        <SolidColorBrush x:Key="RedBrush" Color="Red" />
+                        <SolidColorBrush x:Key="GreenBrush" Color="Green" />
+                        <SolidColorBrush x:Key="SolidBorderBrush" Color="#888" />
+                        <SolidColorBrush x:Key="DisabledBackgroundBrush" Color="#EEE" />
+                        <SolidColorBrush x:Key="DisabledBorderBrush" Color="#AAA" />
+                        <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#888" />
                         <Style TargetType="{x:Type TabItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type TabItem}">
+                                        <Grid>
+                                            <Border
+                                                Name="Border"
+                                                Margin="0,0,-4,0"
+                                                Background="{Binding TabControlBackgroundBrush}"
+                                                BorderBrush="{StaticResource SolidBorderBrush}"
+                                                BorderThickness="1,1,1,1"
+                                                CornerRadius="0,0,2,12">
+                                                <ContentPresenter
+                                                    x:Name="ContentSite"
+                                                    Margin="12,2,12,2"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    ContentSource="Header"
+                                                    RecognizesAccessKey="True" />
+                                            </Border>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Panel.ZIndex" Value="100" />
+                                                <Setter TargetName="Border" Property="Background" Value="{Binding TabControlForegroundBrush}" />
+                                                <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0" />
+                                                <Setter Property="Foreground" Value="{Binding TabControlBackgroundBrush}" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="{Binding TabControlBackgroundBrush}" />
+                                                <Setter Property="Foreground" Value="{Binding TabControlForegroundBrush}" />
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="{StaticResource DisabledBackgroundBrush}" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource DisabledBorderBrush}" />
+                                                <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
                             <Setter Property="HeaderTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
-                                        <ContentPresenter TextBlock.FontWeight="Bold" Content="{TemplateBinding Content}">
+                                        <ContentPresenter Content="{TemplateBinding Content}" TextBlock.FontWeight="Bold">
                                             <ContentPresenter.LayoutTransform>
                                                 <RotateTransform Angle="0" />
                                             </ContentPresenter.LayoutTransform>
@@ -627,67 +898,91 @@
                             </Setter>
                         </Style>
                     </TabControl.Resources>
-                    <TabItem Header="RoboCopy Options" ToolTip="" x:Name="tabRoboCopyOptionsItem" >
+                    <TabItem
+                        x:Name="tabRoboCopyOptionsItem"
+                        Header="RoboCopy Options"
+                        ToolTip="">
                         <DockPanel LastChildFill="True">
-                            <TextBlock DockPanel.Dock="Top" x:Name="txtPropertyGridWaterMark" FontSize="20" TextWrapping="WrapWithOverflow" FontWeight="Bold" 
-                                       Foreground="Red" Text="{Binding PropertyGridTooltip}" ToolTip="{Binding PropertyGridTooltip}"
-                                        Visibility="Collapsed" />
-                            <local:ExtendedPropertyGrid  Margin="-3" VerticalAlignment="Stretch" x:Name="pgAppSettings" 
-                                                    SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False" 
-                                           ShowDescriptionByTooltip="True" FilterWatermark="{Binding PropertyGridTooltip}" 
-                                                         ToolTip="{Binding PropertyGridTooltip}"/>
+                            <TextBlock
+                                x:Name="txtPropertyGridWaterMark"
+                                DockPanel.Dock="Top"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="Red"
+                                Text="{Binding PropertyGridTooltip}"
+                                TextWrapping="WrapWithOverflow"
+                                ToolTip="{Binding PropertyGridTooltip}"
+                                Visibility="Collapsed" />
+                            <sfw:PropertyGrid
+                                xmlns:sfw="clr-namespace:SoftFluent.Windows;assembly=SoftFluent.Windows"
+                                Name="pgAppSettings"
+                                Margin="-3"
+                                Background="{Binding PGControlBackgroundBrush}"
+                                BorderBrush="{Binding PGControlBorderBrush}"
+                                DecamelizePropertiesDisplayNames="false"
+                                Foreground="{Binding PGControlForegroundBrush}"
+                                GroupByCategory="True"
+                                HelpVisible="True"
+                                SelectedObject="{Binding AppSettings}" />
+                            <!--<local:ChoPropertyGrid  Margin="-3" VerticalAlignment="Stretch" x:Name="pgAppSettings"
+                                                    SelectedObject="{Binding AppSettings}"
+                                                         ToolTip="{Binding PropertyGridTooltip}" Style="{x:Null}"/>-->
+                            <!--<local:ExtendedPropertyGrid  Margin="-3" VerticalAlignment="Stretch" x:Name="pgAppSettings"
+                                                    SelectedObject="{Binding AppSettings}" SelectedObjectName="" ShowTitle="False"
+                                           ShowDescriptionByTooltip="True" FilterWatermark="{Binding PropertyGridTooltip}"
+                                                         ToolTip="{Binding PropertyGridTooltip}" Style="{x:Null}"/>-->
                         </DockPanel>
                     </TabItem>
-                    <TabItem Header="Backup Tasks" x:Name="tabBackupTasks" ToolTip="" >
-                        <GroupBox Header="Backup Tasks" Margin="-3" x:Name="grpBackupTasks">
+                    <TabItem
+                        x:Name="tabBackupTasks"
+                        Header="Backup Tasks"
+                        ToolTip="">
+                        <GroupBox
+                            x:Name="grpBackupTasks"
+                            Margin="-3"
+                            Header="Backup Tasks">
                             <DockPanel LastChildFill="True">
-                                <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                                <DockPanel HorizontalAlignment="Stretch" DockPanel.Dock="Top">
                                     <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Directory</TextBlock>
-                                    <DockPanel LastChildFill="True" DockPanel.Dock="Bottom" HorizontalAlignment="Stretch">
-                                        <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="20"  Width="20" DockPanel.Dock="Right"
-                                            x:Name="btnFindBackupTaskDirectoryInFileExplorer" 
-                                                ToolTip="Find backup task directory in file explorer" 
-                                                VerticalAlignment="Center"
-                                                Click="btnFindBackupTaskDirectoryInFileExplorer_Click" 
-                                                IsEnabled="{Binding BackupTaskDirStatus}">
-                                            <Image Source="{iconPacks:FontAwesomeImage Kind=SearchSolid}" >
-                                                <Image.Style>
-                                                    <Style TargetType="{x:Type Image}">
-                                                        <Style.Triggers>
-                                                            <Trigger Property="IsEnabled" Value="False">
-                                                                <Setter Property="Opacity" Value="0.5" />
-                                                            </Trigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Image.Style>
-                                            </Image>
+                                    <DockPanel
+                                        HorizontalAlignment="Stretch"
+                                        DockPanel.Dock="Bottom"
+                                        LastChildFill="True">
+                                        <Button
+                                            x:Name="btnFindBackupTaskDirectoryInFileExplorer"
+                                            Width="20"
+                                            Height="20"
+                                            VerticalAlignment="Center"
+                                            Click="btnFindBackupTaskDirectoryInFileExplorer_Click"
+                                            DockPanel.Dock="Right"
+                                            IsEnabled="{Binding BackupTaskDirStatus}"
+                                            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                            ToolTip="Find backup task directory in file explorer">
+                                            <Border>
+                                                <Image Source="Resources/Search.png">
+                                                    <Image.Style>
+                                                        <Style TargetType="{x:Type Image}">
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsEnabled" Value="False">
+                                                                    <Setter Property="Opacity" Value="0.5" />
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Image.Style>
+                                                </Image>
+                                            </Border>
                                         </Button>
-                                        <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="20" DockPanel.Dock="Right"
-                                            Margin="1,0,1,2"
+                                        <Button
                                             x:Name="btnRefreshBackupTasks"
-                                            ToolTip="Reload backup tasks..." VerticalAlignment="Bottom"
-                                                Click="btnRefreshBackupTasks_Click"
-                                                IsEnabled="{Binding BackupTaskDirStatus}"
-                                                >
-                                            <Image Source="Resources/Refresh.png" >
-                                                <Image.Style>
-                                                    <Style TargetType="{x:Type Image}">
-                                                        <Style.Triggers>
-                                                            <Trigger Property="IsEnabled" Value="False">
-                                                                <Setter Property="Opacity" Value="0.5" />
-                                                            </Trigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Image.Style>
-                                            </Image>
-                                        </Button>
-                                        <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"  Width="20" DockPanel.Dock="Right"
+                                            Width="20"
                                             Margin="1,0,1,2"
-                                            x:Name="btnBackupTaskDirectory"
-                                            ToolTip="Choose backup tasks directory..." VerticalAlignment="Bottom"
-                                                Click="btnBackupTaskDirectory_Click"
-                                                >
-                                            <Image Source="Resources/OpenFolder.png" >
+                                            VerticalAlignment="Bottom"
+                                            Click="btnRefreshBackupTasks_Click"
+                                            DockPanel.Dock="Right"
+                                            IsEnabled="{Binding BackupTaskDirStatus}"
+                                            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                            ToolTip="Reload backup tasks...">
+                                            <Image Source="Resources/Refresh.png">
                                                 <Image.Style>
                                                     <Style TargetType="{x:Type Image}">
                                                         <Style.Triggers>
@@ -699,18 +994,39 @@
                                                 </Image.Style>
                                             </Image>
                                         </Button>
-                                        <local:ChoMruComboBox 
-                                            HorizontalAlignment="Stretch" MruSource="{Binding RecentNumbersList}" 
-                                            Text="{Binding Path=BackupTaskDirectory, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                        <Button
+                                            x:Name="btnBackupTaskDirectory"
+                                            Width="20"
+                                            Margin="1,0,1,2"
+                                            VerticalAlignment="Bottom"
+                                            Click="btnBackupTaskDirectory_Click"
+                                            DockPanel.Dock="Right"
+                                            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                            ToolTip="Choose backup tasks directory...">
+                                            <Image Source="Resources/OpenFolder.png">
+                                                <Image.Style>
+                                                    <Style TargetType="{x:Type Image}">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsEnabled" Value="False">
+                                                                <Setter Property="Opacity" Value="0.5" />
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                        </Button>
+                                        <local:ChoMruComboBox
+                                            HorizontalAlignment="Stretch"
                                             Background="{Binding BackupTaskDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
                                             Foreground="{Binding BackupTaskDirStatus, Converter={StaticResource BoolToForegroundColorConverter1}}"
-                                        />
+                                            MruSource="{Binding RecentNumbersList}"
+                                            Text="{Binding Path=BackupTaskDirectory, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
                                         <!--TextBox HorizontalAlignment="Stretch"
                                             x:Name="txtBackupTasksDirectory"
                                             Margin="1"
-                                            TabIndex="0" 
-                                            Style="{StaticResource WaterMarkTextBoxStyle}" 
+                                            TabIndex="0"
+                                            Style="{StaticResource WaterMarkTextBoxStyle}"
                                             ToolTip="{Binding BackupTaskDirTooltip}"
                                                 Text="{Binding Path=BackupTaskDirectory, UpdateSourceTrigger=PropertyChanged}"
                                                         Background="{Binding BackupTaskDirStatus, Converter={StaticResource BoolToBackgroundColorConverter1}}"
@@ -721,153 +1037,342 @@
                                 </DockPanel>
 
                                 <DockPanel LastChildFill="True">
-                                    <DockPanel LastChildFill="True" DockPanel.Dock="Bottom">
-                                        <StackPanel Margin="0,5,0,0" Orientation="Vertical" DockPanel.Dock="Right" VerticalAlignment="Bottom" >
-                                            <Button Margin="5,0,0,0" x:Name="btnCloneTask" DockPanel.Dock="Right" Content="CLONE" IsEnabled="{Binding CloneTaskEnabled }"
-                                                Style="{DynamicResource MetroButton}" Click="btnCloneTask_Click" 
-                                                    ToolTip="Clone task"/>
-                                            <Button Margin="5,5,0,0" x:Name="btnDeleteTask" DockPanel.Dock="Right" Content="DELETE" IsEnabled="{Binding DeleteTaskEnabled }"
-                                                Style="{DynamicResource MetroButton}" Click="btnDeleteTask_Click" ToolTip="Delete task"/>
-                                            <Button Margin="5,5,0,0" x:Name="btnQueueTask" DockPanel.Dock="Right" Content="QUEUE" IsEnabled="{Binding QueueTaskEnabled }"
-                                                Style="{DynamicResource MetroButton}" Click="btnQueueTask_Click"  ToolTip="Queue task"/>
+                                    <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
+                                        <StackPanel
+                                            Margin="0,5,0,0"
+                                            VerticalAlignment="Bottom"
+                                            DockPanel.Dock="Right"
+                                            Orientation="Vertical">
+                                            <Button
+                                                x:Name="btnCloneTask"
+                                                Margin="5,0,0,0"
+                                                Click="btnCloneTask_Click"
+                                                Content="CLONE"
+                                                DockPanel.Dock="Right"
+                                                IsEnabled="{Binding CloneTaskEnabled}"
+                                                Style="{DynamicResource MetroButton}"
+                                                ToolTip="Clone task" />
+                                            <Button
+                                                x:Name="btnDeleteTask"
+                                                Margin="5,5,0,0"
+                                                Click="btnDeleteTask_Click"
+                                                Content="DELETE"
+                                                DockPanel.Dock="Right"
+                                                IsEnabled="{Binding DeleteTaskEnabled}"
+                                                Style="{DynamicResource MetroButton}"
+                                                ToolTip="Delete task" />
+                                            <Button
+                                                x:Name="btnQueueTask"
+                                                Margin="5,5,0,0"
+                                                Click="btnQueueTask_Click"
+                                                Content="QUEUE"
+                                                DockPanel.Dock="Right"
+                                                IsEnabled="{Binding QueueTaskEnabled}"
+                                                Style="{DynamicResource MetroButton}"
+                                                ToolTip="Queue task" />
                                         </StackPanel>
                                         <DockPanel LastChildFill="True">
                                             <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Backup Task Comments</TextBlock>
-                                            <TextBox x:Name="txtTaskComments" Margin="0,5,0,0" Height="70" VerticalScrollBarVisibility="Auto" 
-                                                     TextWrapping="WrapWithOverflow"
-                                                     Text="{Binding Path=AppSettings.Comments, UpdateSourceTrigger=PropertyChanged}" ToolTip="Backup Task Comments" />
+                                            <TextBox
+                                                x:Name="txtTaskComments"
+                                                Height="70"
+                                                Margin="0,5,0,0"
+                                                Text="{Binding Path=AppSettings.Comments, UpdateSourceTrigger=PropertyChanged}"
+                                                TextWrapping="WrapWithOverflow"
+                                                ToolTip="Backup Task Comments"
+                                                VerticalScrollBarVisibility="Auto" />
                                         </DockPanel>
                                     </DockPanel>
-                                    <ListView x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
-                                             ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName" 
-                                             SelectedValue="{Binding SelectedBackupTaskFilePath}"
-                                             SelectedItem="{Binding SelectedBackupTaskItem}"
-                                             local:ChoGridViewSort.AutoSort="True" 
-                                             local:ChoGridViewColumnVisibilityManager.Enabled="True"
-                                             FontFamily="Courier New" FontSize="12" ToolTip=""
-                                               PreviewKeyUp="lstBackupTasks_PreviewKeyUp">
+                                    <ListView
+                                        x:Name="lstBackupTasks"
+                                        Margin="0,5,0,0"
+                                        VerticalAlignment="Stretch"
+                                        local:ChoGridViewColumnVisibilityManager.Enabled="True"
+                                        local:ChoGridViewSort.AutoSort="True"
+                                        BorderThickness="1"
+                                        DisplayMemberPath="FileName"
+                                        FontFamily="Courier New"
+                                        FontSize="12"
+                                        ItemsSource="{Binding BackupTaskInfos}"
+                                        PreviewKeyUp="lstBackupTasks_PreviewKeyUp"
+                                        SelectedItem="{Binding SelectedBackupTaskItem}"
+                                        SelectedValue="{Binding SelectedBackupTaskFilePath}"
+                                        SelectedValuePath="FilePath"
+                                        ToolTip="">
                                         <ListView.Resources>
                                             <ContextMenu x:Key="grdHeaderContextMenu">
-                                                <MenuItem x:Name="mnuDateCreated" Header="Date Created" IsCheckable="true" IsChecked="{Binding DateCreated}" />
-                                                <MenuItem x:Name="mnuDateModified" Header="Date Modified" IsCheckable="true" IsChecked="{Binding DateModified}" />
+                                                <MenuItem
+                                                    x:Name="mnuDateCreated"
+                                                    Header="Date Created"
+                                                    IsCheckable="true"
+                                                    IsChecked="{Binding DateCreated}" />
+                                                <MenuItem
+                                                    x:Name="mnuDateModified"
+                                                    Header="Date Modified"
+                                                    IsCheckable="true"
+                                                    IsChecked="{Binding DateModified}" />
                                                 <Separator />
                                                 <MenuItem Header="Clone Options">
-                                                    <MenuItem Header="Keep Date Created" IsCheckable="true" IsChecked="{Binding KeepDateCreated}"/>
-                                                    <MenuItem Header="Keep Date Modified" IsCheckable="true" IsChecked="{Binding KeepDateModified}" />
+                                                    <MenuItem
+                                                        Header="Keep Date Created"
+                                                        IsCheckable="true"
+                                                        IsChecked="{Binding KeepDateCreated}" />
+                                                    <MenuItem
+                                                        Header="Keep Date Modified"
+                                                        IsCheckable="true"
+                                                        IsChecked="{Binding KeepDateModified}" />
                                                 </MenuItem>
                                                 <Separator />
-                                                <MenuItem x:Name="mnuColumnToFit" Header="Size Column to Fit" Click="mnuColumnToFit_Click" />
-                                                <MenuItem x:Name="mnuAllColumnsToFit" Header="Size All Columns to Fit" Click="mnuAllColumnsToFit_Click" />
+                                                <MenuItem
+                                                    x:Name="mnuColumnToFit"
+                                                    Click="mnuColumnToFit_Click"
+                                                    Header="Size Column to Fit" />
+                                                <MenuItem
+                                                    x:Name="mnuAllColumnsToFit"
+                                                    Click="mnuAllColumnsToFit_Click"
+                                                    Header="Size All Columns to Fit" />
                                                 <Separator />
-                                                <MenuItem Header="Confirm on Delete Task" IsCheckable="True" IsChecked="{Binding ConfirmOnDelete}" />
-                                                <MenuItem Header="Watch for Changes" IsCheckable="True" IsChecked="{Binding WatchForChanges}" />
+                                                <MenuItem
+                                                    Header="Confirm on Delete Task"
+                                                    IsCheckable="True"
+                                                    IsChecked="{Binding ConfirmOnDelete}" />
+                                                <MenuItem
+                                                    Header="Watch for Changes"
+                                                    IsCheckable="True"
+                                                    IsChecked="{Binding WatchForChanges}" />
                                             </ContextMenu>
                                             <ContextMenu x:Key="grdItemContextMenu">
-                                                <MenuItem x:Name="mnuCloneTask" Header="Clone Task" Click="mnuCloneTask_Click" InputGestureText="Ctrl+V" />
-                                                <MenuItem x:Name="mnuDeleteTask" Header="Delete Task" Click="mnuDeleteTask_Click" InputGestureText="Del" />
-                                                <MenuItem x:Name="mnuQueueTask" Header="Queue Task" Click="mnuQueueTask_Click"  InputGestureText="Ctrl+Q" />
+                                                <MenuItem
+                                                    x:Name="mnuCloneTask"
+                                                    Click="mnuCloneTask_Click"
+                                                    Header="Clone Task"
+                                                    InputGestureText="Ctrl+V" />
+                                                <MenuItem
+                                                    x:Name="mnuDeleteTask"
+                                                    Click="mnuDeleteTask_Click"
+                                                    Header="Delete Task"
+                                                    InputGestureText="Del" />
+                                                <MenuItem
+                                                    x:Name="mnuQueueTask"
+                                                    Click="mnuQueueTask_Click"
+                                                    Header="Queue Task"
+                                                    InputGestureText="Ctrl+Q" />
                                                 <Separator />
                                                 <MenuItem Header="Clone Options">
-                                                    <MenuItem Header="Keep Date Created" IsCheckable="true" IsChecked="{Binding KeepDateCreated, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
-                                                    <MenuItem Header="Keep Date Modified" IsCheckable="true" IsChecked="{Binding KeepDateModified, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+                                                    <MenuItem
+                                                        Header="Keep Date Created"
+                                                        IsCheckable="true"
+                                                        IsChecked="{Binding KeepDateCreated, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+                                                    <MenuItem
+                                                        Header="Keep Date Modified"
+                                                        IsCheckable="true"
+                                                        IsChecked="{Binding KeepDateModified, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
                                                 </MenuItem>
                                                 <Separator />
-                                                <MenuItem Header="Confirm on Delete Task" IsCheckable="True" IsChecked="{Binding ConfirmOnDelete, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
-                                                <MenuItem Header="Watch for Changes" IsCheckable="True" IsChecked="{Binding WatchForChanges, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+                                                <MenuItem
+                                                    Header="Confirm on Delete Task"
+                                                    IsCheckable="True"
+                                                    IsChecked="{Binding ConfirmOnDelete, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+                                                <MenuItem
+                                                    Header="Watch for Changes"
+                                                    IsCheckable="True"
+                                                    IsChecked="{Binding WatchForChanges, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
                                             </ContextMenu>
                                         </ListView.Resources>
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="{x:Type ListViewItem}">
                                                 <!--<EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListViewItem_PreviewMouseLeftButtonDown" />-->
-                                                <Setter Property="ContextMenu" Value="{StaticResource grdItemContextMenu}"/>
+                                                <Setter Property="ContextMenu" Value="{StaticResource grdItemContextMenu}" />
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter Property="Background" Value="Gray" />
+                                                        <Setter Property="Foreground" Value="White" />
+                                                    </Trigger>
+                                                </Style.Triggers>
                                             </Style>
                                         </ListView.ItemContainerStyle>
                                         <ListView.View>
                                             <GridView AllowsColumnReorder="true" ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle1}">
-                                                <GridViewColumn x:Name="grdTaskNameColumn" Width="{Binding TaskNameColumnWidth}" DisplayMemberBinding="{Binding Path=TaskName}" 
-                                                                local:ChoGridViewSort.PropertyName="TaskName" >
-                                                    <GridViewColumnHeader x:Name="grdTaskNameColumnHeader" Content="TASK NAME" ContextMenu="{StaticResource grdHeaderContextMenu}" 
-                                                                          SizeChanged="TaskNameGridViewColumnHeader_SizeChanged" Tag="TaskName"
-                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grdBackupTaskColumnHeader_Click" />
+                                                <GridViewColumn
+                                                    x:Name="grdTaskNameColumn"
+                                                    Width="{Binding TaskNameColumnWidth}"
+                                                    local:ChoGridViewSort.PropertyName="TaskName"
+                                                    DisplayMemberBinding="{Binding Path=TaskName}">
+                                                    <GridViewColumnHeader
+                                                        x:Name="grdTaskNameColumnHeader"
+                                                        Click="grdBackupTaskColumnHeader_Click"
+                                                        Content="TASK NAME"
+                                                        ContextMenu="{StaticResource grdHeaderContextMenu}"
+                                                        MouseDown="GridViewColumnHeader_MouseDown"
+                                                        SizeChanged="TaskNameGridViewColumnHeader_SizeChanged"
+                                                        Tag="TaskName" />
                                                 </GridViewColumn>
-                                                <GridViewColumn x:Name="grdDateCreatedColumn" Width="{Binding DateCreatedColumnWidth}" 
-                                                                DisplayMemberBinding="{Binding Path=CreatedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
-                                                                local:ChoGridViewSort.PropertyName="CreatedDate" 
-                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateCreatedVisibility}">
-                                                    <GridViewColumnHeader x:Name="grdDateCreatedColumnHeader" Content="DATE CREATED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
-                                                                          SizeChanged="DateCreatedGridViewColumnHeader_SizeChanged" Tag="CreatedDate"
-                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grdBackupTaskColumnHeader_Click" />
+                                                <GridViewColumn
+                                                    x:Name="grdDateCreatedColumn"
+                                                    Width="{Binding DateCreatedColumnWidth}"
+                                                    local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateCreatedVisibility}"
+                                                    local:ChoGridViewSort.PropertyName="CreatedDate"
+                                                    DisplayMemberBinding="{Binding Path=CreatedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}">
+                                                    <GridViewColumnHeader
+                                                        x:Name="grdDateCreatedColumnHeader"
+                                                        Click="grdBackupTaskColumnHeader_Click"
+                                                        Content="DATE CREATED"
+                                                        ContextMenu="{StaticResource grdHeaderContextMenu}"
+                                                        MouseDown="GridViewColumnHeader_MouseDown"
+                                                        SizeChanged="DateCreatedGridViewColumnHeader_SizeChanged"
+                                                        Tag="CreatedDate" />
                                                 </GridViewColumn>
-                                                <GridViewColumn x:Name="grdDateModifiedColumn" Width="{Binding DateModifiedColumnWidth}" 
-                                                                DisplayMemberBinding="{Binding Path=ModifiedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
-                                                                local:ChoGridViewSort.PropertyName="ModifiedDate" 
-                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateModifiedVisibility}" >
-                                                    <GridViewColumnHeader x:Name="grdDateModifiedColumnHeader" Content="DATE MODIFIED" ContextMenu="{StaticResource grdHeaderContextMenu}" 
-                                                                          SizeChanged="DateModifiedGridViewColumnHeader_SizeChanged" Tag="ModifiedDate"
-                                                                          MouseDown="GridViewColumnHeader_MouseDown" Click="grdBackupTaskColumnHeader_Click"/>
+                                                <GridViewColumn
+                                                    x:Name="grdDateModifiedColumn"
+                                                    Width="{Binding DateModifiedColumnWidth}"
+                                                    local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding DateModifiedVisibility}"
+                                                    local:ChoGridViewSort.PropertyName="ModifiedDate"
+                                                    DisplayMemberBinding="{Binding Path=ModifiedDate, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}">
+                                                    <GridViewColumnHeader
+                                                        x:Name="grdDateModifiedColumnHeader"
+                                                        Click="grdBackupTaskColumnHeader_Click"
+                                                        Content="DATE MODIFIED"
+                                                        ContextMenu="{StaticResource grdHeaderContextMenu}"
+                                                        MouseDown="GridViewColumnHeader_MouseDown"
+                                                        SizeChanged="DateModifiedGridViewColumnHeader_SizeChanged"
+                                                        Tag="ModifiedDate" />
                                                 </GridViewColumn>
                                             </GridView>
                                         </ListView.View>
                                     </ListView>
 
                                     <!--<ListBox x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
-                                             ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName" 
+                                             ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName"
                                              SelectedValue="{Binding SelectedBackupTaskFilePath}" >-->
                                 </DockPanel>
                             </DockPanel>
                         </GroupBox>
                     </TabItem>
-                    <TabItem Header="Task Queue" x:Name="tabTaskQueue" ToolTip="" >
-                        <GroupBox Header="Task Queue" Margin="-3" x:Name="grpTaskQueue">
+                    <TabItem
+                        x:Name="tabTaskQueue"
+                        Header="Task Queue"
+                        ToolTip="">
+                        <GroupBox
+                            x:Name="grpTaskQueue"
+                            Margin="-3"
+                            Header="Task Queue">
                             <DockPanel LastChildFill="True">
-                                <StackPanel Margin="0,5,0,0" DockPanel.Dock="Bottom" Orientation="Horizontal" >
-                                    <Button Margin="0,0,0,0" x:Name="btnTaskQStopTask" Content="STOP" IsEnabled="{Binding TaskQStopTaskEnabled }"
-                                            Style="{DynamicResource MetroButton}" Click="btnTaskQStopTask_Click" ToolTip="Stop task"/>
+                                <StackPanel
+                                    Margin="0,5,0,0"
+                                    DockPanel.Dock="Bottom"
+                                    Orientation="Horizontal">
+                                    <Button
+                                        x:Name="btnTaskQStopTask"
+                                        Margin="0,0,0,0"
+                                        Click="btnTaskQStopTask_Click"
+                                        Content="STOP"
+                                        IsEnabled="{Binding TaskQStopTaskEnabled}"
+                                        Style="{DynamicResource MetroButton}"
+                                        ToolTip="Stop task" />
                                     <!--<Button Margin="5,0,0,0" x:Name="btnTaskQMoveUpTask" Content="MOVE UP" IsEnabled="{Binding TaskQMoveUpTaskEnabled }"
                                             Style="{DynamicResource MetroButton}" Click="btnTaskQMoveUpTask_Click"  ToolTip="Move Up task"/>
                                     <Button Margin="5,0,0,0" x:Name="btnTaskQMoveDownTask" Content="MOVE DOWN" IsEnabled="{Binding TaskQMoveDownTaskEnabled }"
                                             Style="{DynamicResource MetroButton}" Click="btnTaskQMoveDownTask_Click"  ToolTip="Move Down task"/>-->
-                                    <Button Margin="5,0,0,0" x:Name="btnTaskQRemoveTask" Content="REMOVE" IsEnabled="{Binding TaskQRemoveTaskEnabled }"
-                                            Style="{DynamicResource MetroButton}" Click="btnTaskQRemoveTask_Click"  ToolTip="Remove task"/>
-                                    <Button Margin="5,0,0,0" x:Name="btnOpenTaskLogFile" DockPanel.Dock="Right" Content="OPEN LOG FILE" IsEnabled="{Binding OpenTaskLogFileEnabled }"
-                                                Style="{DynamicResource MetroButton}" Click="btnOpenTaskLogFile_Click"  ToolTip="Open task log file"/>
-                                    <Button Margin="5,0,0,0" x:Name="btnOpenTaskLogFolder" DockPanel.Dock="Right" Content="OPEN LOG FOLDER" IsEnabled="{Binding OpenTaskLogFolderEnabled }"
-                                                Style="{DynamicResource MetroButton}" Click="btnOpenTaskLogFolder_Click"  ToolTip="Open task log folder"/>
+                                    <Button
+                                        x:Name="btnTaskQRemoveTask"
+                                        Margin="5,0,0,0"
+                                        Click="btnTaskQRemoveTask_Click"
+                                        Content="REMOVE"
+                                        IsEnabled="{Binding TaskQRemoveTaskEnabled}"
+                                        Style="{DynamicResource MetroButton}"
+                                        ToolTip="Remove task" />
+                                    <Button
+                                        x:Name="btnOpenTaskLogFile"
+                                        Margin="5,0,0,0"
+                                        Click="btnOpenTaskLogFile_Click"
+                                        Content="OPEN LOG FILE"
+                                        DockPanel.Dock="Right"
+                                        IsEnabled="{Binding OpenTaskLogFileEnabled}"
+                                        Style="{DynamicResource MetroButton}"
+                                        ToolTip="Open task log file" />
+                                    <Button
+                                        x:Name="btnOpenTaskLogFolder"
+                                        Margin="5,0,0,0"
+                                        Click="btnOpenTaskLogFolder_Click"
+                                        Content="OPEN LOG FOLDER"
+                                        DockPanel.Dock="Right"
+                                        IsEnabled="{Binding OpenTaskLogFolderEnabled}"
+                                        Style="{DynamicResource MetroButton}"
+                                        ToolTip="Open task log folder" />
                                 </StackPanel>
-                                <ListView x:Name="lstTaskQueue" Margin="0,0,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
-                                             ItemsSource="{Binding TaskQueueItems}" SelectedValuePath="Id" 
-                                             SelectedValue="{Binding SelectedTaskQueueItemId}"
-                                             SelectedItem="{Binding SelectedTaskQueueItem}"
-                                             local:ChoGridViewSort.AutoSort="True" 
-                                             local:ChoGridViewColumnVisibilityManager.Enabled="True"
-                                             FontFamily="Courier New" FontSize="12" ToolTip=""
-                                               PreviewKeyUp="lstTaskQueue_PreviewKeyUp">
+                                <ListView
+                                    x:Name="lstTaskQueue"
+                                    Margin="0,0,0,0"
+                                    VerticalAlignment="Stretch"
+                                    local:ChoGridViewColumnVisibilityManager.Enabled="True"
+                                    local:ChoGridViewSort.AutoSort="True"
+                                    BorderBrush="LightGray"
+                                    BorderThickness="1"
+                                    FontFamily="Courier New"
+                                    FontSize="12"
+                                    ItemsSource="{Binding TaskQueueItems}"
+                                    PreviewKeyUp="lstTaskQueue_PreviewKeyUp"
+                                    SelectedItem="{Binding SelectedTaskQueueItem}"
+                                    SelectedValue="{Binding SelectedTaskQueueItemId}"
+                                    SelectedValuePath="Id"
+                                    ToolTip="">
                                     <ListView.Resources>
                                         <ContextMenu x:Key="grdTaskQueueHeaderContextMenu">
-                                            <MenuItem x:Name="mnuTaskQColumnToFit" Header="Size Column to Fit" Click="mnuTaskQColumnToFit_Click" />
-                                            <MenuItem x:Name="mnuTaskQAllColumnsToFit" Header="Size All Columns to Fit" Click="mnuTaskQAllColumnsToFit_Click" />
+                                            <MenuItem
+                                                x:Name="mnuTaskQColumnToFit"
+                                                Click="mnuTaskQColumnToFit_Click"
+                                                Header="Size Column to Fit" />
+                                            <MenuItem
+                                                x:Name="mnuTaskQAllColumnsToFit"
+                                                Click="mnuTaskQAllColumnsToFit_Click"
+                                                Header="Size All Columns to Fit" />
                                             <Separator />
-                                            <MenuItem Header="Confirm on Delete Task" IsCheckable="True" IsChecked="{Binding ConfirmOnDelete}" />
+                                            <MenuItem
+                                                Header="Confirm on Delete Task"
+                                                IsCheckable="True"
+                                                IsChecked="{Binding ConfirmOnDelete}" />
                                         </ContextMenu>
                                         <ContextMenu x:Key="grdTaskQueueItemContextMenu">
-                                            <MenuItem x:Name="mnuTaskQStopTask" Header="Stop Task" Click="mnuCloneTask_Click" InputGestureText="Ctrl+S" IsEnabled="{Binding TaskQStopTaskEnabled }"/>
+                                            <MenuItem
+                                                x:Name="mnuTaskQStopTask"
+                                                Click="mnuCloneTask_Click"
+                                                Header="Stop Task"
+                                                InputGestureText="Ctrl+S"
+                                                IsEnabled="{Binding TaskQStopTaskEnabled}" />
                                             <!--<MenuItem x:Name="mnuTaskQMoveUpTask" Header="Move Up Task" Click="mnuDeleteTask_Click" InputGestureText="Ctrl+Up" IsEnabled="{Binding TaskQMoveUpTaskEnabled }"/>
                                             <MenuItem x:Name="mnuTaskQMoveDownTask" Header="Move Down Task" Click="mnuDeleteTask_Click" InputGestureText="Ctrl+Down" IsEnabled="{Binding TaskQMoveDownTaskEnabled }"/>-->
-                                            <MenuItem x:Name="mnuTaskQRemoveTask" Header="Remove Task" Click="mnuDeleteTask_Click" InputGestureText="Del" IsEnabled="{Binding TaskQRemoveTaskEnabled }"/>
-                                            <MenuItem x:Name="mnuTaskQOpenLogFile" Header="Open log file" Click="mnuTaskQOpenLogFile_Click" InputGestureText="Ctrl+O" IsEnabled="{Binding OpenTaskLogFileEnabled }"/>
+                                            <MenuItem
+                                                x:Name="mnuTaskQRemoveTask"
+                                                Click="mnuDeleteTask_Click"
+                                                Header="Remove Task"
+                                                InputGestureText="Del"
+                                                IsEnabled="{Binding TaskQRemoveTaskEnabled}" />
+                                            <MenuItem
+                                                x:Name="mnuTaskQOpenLogFile"
+                                                Click="mnuTaskQOpenLogFile_Click"
+                                                Header="Open log file"
+                                                InputGestureText="Ctrl+O"
+                                                IsEnabled="{Binding OpenTaskLogFileEnabled}" />
                                             <Separator />
-                                            <MenuItem Header="Confirm on Delete Task" IsCheckable="True" IsChecked="{Binding ConfirmOnDelete, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+                                            <MenuItem
+                                                Header="Confirm on Delete Task"
+                                                IsCheckable="True"
+                                                IsChecked="{Binding ConfirmOnDelete, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
                                         </ContextMenu>
                                     </ListView.Resources>
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="{x:Type ListBoxItem}">
                                             <!--<EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnListViewItem_PreviewMouseLeftButtonDown" />-->
-                                            <Setter Property="ContextMenu" Value="{StaticResource grdTaskQueueItemContextMenu}"/>
-                                            <Setter Property="Padding" Value="0,0,0,0"/>
-                                            <Setter Property="Margin" Value="0,0,0,0"/>
+                                            <Setter Property="ContextMenu" Value="{StaticResource grdTaskQueueItemContextMenu}" />
+                                            <Setter Property="Padding" Value="0,0,0,0" />
+                                            <Setter Property="Margin" Value="0,0,0,0" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Status}" Value="3">
-                                                    <Setter Property="Background" Value="LightGreen" />
+                                                    <Setter Property="Background" Value="DarkGreen" />
+                                                    <Setter Property="Foreground" Value="White" />
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="2">
                                                     <Setter Property="Background" Value="Red" />
@@ -875,70 +1380,122 @@
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="1">
                                                     <Setter Property="Background" Value="Yellow" />
+                                                    <Setter Property="Foreground" Value="Black" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </ListView.ItemContainerStyle>
                                     <ListView.View>
                                         <GridView AllowsColumnReorder="true" ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle1}">
-                                            <GridViewColumn x:Name="grdTaskQIdColumn" Width="{Binding TaskQIdColumnWidth}" DisplayMemberBinding="{Binding Path=Id}" 
-                                                                local:ChoGridViewSort.PropertyName="Id" >
-                                                <GridViewColumnHeader x:Name="grdTaskQTaskIdColumnHeader" Content="ID" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
-                                                                          SizeChanged="grdTaskQIdColumnHeader_SizeChanged"  Tag="TaskName"
-                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click" />
+                                            <GridViewColumn
+                                                x:Name="grdTaskQIdColumn"
+                                                Width="{Binding TaskQIdColumnWidth}"
+                                                local:ChoGridViewSort.PropertyName="Id"
+                                                DisplayMemberBinding="{Binding Path=Id}">
+                                                <GridViewColumnHeader
+                                                    x:Name="grdTaskQTaskIdColumnHeader"
+                                                    Click="grdTaskQColumnHeader_Click"
+                                                    Content="ID"
+                                                    ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}"
+                                                    MouseDown="GridViewTaskQColumnHeader_MouseDown"
+                                                    SizeChanged="grdTaskQIdColumnHeader_SizeChanged"
+                                                    Tag="TaskName" />
                                             </GridViewColumn>
-                                            <GridViewColumn x:Name="grdTaskQNameColumn" Width="{Binding TaskQNameColumnWidth}" DisplayMemberBinding="{Binding Path=TaskName}" 
-                                                                local:ChoGridViewSort.PropertyName="TaskName" >
-                                                <GridViewColumnHeader x:Name="grdTaskQTaskNameColumnHeader" Content="TASK NAME" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
-                                                                          SizeChanged="grdTaskQNameColumnHeader_SizeChanged"  Tag="TaskName"
-                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click" />
+                                            <GridViewColumn
+                                                x:Name="grdTaskQNameColumn"
+                                                Width="{Binding TaskQNameColumnWidth}"
+                                                local:ChoGridViewSort.PropertyName="TaskName"
+                                                DisplayMemberBinding="{Binding Path=TaskName}">
+                                                <GridViewColumnHeader
+                                                    x:Name="grdTaskQTaskNameColumnHeader"
+                                                    Click="grdTaskQColumnHeader_Click"
+                                                    Content="TASK NAME"
+                                                    ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}"
+                                                    MouseDown="GridViewTaskQColumnHeader_MouseDown"
+                                                    SizeChanged="grdTaskQNameColumnHeader_SizeChanged"
+                                                    Tag="TaskName" />
                                             </GridViewColumn>
-                                            <GridViewColumn x:Name="grdTaskQQueueTimeColumn" Width="{Binding TaskQQueueTimeColumnWidth}" 
-                                                                DisplayMemberBinding="{Binding Path=QueueTime, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
-                                                                local:ChoGridViewSort.PropertyName="QueueTime" 
-                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding QueueTime}">
-                                                <GridViewColumnHeader x:Name="grdTaskQQueueTimeColumnHeader" Content="QUEUE TIME" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
-                                                                          SizeChanged="grdTaskQQueueTimeColumnHeader_SizeChanged"  Tag="QueueTime"
-                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click" />
+                                            <GridViewColumn
+                                                x:Name="grdTaskQQueueTimeColumn"
+                                                Width="{Binding TaskQQueueTimeColumnWidth}"
+                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding QueueTime}"
+                                                local:ChoGridViewSort.PropertyName="QueueTime"
+                                                DisplayMemberBinding="{Binding Path=QueueTime, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}">
+                                                <GridViewColumnHeader
+                                                    x:Name="grdTaskQQueueTimeColumnHeader"
+                                                    Click="grdTaskQColumnHeader_Click"
+                                                    Content="QUEUE TIME"
+                                                    ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}"
+                                                    MouseDown="GridViewTaskQColumnHeader_MouseDown"
+                                                    SizeChanged="grdTaskQQueueTimeColumnHeader_SizeChanged"
+                                                    Tag="QueueTime" />
                                             </GridViewColumn>
-                                            <GridViewColumn x:Name="grdTaskQStartTimeColumn" Width="{Binding TaskQStartTimeColumnWidth}" 
-                                                                DisplayMemberBinding="{Binding Path=StartTime, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
-                                                                local:ChoGridViewSort.PropertyName="StartTime" 
-                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding StartTime}">
-                                                <GridViewColumnHeader x:Name="grdTaskQStartTimeColumnHeader" Content="START TIME" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
-                                                                          SizeChanged="grdTaskQStartTimeColumnHeader_SizeChanged"  Tag="StartTime"
-                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click" />
+                                            <GridViewColumn
+                                                x:Name="grdTaskQStartTimeColumn"
+                                                Width="{Binding TaskQStartTimeColumnWidth}"
+                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding StartTime}"
+                                                local:ChoGridViewSort.PropertyName="StartTime"
+                                                DisplayMemberBinding="{Binding Path=StartTime, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}">
+                                                <GridViewColumnHeader
+                                                    x:Name="grdTaskQStartTimeColumnHeader"
+                                                    Click="grdTaskQColumnHeader_Click"
+                                                    Content="START TIME"
+                                                    ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}"
+                                                    MouseDown="GridViewTaskQColumnHeader_MouseDown"
+                                                    SizeChanged="grdTaskQStartTimeColumnHeader_SizeChanged"
+                                                    Tag="StartTime" />
                                             </GridViewColumn>
-                                            <GridViewColumn x:Name="grdTaskQEndTimeColumn" Width="{Binding DateModifiedColumnWidth}" 
-                                                                DisplayMemberBinding="{Binding Path=EndTime, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}" 
-                                                                local:ChoGridViewSort.PropertyName="EndTime" 
-                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding EndTime}" >
-                                                <GridViewColumnHeader x:Name="grdTaskQEndTimeColumnHeader" Content="END TIME" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
-                                                                          SizeChanged="grdTaskQEndTimeColumnHeader_SizeChanged"  Tag="EndTime"
-                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click"/>
+                                            <GridViewColumn
+                                                x:Name="grdTaskQEndTimeColumn"
+                                                Width="{Binding DateModifiedColumnWidth}"
+                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding EndTime}"
+                                                local:ChoGridViewSort.PropertyName="EndTime"
+                                                DisplayMemberBinding="{Binding Path=EndTime, StringFormat='dd-MMM-yyyy hh:mm:ss tt'}">
+                                                <GridViewColumnHeader
+                                                    x:Name="grdTaskQEndTimeColumnHeader"
+                                                    Click="grdTaskQColumnHeader_Click"
+                                                    Content="END TIME"
+                                                    ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}"
+                                                    MouseDown="GridViewTaskQColumnHeader_MouseDown"
+                                                    SizeChanged="grdTaskQEndTimeColumnHeader_SizeChanged"
+                                                    Tag="EndTime" />
                                             </GridViewColumn>
-                                            <GridViewColumn x:Name="grdTaskQStatusColumn" Width="{Binding DateModifiedColumnWidth}" 
-                                                                DisplayMemberBinding="{Binding Path=Status}" 
-                                                                local:ChoGridViewSort.PropertyName="Status" 
-                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding Status}" >
-                                                <GridViewColumnHeader x:Name="grdTaskQStatusColumnHeader" Content="STATUS" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
-                                                                          SizeChanged="grdTaskQStatusColumnHeader_SizeChanged" Tag="Status"
-                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click"/>
+                                            <GridViewColumn
+                                                x:Name="grdTaskQStatusColumn"
+                                                Width="{Binding DateModifiedColumnWidth}"
+                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding Status}"
+                                                local:ChoGridViewSort.PropertyName="Status"
+                                                DisplayMemberBinding="{Binding Path=Status}">
+                                                <GridViewColumnHeader
+                                                    x:Name="grdTaskQStatusColumnHeader"
+                                                    Click="grdTaskQColumnHeader_Click"
+                                                    Content="STATUS"
+                                                    ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}"
+                                                    MouseDown="GridViewTaskQColumnHeader_MouseDown"
+                                                    SizeChanged="grdTaskQStatusColumnHeader_SizeChanged"
+                                                    Tag="Status" />
                                             </GridViewColumn>
-                                            <GridViewColumn x:Name="grdTaskQErrorMsgColumn" Width="{Binding DateModifiedColumnWidth}" 
-                                                                DisplayMemberBinding="{Binding Path=ErrorMessage}" 
-                                                                local:ChoGridViewSort.PropertyName="Status" 
-                                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding ErrorMessage}" >
-                                                <GridViewColumnHeader x:Name="grdTaskQErrorMsgColumnHeader" Content="ERROR MSG" ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}" 
-                                                                          SizeChanged="grdTaskQErrorMsgColumnHeader_SizeChanged" Tag="ErrorMessage"
-                                                                          MouseDown="GridViewTaskQColumnHeader_MouseDown" Click="grdTaskQColumnHeader_Click"/>
+                                            <GridViewColumn
+                                                x:Name="grdTaskQErrorMsgColumn"
+                                                Width="{Binding DateModifiedColumnWidth}"
+                                                local:ChoGridViewColumnVisibilityManager.IsVisible="{Binding ErrorMessage}"
+                                                local:ChoGridViewSort.PropertyName="Status"
+                                                DisplayMemberBinding="{Binding Path=ErrorMessage}">
+                                                <GridViewColumnHeader
+                                                    x:Name="grdTaskQErrorMsgColumnHeader"
+                                                    Click="grdTaskQColumnHeader_Click"
+                                                    Content="ERROR MSG"
+                                                    ContextMenu="{StaticResource grdTaskQueueHeaderContextMenu}"
+                                                    MouseDown="GridViewTaskQColumnHeader_MouseDown"
+                                                    SizeChanged="grdTaskQErrorMsgColumnHeader_SizeChanged"
+                                                    Tag="ErrorMessage" />
                                             </GridViewColumn>
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
 
                                 <!--<ListBox x:Name="lstBackupTasks" Margin="0,5,0,0" BorderThickness="1" BorderBrush="LightGray" VerticalAlignment="Stretch"
-                                             ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName" 
+                                             ItemsSource="{Binding BackupTaskInfos}" SelectedValuePath="FilePath" DisplayMemberPath="FileName"
                                              SelectedValue="{Binding SelectedBackupTaskFilePath}" >-->
                             </DockPanel>
                         </GroupBox>
@@ -946,8 +1503,15 @@
                 </TabControl>
             </Expander>
 
-            <GridSplitter Grid.Column="1" Width="1" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" IsTabStop="False" 
-                          ResizeDirection="Columns" Background="{Binding TextBoxFocusBorderBrush}" />
+            <GridSplitter
+                Grid.Column="1"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Background="{Binding WindowTitleBrush}"
+                IsTabStop="False"
+                ResizeBehavior="PreviousAndNext"
+                ResizeDirection="Columns" />
         </Grid>
     </DockPanel>
 </Controls:MetroWindow>

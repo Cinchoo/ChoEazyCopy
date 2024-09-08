@@ -15,6 +15,8 @@
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -106,7 +108,21 @@
       <HintPath>Lib\MahApps.Metro.IconPacks.FontAwesome.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack">
+      <HintPath>Lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>Lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SoftFluent.Windows, Version=1.0.0.0, Culture=neutral, PublicKeyToken=02a67131d2a99c25, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\SoftFluent.Windows.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Activities.Presentation" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
@@ -131,22 +147,13 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Xceed.Wpf.Toolkit, Version=2.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Lib\Xceed.Wpf.Toolkit.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ChoPropertyGridFilePicker.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ChoPropertyGridFolderPicker.xaml">
+    <Page Include="ChoSystemColorsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -161,13 +168,10 @@
     <Compile Include="ChoAppCmdLineArgs.cs" />
     <Compile Include="ChoAppSettings.cs" />
     <Compile Include="ChoAppTheme.cs" />
-    <Compile Include="ChoPropertyGridFilePicker.xaml.cs">
-      <DependentUpon>ChoPropertyGridFilePicker.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ChoPropertyGridFolderPicker.xaml.cs">
-      <DependentUpon>ChoPropertyGridFolderPicker.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ChoRoboCopyManager.cs" />
+    <Compile Include="ChoSystemColorsWindow.xaml.cs">
+      <DependentUpon>ChoSystemColorsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ChoTaskQueueItem.cs" />
     <Compile Include="ChoUserPreferences.cs" />
     <Compile Include="ChoGridViewColumnVisibilityManager.cs" />
@@ -177,6 +181,14 @@
     <Compile Include="ChoUtility.cs" />
     <Compile Include="ChoObservableCollection.cs" />
     <Compile Include="ChoTaskQueueItemLogInfo.cs" />
+    <Compile Include="ChoAssemblyBetaVersionAttribute.cs" />
+    <Compile Include="ChoFileSizeFormatter.cs" />
+    <Compile Include="ChoApplicationThemeManager.cs" />
+    <Compile Include="ChoValueConverters.cs" />
+    <Compile Include="ChoBackupTaskInfo.cs" />
+    <Compile Include="Controls\ChoPropertyGrid.cs" />
+    <Compile Include="Controls\ChoMaskedTextBox.cs" />
+    <Compile Include="Controls\WpfPropertyGrid.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -215,9 +227,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="App.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Lib\Xceed.Wpf.Toolkit.dll" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\AddFile.png" />
@@ -325,6 +334,22 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\MoveJob.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Lib\MahApps.Metro.IconPacks.BootstrapIcons.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Lib\SoftFluent.Windows.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Lib\Microsoft.WindowsAPICodePack.dll" />
+    <EmbeddedResource Include="Lib\Microsoft.WindowsAPICodePack.Shell.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

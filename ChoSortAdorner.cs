@@ -43,7 +43,7 @@ namespace ChoEazyCopy
             Geometry geometry = ascGeometry;
             if (this.Direction == ListSortDirection.Descending)
                 geometry = descGeometry;
-            drawingContext.DrawGeometry(ChoAppTheme.ControlForegroundBrush, null, geometry);
+            drawingContext.DrawGeometry(ChoAppTheme.Instance.ControlForegroundBrush, null, geometry);
 
             drawingContext.Pop();
         }

@@ -18,7 +18,6 @@
     using Cinchoo.Core.IO;
     using System.IO;
     using System.Xml.Serialization;
-    using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
     using System.Windows;
     using Cinchoo.Core.WPF;
     using System.Windows.Data;
@@ -28,75 +27,97 @@
     using System.Windows.Threading;
     using System.Runtime.CompilerServices;
     using System.Reflection;
+    using SoftFluent.Windows;
 
     #endregion NameSpaces
 
     [Flags]
-    public enum ChoCopyFlags
+    public enum ChoCopyFileFlags
     {
+        [Description("")]
+        None = 0,
         [Description("D")]
-        Data,
+        Data = 1,
         [Description("A")]
-        Attributes,
+        Attributes = 2,
         [Description("T")]
-        Timestamps,
+        Timestamps = 4,
         [Description("S")]
-        SecurityNTFSACLs,
+        SecurityNTFSACLs = 8,
         [Description("O")]
-        OwnerInfo,
+        OwnerInfo = 16,
         [Description("U")]
-        AuditingInfo
+        AuditingInfo = 32
     }
 
+    [Flags]
+    public enum ChoCopyDirFlags
+    {
+        [Description("")]
+        None = 0,
+        [Description("D")]
+        Data = 1,
+        [Description("A")]
+        Attributes = 2,
+        [Description("T")]
+        Timestamps = 4,
+        [Description("E")]
+        ExtendedAttributes = 8,
+        [Description("X")]
+        SkipAlternativeDataStreams = 16,
+    }
+
+    [Flags]
     public enum ChoFileAttributes
     {
+        [Description("")]
+        None = 0,
         [Description("R")]
-        ReadOnly,
+        ReadOnly = 1,
         [Description("H")]
-        Hidden,
+        Hidden = 2,
         [Description("A")]
-        Archive,
+        Archive = 4,
         [Description("S")]
-        System,
+        System = 8,
         [Description("C")]
-        Compressed,
+        Compressed = 16,
         [Description("N")]
-        NotContentIndexed,
+        NotContentIndexed = 32,
         [Description("E")]
-        Encrypted,
+        Encrypted = 64,
         [Description("T")]
-        Temporary
+        Temporary = 128
     }
 
+    [Flags]
     public enum ChoFileSelectionAttributes
     {
+        None = 0,
         [Description("R")]
-        ReadOnly,
+        ReadOnly = 1,
         [Description("A")]
-        Archive,
+        Archive = 2,
         [Description("S")]
-        System,
+        System = 4,
         [Description("H")]
-        Hidden,
+        Hidden = 8,
         [Description("C")]
-        Compressed,
+        Compressed = 16,
         [Description("N")]
-        NotContentIndexed,
+        NotContentIndexed = 32,
         [Description("E")]
-        Encrypted,
+        Encrypted = 64,
         [Description("T")]
-        Temporary,
+        Temporary = 128,
         [Description("O")]
-        Offline
+        Offline = 256
     }
 
     public enum ChoFileMoveAttributes
     {
-        [Description("")]
         None,
-        [Description("/MOV")]
         MoveFilesOnly,
-        [Description("/MOVE")]
         MoveDirectoriesAndFiles,
     }
     public abstract class ChoViewModelBase : INotifyPropertyChanged
@@ -116,6 +137,9 @@
         private readonly static Dictionary<string, PropertyInfo> _propInfos = new Dictionary<string, PropertyInfo>();
         private readonly static Dictionary<PropertyInfo, object> _defaultValues = new Dictionary<PropertyInfo, object>();
         private readonly static ChoAppSettings DefaultInstance = new ChoAppSettings();
+
+        #region Constructors
+
         static ChoAppSettings()
         {
             ChoPropertyInfoAttribute attr = null;
@@ -136,12 +160,14 @@
         {
         }
 
+        #endregion Constructors
+
         #region Instance Data Members (Others)
 
         private bool _showRoboCopyProgress;
         [Browsable(false)]
         [ChoPropertyInfo("ShowRoboCopyProgress")]
-        [XmlIgnore]
+        //[XmlIgnore]
         public bool ShowRoboCopyProgress
         {
             get { return _showRoboCopyProgress; }
@@ -260,6 +286,7 @@
         [Description("Additional command line parameters (Optional).")]
         [DisplayName("AdditionalParams")]
         [ChoPropertyInfo("additionalParams", DefaultValue = "")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "BigTextEditor")]
         public string AdditionalParams
         {
             get { return _additionalParams; }
@@ -275,7 +302,8 @@
         [Description("Specify MS-DOS commands to run before robocopy operations, separated by ; (Optional).")]
         [DisplayName("PreCommands")]
         [ChoPropertyInfo("precommands", DefaultValue = "")]
-        [Editor(typeof(ChoMultilineTextBoxEditor), typeof(ChoMultilineTextBoxEditor))]
+        //[Editor(typeof(ChoMultilineTextBoxEditor), typeof(ChoMultilineTextBoxEditor))]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "BigTextEditor")]
         public string Precommands
         {
             get { return _precommands; }
@@ -291,7 +319,8 @@
         [Description("Specify MS-DOS commands to run after robocopy operations, separated by ; (Optional).")]
         [DisplayName("Postcommands")]
         [ChoPropertyInfo("postcommands", DefaultValue = "")]
-        [Editor(typeof(ChoMultilineTextBoxEditor), typeof(ChoMultilineTextBoxEditor))]
+        //[Editor(typeof(ChoMultilineTextBoxEditor), typeof(ChoMultilineTextBoxEditor))]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "BigTextEditor")]
         public string Postcommands
         {
             get { return _postcommands; }
@@ -307,6 +336,7 @@
         [Description("Short description of backup task.")]
         [DisplayName("Comments")]
         [ChoPropertyInfo("comments", DefaultValue = "")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "BigTextEditor")]
         public string Comments
         {
             get { return _comments; }
@@ -352,19 +382,39 @@
             }
         }
 
-        string _copyFlags;
+        ChoCopyFileFlags _copyFileFlags;
         [Category("2. Source Options")]
         [Description("What to copy for files (default is /COPY:DAT). (copyflags : D=Data, A=Attributes, T=Timestamps, S=Security=NTFS ACLs, O=Owner info, U=aUditing info). (/COPY:flags).")]
         [DisplayName("CopyFlags")]
         [ChoPropertyInfo("copyFlags", DefaultValue = "Data,Attributes,Timestamps")]
-        [Editor(typeof(CopyFlagsEditor), typeof(CopyFlagsEditor))]
-        public string CopyFlags
+        //[Editor(typeof(CopyFlagsEditor), typeof(CopyFlagsEditor))]
+        [XmlIgnore]
+        public ChoCopyFileFlags CopyFileFlags
         {
-            get { return _copyFlags; }
+            get { return _copyFileFlags; }
             set
             {
-                _copyFlags = value;
+                _copyFileFlags = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        [Browsable(false)]
+        [XmlElement("CopyFileFlags")]
+        public string CopyFileFlagsElement
+        {
+            get { return CopyFileFlags.ToString(); }
+            set
+            {
+                if (value != null)
+                {
+                    if (!value.Contains(","))
+                    value = value.Replace(" ", ",").Trim();
+                }
+
+                ChoCopyFileFlags copyFlags;
+                if (Enum.TryParse<ChoCopyFileFlags>(value, out copyFlags))
+                    _copyFileFlags = copyFlags;
             }
         }
 
@@ -383,20 +433,58 @@
             }
         }
 
-        bool _copyDirTimestamp;
+        //bool _copyDirTimestamp;
+        //[Category("2. Source Options")]
+        //[Description("Copy Directory Timestamps. (/DCOPY:T).")]
+        //[DisplayName("CopyDirTimestamp")]
+        //[ChoPropertyInfo("copyDirTimestamp")]
+        //public bool CopyDirTimestamp
+        //{
+        //    get { return _copyDirTimestamp; }
+        //    set
+        //    {
+        //        _copyDirTimestamp = value;
+        //        NotifyPropertyChanged();
+        //    }
+        //}
+
+
+        ChoCopyDirFlags _copyDirFlags;
         [Category("2. Source Options")]
-        [Description("Copy Directory Timestamps. (/DCOPY:T).")]
-        [DisplayName("CopyDirTimestamp")]
-        [ChoPropertyInfo("copyDirTimestamp")]
-        public bool CopyDirTimestamp
+        [Description("What to copy in directories (default is /DCOPY:DA). (copyflags : D=Data, A=Attributes, T=Timestamps, X=Skip alt data streams). (/DCOPY:flags).")]
+        [DisplayName("CopyDirFlags")]
+        [ChoPropertyInfo("copyDirFlags", DefaultValue = "Data,Attributes")]
+        //[Editor(typeof(CopyFlagsEditor), typeof(CopyFlagsEditor))]
+        [XmlIgnore]
+        public ChoCopyDirFlags CopyDirFlags
         {
-            get { return _copyDirTimestamp; }
+            get { return _copyDirFlags; }
             set
             {
-                _copyDirTimestamp = value;
+                _copyDirFlags = value;
                 NotifyPropertyChanged();
             }
         }
+
+        [Browsable(false)]
+        [XmlElement("CopyDirFlags")]
+        public string CopyDirFlagsElement
+        {
+            get { return CopyDirFlags.ToString(); }
+            set
+            {
+                if (value != null)
+                {
+                    if (!value.Contains(","))
+                        value = value.Replace(" ", ",").Trim();
+                }
+
+                ChoCopyDirFlags copyDirFlags;
+                if (Enum.TryParse<ChoCopyDirFlags>(value, out copyDirFlags))
+                    _copyDirFlags = copyDirFlags;
+            }
+        }
+
 
         bool _copyFilesWithFileInfo;
         [Category("2. Source Options")]
@@ -463,6 +551,7 @@
         [Description("Only copy the top n levels of the source directory tree. 0 - all levels. (/LEV:n).")]
         [DisplayName("OnlyCopyNLevels")]
         [ChoPropertyInfo("onlyCopyNLevels")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint OnlyCopyNLevels
         {
             get { return _onlyCopyNLevels; }
@@ -478,6 +567,7 @@
         [Description("MAXimum file AGE - exclude files older than n days/date. (/MAXAGE:n).")]
         [DisplayName("ExcludeFilesOlderThanNDays")]
         [ChoPropertyInfo("excludeFilesOlderThanNDays")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint ExcludeFilesOlderThanNDays
         {
             get { return _excludeFilesOlderThanNDays; }
@@ -493,6 +583,7 @@
         [Description("MINimum file AGE - exclude files newer than n days/date. (/MINAGE:n).")]
         [DisplayName("ExcludeFilesNewerThanNDays")]
         [ChoPropertyInfo("excludeFilesNewerThanNDays")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint ExcludeFilesNewerThanNDays
         {
             get { return _excludeFilesNewerThanNDays; }
@@ -537,13 +628,14 @@
 
         #region Instance Data Members (Destination Options)
 
-        string _addFileAttributes;
+        ChoFileAttributes _addFileAttributes;
         [Category("3. Destination Options")]
         [Description("Add the given attributes to copied files. (/A+:[RASHCNET]).")]
         [DisplayName("AddFileAttributes")]
         [ChoPropertyInfo("addFileAttributes", DefaultValue = "")]
-        [Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
-        public string AddFileAttributes
+        //[Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
+        [XmlIgnore]
+        public ChoFileAttributes AddFileAttributes
         {
             get { return _addFileAttributes; }
             set
@@ -553,19 +645,59 @@
             }
         }
 
-        string _removeFileAttributes;
+
+        [Browsable(false)]
+        [XmlElement("AddFileAttributes")]
+        public string AddFileAttributesElement
+        {
+            get { return AddFileAttributes.ToString(); }
+            set
+            {
+                if (value != null)
+                {
+                    if (!value.Contains(","))
+                        value = value.Replace(" ", ",").Trim();
+                }
+
+                ChoFileAttributes addFileAttributes;
+                if (Enum.TryParse<ChoFileAttributes>(value, out addFileAttributes))
+                    _addFileAttributes = addFileAttributes;
+            }
+        }
+
+        ChoFileAttributes _removeFileAttributes;
         [Category("3. Destination Options")]
         [Description("Remove the given Attributes from copied files. (/A-:[RASHCNET]).")]
         [DisplayName("RemoveFileAttributes")]
         [ChoPropertyInfo("removeFileAttributes", DefaultValue = "")]
-        [Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
-        public string RemoveFileAttributes
+        //[Editor(typeof(FileAttributesEditor), typeof(FileAttributesEditor))]
+        [XmlIgnore]
+        public ChoFileAttributes RemoveFileAttributes
         {
             get { return _removeFileAttributes; }
             set
             {
                 _removeFileAttributes = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        [Browsable(false)]
+        [XmlElement("RemoveFileAttributes")]
+        public string RemoveFileAttributesElement
+        {
+            get { return RemoveFileAttributes.ToString(); }
+            set
+            {
+                if (value != null)
+                {
+                    if (!value.Contains(","))
+                        value = value.Replace(" ", ",").Trim();
+                }
+
+                ChoFileAttributes removeFileAttributes;
+                if (Enum.TryParse<ChoFileAttributes>(value, out removeFileAttributes))
+                    _removeFileAttributes = removeFileAttributes;
             }
         }
 
@@ -633,13 +765,13 @@
             }
         }
 
-        string _moveFilesAndDirectories;
+        ChoFileMoveAttributes _moveFilesAndDirectories;
         [Category("4. Copy Options")]
         [Description("Move files and dirs (delete from source after copying). (/MOV or /MOVE).")]
         [DisplayName("MoveFilesAndDirectories")]
         [ChoPropertyInfo("moveFilesAndDirectories", DefaultValue = "None")]
-        [Editor(typeof(FileMoveSelectionAttributesEditor), typeof(FileMoveSelectionAttributesEditor))]
-        public string MoveFilesAndDirectories
+        //[Editor(typeof(FileMoveSelectionAttributesEditor), typeof(FileMoveSelectionAttributesEditor))]
+        public ChoFileMoveAttributes MoveFilesAndDirectories
         {
             get { return _moveFilesAndDirectories; }
             set
@@ -649,7 +781,7 @@
             }
         }
 
-        internal void SetMoveFilesAndDirectories(string value)
+        internal void SetMoveFilesAndDirectories(ChoFileMoveAttributes value)
         {
             _moveFilesAndDirectories = value;
             NotifyPropertyChanged(nameof(Comments));
@@ -826,7 +958,8 @@
         [Description("eXclude Files matching given names/paths/wildcards. Separate names with ;. (/XF).")]
         [DisplayName("ExcludeFilesWithGivenNames")]
         [ChoPropertyInfo("excludeFilesWithGivenNames", DefaultValue = "")]
-        [Editor(typeof(ChoPropertyGridFilePicker), typeof(ChoPropertyGridFilePicker))]
+        //[Editor(typeof(ChoPropertyGridFilePicker), typeof(ChoPropertyGridFilePicker))]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "BigTextEditor")]
         public string ExcludeFilesWithGivenNames
         {
             get { return _excludeFilesWithGivenNames; }
@@ -842,7 +975,8 @@
         [Description("eXclude Directories matching given names/paths. Separate names with ;. (/XD).")]
         [DisplayName("ExcludeDirsWithGivenNames")]
         [ChoPropertyInfo("excludeDirsWithGivenNames", DefaultValue = "")]
-        [Editor(typeof(ChoPropertyGridFolderPicker), typeof(ChoPropertyGridFolderPicker))]
+        //[Editor(typeof(ChoPropertyGridFolderPicker), typeof(ChoPropertyGridFolderPicker))]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "BigTextEditor")]
         public string ExcludeDirsWithGivenNames
         {
             get { return _excludeDirsWithGivenNames; }
@@ -853,13 +987,14 @@
             }
         }
 
-        string _includeFilesWithGivenAttributes;
+        ChoFileSelectionAttributes _includeFilesWithGivenAttributes;
         [Category("4. Copy Options")]
         [Description("Include only files with any of the given Attributes set. (/IA:[RASHCNETO]).")]
         [DisplayName("IncludeFilesWithGivenAttributes")]
         [ChoPropertyInfo("includeFilesWithGivenAttributes", DefaultValue = "")]
-        [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
-        public string IncludeFilesWithGivenAttributes
+        //[Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
+        [XmlIgnore]
+        public ChoFileSelectionAttributes IncludeFilesWithGivenAttributes
         {
             get { return _includeFilesWithGivenAttributes; }
             set
@@ -869,19 +1004,58 @@
             }
         }
 
-        string _excludeFilesWithGivenAttributes;
+        [Browsable(false)]
+        [XmlElement("IncludeFilesWithGivenAttributes")]
+        public string IncludeFilesWithGivenAttributesElement
+        {
+            get { return IncludeFilesWithGivenAttributes.ToString(); }
+            set
+            {
+                if (value != null)
+                {
+                    if (!value.Contains(","))
+                        value = value.Replace(" ", ",").Trim();
+                }
+
+                ChoFileSelectionAttributes includeFilesWithGivenAttributes;
+                if (Enum.TryParse<ChoFileSelectionAttributes>(value, out includeFilesWithGivenAttributes))
+                    _includeFilesWithGivenAttributes = includeFilesWithGivenAttributes;
+            }
+        }
+
+        ChoFileSelectionAttributes _excludeFilesWithGivenAttributes;
         [Category("4. Copy Options")]
         [Description("eXclude files with any of the given Attributes set. (/XA:[RASHCNETO]).")]
         [DisplayName("ExcludeFilesWithGivenAttributes")]
         [ChoPropertyInfo("excludeFilesWithGivenAttributes", DefaultValue = "")]
-        [Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
-        public string ExcludeFilesWithGivenAttributes
+        //[Editor(typeof(FileSelectionAttributesEditor), typeof(FileSelectionAttributesEditor))]
+        [XmlIgnore]
+        public ChoFileSelectionAttributes ExcludeFilesWithGivenAttributes
         {
             get { return _excludeFilesWithGivenAttributes; }
             set
             {
                 _excludeFilesWithGivenAttributes = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        [Browsable(false)]
+        [XmlElement("ExcludeFilesWithGivenAttributes")]
+        public string ExcludeFilesWithGivenAttributesElement
+        {
+            get { return ExcludeFilesWithGivenAttributes.ToString(); }
+            set
+            {
+                if (value != null)
+                {
+                    if (!value.Contains(","))
+                        value = value.Replace(" ", ",").Trim();
+                }
+
+                ChoFileSelectionAttributes excludeFilesWithGivenAttributes;
+                if (Enum.TryParse<ChoFileSelectionAttributes>(value, out excludeFilesWithGivenAttributes))
+                    _excludeFilesWithGivenAttributes = excludeFilesWithGivenAttributes;
             }
         }
 
@@ -980,6 +1154,7 @@
         [Description("MAXimum file size - exclude files bigger than n bytes. (/MAX:n).")]
         [DisplayName("ExcludeFilesBiggerThanNBytes")]
         [ChoPropertyInfo("excludeFilesBiggerThanNBytes")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint ExcludeFilesBiggerThanNBytes
         {
             get { return _excludeFilesBiggerThanNBytes; }
@@ -995,6 +1170,7 @@
         [Description("MINimum file size - exclude files smaller than n bytes. (/MIN:n).")]
         [DisplayName("ExcludeFilesSmallerThanNBytes")]
         [ChoPropertyInfo("excludeFilesSmallerThanNBytes")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint ExcludeFilesSmallerThanNBytes
         {
             get { return _excludeFilesSmallerThanNBytes; }
@@ -1010,6 +1186,7 @@
         [Description("MAXimum Last Access Date - exclude files unused since n. (/MAXLAD:n).")]
         [DisplayName("ExcludeFilesUnusedSinceNDays")]
         [ChoPropertyInfo("excludeFilesUnusedSinceNDays")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint ExcludeFilesUnusedSinceNDays
         {
             get { return _excludeFilesUnusedSinceNDays; }
@@ -1025,6 +1202,7 @@
         [Description("MINimum Last Access Date - exclude files used since n. (If n < 1900 then n = n days, else n = YYYYMMDD date). (/MINLAD:n).")]
         [DisplayName("ExcludeFilesUsedSinceNDays")]
         [ChoPropertyInfo("excludeFilesUsedSinceNDays")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint ExcludeFilesUsedSinceNDays
         {
             get { return _excludeFilesUsedSinceNDays; }
@@ -1130,6 +1308,7 @@
         [Description("Do multi-threaded copies with n threads (default 8). n must be at least 1 and not greater than 128. This option is incompatible with the /IPG and /EFSRAW options. Redirect output using /LOG option for better performance. (/MT[:n]).")]
         [DisplayName("MultithreadCopy")]
         [ChoPropertyInfo("multithreadCopy", DefaultValue = "0")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint MultithreadCopy
         {
             get { return _multithreadCopy; }
@@ -1168,6 +1347,7 @@
         [Description("Number of Retries on failed copies: default 1 million. (/R:n).")]
         [DisplayName("NoOfRetries")]
         [ChoPropertyInfo("noOfRetries", DefaultValue = DefaultNoOfRetries)]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint NoOfRetries
         {
             get { return _noOfRetries; }
@@ -1185,6 +1365,7 @@
         [Description("Wait time between retries: default is 30 seconds. (/W:n).")]
         [DisplayName("WaitTimeBetweenRetries")]
         [ChoPropertyInfo("waitTimeBetweenRetries", DefaultValue = DefaultWaitTimeBetweenRetries)]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint WaitTimeBetweenRetries
         {
             get { return _waitTimeBetweenRetries; }
@@ -1230,6 +1411,7 @@
         [Description("Monitor source; run again when more than n changes seen. (/MON:n).")]
         [DisplayName("RunAgainWithNoChangesSeen")]
         [ChoPropertyInfo("runAgainWithNoChangesSeen")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint RunAgainWithNoChangesSeen
         {
             get { return _runAgainWithNoChangesSeen; }
@@ -1245,6 +1427,7 @@
         [Description("Monitor source; run again in m minutes time, if changed. (/MOT:m).")]
         [DisplayName("RunAgainWithChangesSeenInMin")]
         [ChoPropertyInfo("runAgainWithChangesSeenInMin")]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "NumericDropDownListEditor")]
         public uint RunAgainWithChangesSeenInMin
         {
             get { return _runAgainWithChangesSeenInMin; }
@@ -1280,6 +1463,8 @@
         [DisplayName("RunHourStartTime")]
         [ChoPropertyInfo("runHourStartTime")]
         [XmlIgnore]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "TimePickerEditor")]
+        [IgnoreValue("__:__:__")]
         public TimeSpan RunHourStartTime
         {
             get { return _runHourStartTime; }
@@ -1299,6 +1484,8 @@
         [DisplayName("RunHourEndTime")]
         [ChoPropertyInfo("runHourEndTime")]
         [XmlIgnore]
+        [PropertyGridOptions(EditorDataTemplateResourceKey = "TimePickerEditor")]
+        [IgnoreValue("__:__:__")]
         public TimeSpan RunHourEndTime
         {
             get { return _runHourEndTime; }
@@ -1597,6 +1784,8 @@
             Copy(DefaultInstance, this);
             //ChoObject.ResetObject(this);
             //Persist();
+            SourceDirectory = null;
+            DestDirectory = null;
             MultithreadCopy = 0;
             Precommands = null;
             Postcommands = null;
@@ -1629,6 +1818,8 @@
                 cmdText.Append(Postcommands);
             if (!Precommands.IsNullOrWhiteSpace())
                 cmdText.Append(Precommands);
+            cmdText.Append($"/ShowOutputLineNumbers:{ShowOutputLineNumbers}");
+            cmdText.Append($"/ShowRoboCopyProgress:{ShowRoboCopyProgress}");
 
             return cmdText.ToString();
         }
@@ -1669,14 +1860,37 @@
 
             if (EncrptFileEFSRawMode)
                 cmdText.Append(" /EFSRAW");
-            if (!CopyFlags.IsNullOrWhiteSpace())
-            {
-                cmdText.AppendFormat(" /COPY:{0}", (from f in CopyFlags.SplitNTrim()
-                                                    where !f.IsNullOrWhiteSpace()
-                                                    select ((ChoCopyFlags)Enum.Parse(typeof(ChoCopyFlags), f)).ToDescription()).Join(""));
-            }
-            if (CopyDirTimestamp)
-                cmdText.Append(" /DCOPY:T");
+
+            StringBuilder copyFileFlags = new StringBuilder();
+            if ((CopyFileFlags & ChoCopyFileFlags.Data) == ChoCopyFileFlags.Data)
+                copyFileFlags.Append($"D");
+            if ((CopyFileFlags & ChoCopyFileFlags.Attributes) == ChoCopyFileFlags.Attributes)
+                copyFileFlags.Append($"A");
+            if ((CopyFileFlags & ChoCopyFileFlags.Timestamps) == ChoCopyFileFlags.Timestamps)
+                copyFileFlags.Append($"T");
+            if ((CopyFileFlags & ChoCopyFileFlags.SecurityNTFSACLs) == ChoCopyFileFlags.SecurityNTFSACLs)
+                copyFileFlags.Append($"S");
+            if ((CopyFileFlags & ChoCopyFileFlags.OwnerInfo) == ChoCopyFileFlags.OwnerInfo)
+                copyFileFlags.Append($"O");
+            if ((CopyFileFlags & ChoCopyFileFlags.AuditingInfo) == ChoCopyFileFlags.AuditingInfo)
+                copyFileFlags.Append($"U");
+            if (copyFileFlags.Length > 0)
+                cmdText.AppendFormat(" /COPY:{0}", copyFileFlags.ToString());
+
+            StringBuilder copyDirFlags = new StringBuilder();
+            if ((CopyDirFlags & ChoCopyDirFlags.Data) == ChoCopyDirFlags.Data)
+                copyDirFlags.Append($"D");
+            if ((CopyDirFlags & ChoCopyDirFlags.Attributes) == ChoCopyDirFlags.Attributes)
+                copyDirFlags.Append($"A");
+            if ((CopyDirFlags & ChoCopyDirFlags.Timestamps) == ChoCopyDirFlags.Timestamps)
+                copyDirFlags.Append($"T");
+            if ((CopyDirFlags & ChoCopyDirFlags.ExtendedAttributes) == ChoCopyDirFlags.ExtendedAttributes)
+                copyDirFlags.Append($"E");
+            if ((CopyDirFlags & ChoCopyDirFlags.SkipAlternativeDataStreams) == ChoCopyDirFlags.SkipAlternativeDataStreams)
+                copyDirFlags.Append($"X");
+            if (copyDirFlags.Length > 0)
+                cmdText.AppendFormat(" /DCOPY:{0}", copyDirFlags.ToString());
+
             if (CopyFilesWithSecurity)
                 cmdText.Append(" /SEC");
 
@@ -1697,36 +1911,58 @@
             //    cmdText.Append(" /MOV");
             //if (MoveFilesNDirs)
             //    cmdText.Append(" /MOVE");
-            if (!MoveFilesAndDirectories.IsNullOrWhiteSpace())
+            switch (MoveFilesAndDirectories)
             {
-                ChoFileMoveAttributes value = ChoFileMoveAttributes.None;
-                if (Enum.TryParse<ChoFileMoveAttributes>(MoveFilesAndDirectories, out value))
-                {
-                    switch (value)
-                    {
-                        case ChoFileMoveAttributes.MoveFilesOnly:
-                            cmdText.Append(" /MOV");
-                            break;
-                        case ChoFileMoveAttributes.MoveDirectoriesAndFiles:
-                            cmdText.Append(" /MOVE");
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                case ChoFileMoveAttributes.MoveFilesOnly:
+                    cmdText.Append(" /MOV");
+                    break;
+                case ChoFileMoveAttributes.MoveDirectoriesAndFiles:
+                    cmdText.Append(" /MOVE");
+                    break;
+                default:
+                    break;
             }
-            if (!AddFileAttributes.IsNullOrWhiteSpace())
-            {
-                cmdText.AppendFormat(" /A+:{0}", (from f in AddFileAttributes.SplitNTrim()
-                                                  where !f.IsNullOrWhiteSpace()
-                                                  select ((ChoFileAttributes)Enum.Parse(typeof(ChoFileAttributes), f)).ToDescription()).Join(""));
-            }
-            if (!RemoveFileAttributes.IsNullOrWhiteSpace())
-            {
-                cmdText.AppendFormat(" /A-:{0}", (from f in RemoveFileAttributes.SplitNTrim()
-                                                  where !f.IsNullOrWhiteSpace()
-                                                  select ((ChoFileAttributes)Enum.Parse(typeof(ChoFileAttributes), f)).ToDescription()).Join(""));
-            }
+
+            StringBuilder addFileAttributes = new StringBuilder();
+            if ((AddFileAttributes & ChoFileAttributes.ReadOnly) == ChoFileAttributes.ReadOnly)
+                addFileAttributes.Append($"R");
+            if ((AddFileAttributes & ChoFileAttributes.Hidden) == ChoFileAttributes.Hidden)
+                addFileAttributes.Append($"H");
+            if ((AddFileAttributes & ChoFileAttributes.Archive) == ChoFileAttributes.Archive)
+                addFileAttributes.Append($"A");
+            if ((AddFileAttributes & ChoFileAttributes.System) == ChoFileAttributes.System)
+                addFileAttributes.Append($"S");
+            if ((AddFileAttributes & ChoFileAttributes.Compressed) == ChoFileAttributes.Compressed)
+                addFileAttributes.Append($"C");
+            if ((AddFileAttributes & ChoFileAttributes.NotContentIndexed) == ChoFileAttributes.NotContentIndexed)
+                addFileAttributes.Append($"N");
+            if ((AddFileAttributes & ChoFileAttributes.Encrypted) == ChoFileAttributes.Encrypted)
+                addFileAttributes.Append($"E");
+            if ((AddFileAttributes & ChoFileAttributes.Temporary) == ChoFileAttributes.Temporary)
+                addFileAttributes.Append($"T");
+            if (addFileAttributes.Length > 0)
+                cmdText.AppendFormat(" /A+:{0}", addFileAttributes.ToString());
+
+            StringBuilder removeFileAttributes = new StringBuilder();
+            if ((RemoveFileAttributes & ChoFileAttributes.ReadOnly) == ChoFileAttributes.ReadOnly)
+                removeFileAttributes.Append($"R");
+            if ((RemoveFileAttributes & ChoFileAttributes.Hidden) == ChoFileAttributes.Hidden)
+                removeFileAttributes.Append($"H");
+            if ((RemoveFileAttributes & ChoFileAttributes.Archive) == ChoFileAttributes.Archive)
+                removeFileAttributes.Append($"A");
+            if ((RemoveFileAttributes & ChoFileAttributes.System) == ChoFileAttributes.System)
+                removeFileAttributes.Append($"S");
+            if ((RemoveFileAttributes & ChoFileAttributes.Compressed) == ChoFileAttributes.Compressed)
+                removeFileAttributes.Append($"C");
+            if ((RemoveFileAttributes & ChoFileAttributes.NotContentIndexed) == ChoFileAttributes.NotContentIndexed)
+                removeFileAttributes.Append($"N");
+            if ((RemoveFileAttributes & ChoFileAttributes.Encrypted) == ChoFileAttributes.Encrypted)
+                removeFileAttributes.Append($"E");
+            if ((RemoveFileAttributes & ChoFileAttributes.Temporary) == ChoFileAttributes.Temporary)
+                removeFileAttributes.Append($"T");
+            if (removeFileAttributes.Length > 0)
+                cmdText.AppendFormat(" /A-:{0}", removeFileAttributes.ToString());
+
             if (CreateDirTree)
                 cmdText.Append(" /CREATE");
             if (CreateFATFileNames)
@@ -1761,18 +1997,52 @@
                 cmdText.Append(" /A");
             if (CopyOnlyFilesWithArchiveAttributesAndReset)
                 cmdText.Append(" /M");
-            if (!IncludeFilesWithGivenAttributes.IsNullOrWhiteSpace())
-            {
-                cmdText.AppendFormat(" /IA:{0}", (from f in IncludeFilesWithGivenAttributes.SplitNTrim()
-                                                  where !f.IsNullOrWhiteSpace()
-                                                  select ((ChoFileSelectionAttributes)Enum.Parse(typeof(ChoFileSelectionAttributes), f)).ToDescription()).Join(""));
-            }
-            if (!ExcludeFilesWithGivenAttributes.IsNullOrWhiteSpace())
-            {
-                cmdText.AppendFormat(" /XA:{0}", (from f in ExcludeFilesWithGivenAttributes.SplitNTrim()
-                                                  where !f.IsNullOrWhiteSpace()
-                                                  select ((ChoFileSelectionAttributes)Enum.Parse(typeof(ChoFileSelectionAttributes), f)).ToDescription()).Join(""));
-            }
+
+            StringBuilder includeFilesWithGivenAttributes = new StringBuilder();
+            if ((IncludeFilesWithGivenAttributes & ChoFileSelectionAttributes.ReadOnly) == ChoFileSelectionAttributes.ReadOnly)
+                removeFileAttributes.Append($"R");
+            if ((IncludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Archive) == ChoFileSelectionAttributes.Archive)
+                removeFileAttributes.Append($"A");
+            if ((IncludeFilesWithGivenAttributes & ChoFileSelectionAttributes.System) == ChoFileSelectionAttributes.System)
+                removeFileAttributes.Append($"S");
+            if ((IncludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Hidden) == ChoFileSelectionAttributes.Hidden)
+                removeFileAttributes.Append($"H");
+            if ((IncludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Compressed) == ChoFileSelectionAttributes.Compressed)
+                removeFileAttributes.Append($"C");
+            if ((IncludeFilesWithGivenAttributes & ChoFileSelectionAttributes.NotContentIndexed) == ChoFileSelectionAttributes.NotContentIndexed)
+                removeFileAttributes.Append($"N");
+            if ((IncludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Encrypted) == ChoFileSelectionAttributes.Encrypted)
+                removeFileAttributes.Append($"E");
+            if ((IncludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Temporary) == ChoFileSelectionAttributes.Temporary)
+                removeFileAttributes.Append($"T");
+            if ((IncludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Offline) == ChoFileSelectionAttributes.Offline)
+                removeFileAttributes.Append($"O");
+            if (includeFilesWithGivenAttributes.Length > 0)
+                cmdText.AppendFormat(" /IA:{0}", includeFilesWithGivenAttributes.ToString());
+
+
+            StringBuilder excludeFilesWithGivenAttributes = new StringBuilder();
+            if ((ExcludeFilesWithGivenAttributes & ChoFileSelectionAttributes.ReadOnly) == ChoFileSelectionAttributes.ReadOnly)
+                removeFileAttributes.Append($"R");
+            if ((ExcludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Archive) == ChoFileSelectionAttributes.Archive)
+                removeFileAttributes.Append($"A");
+            if ((ExcludeFilesWithGivenAttributes & ChoFileSelectionAttributes.System) == ChoFileSelectionAttributes.System)
+                removeFileAttributes.Append($"S");
+            if ((ExcludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Hidden) == ChoFileSelectionAttributes.Hidden)
+                removeFileAttributes.Append($"H");
+            if ((ExcludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Compressed) == ChoFileSelectionAttributes.Compressed)
+                removeFileAttributes.Append($"C");
+            if ((ExcludeFilesWithGivenAttributes & ChoFileSelectionAttributes.NotContentIndexed) == ChoFileSelectionAttributes.NotContentIndexed)
+                removeFileAttributes.Append($"N");
+            if ((ExcludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Encrypted) == ChoFileSelectionAttributes.Encrypted)
+                removeFileAttributes.Append($"E");
+            if ((ExcludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Temporary) == ChoFileSelectionAttributes.Temporary)
+                removeFileAttributes.Append($"T");
+            if ((ExcludeFilesWithGivenAttributes & ChoFileSelectionAttributes.Offline) == ChoFileSelectionAttributes.Offline)
+                removeFileAttributes.Append($"O");
+            if (excludeFilesWithGivenAttributes.Length > 0)
+                cmdText.AppendFormat(" /XA:{0}", excludeFilesWithGivenAttributes.ToString());
+            
             if (!ExcludeFilesWithGivenNames.IsNullOrWhiteSpace())
                 cmdText.AppendFormat(@" /XF {0}", String.Join(" ", ExcludeFilesWithGivenNames.Split(";").Select(f => f).Select(f => f.Contains(" ") ? String.Format(@"""{0}""", f) : f)));
             if (!ExcludeDirsWithGivenNames.IsNullOrWhiteSpace())
@@ -1966,140 +2236,6 @@
         object ICloneable.Clone()
         {
             return Clone();
-        }
-    }
-
-    //Custom editors that are used as attributes MUST implement the ITypeEditor interface.
-    public class CopyFlagsEditor : Xceed.Wpf.Toolkit.PropertyGrid.Editors.ITypeEditor
-    {
-        public FrameworkElement ResolveEditor(Xceed.Wpf.Toolkit.PropertyGrid.PropertyItem propertyItem)
-        {
-            ChoMultiSelectComboBox cmb = new ChoMultiSelectComboBox();
-            cmb.HorizontalAlignment = HorizontalAlignment.Stretch;
-
-            //create the binding from the bound property item to the editor
-            var _binding = new Binding("Value"); //bind to the Value property of the PropertyItem
-            _binding.Source = propertyItem;
-            _binding.ValidatesOnExceptions = true;
-            _binding.ValidatesOnDataErrors = true;
-            _binding.Mode = propertyItem.IsReadOnly ? BindingMode.OneWay : BindingMode.TwoWay;
-            BindingOperations.SetBinding(cmb, ChoMultiSelectComboBox.TextProperty, _binding);
-
-            cmb.ItemsSource = ChoEnum.AsNodeList<ChoCopyFlags>(propertyItem.Value.ToNString());
-
-            return cmb;
-        }
-    }
-
-    //Custom editors that are used as attributes MUST implement the ITypeEditor interface.
-    public class FileAttributesEditor : Xceed.Wpf.Toolkit.PropertyGrid.Editors.ITypeEditor
-    {
-        public FrameworkElement ResolveEditor(Xceed.Wpf.Toolkit.PropertyGrid.PropertyItem propertyItem)
-        {
-            ChoMultiSelectComboBox cmb = new ChoMultiSelectComboBox();
-            cmb.HorizontalAlignment = HorizontalAlignment.Stretch;
-
-            //create the binding from the bound property item to the editor
-            var _binding = new Binding("Value"); //bind to the Value property of the PropertyItem
-            _binding.Source = propertyItem;
-            _binding.ValidatesOnExceptions = true;
-            _binding.ValidatesOnDataErrors = true;
-            _binding.Mode = propertyItem.IsReadOnly ? BindingMode.OneWay : BindingMode.TwoWay;
-            BindingOperations.SetBinding(cmb, ChoMultiSelectComboBox.TextProperty, _binding);
-
-            cmb.ItemsSource = ChoEnum.AsNodeList<ChoFileAttributes>(propertyItem.Value.ToNString());
-
-            return cmb;
-        }
-    }
-
-    //Custom editors that are used as attributes MUST implement the ITypeEditor interface.
-    public class FileSelectionAttributesEditor : Xceed.Wpf.Toolkit.PropertyGrid.Editors.ITypeEditor
-    {
-        public FrameworkElement ResolveEditor(Xceed.Wpf.Toolkit.PropertyGrid.PropertyItem propertyItem)
-        {
-            ChoMultiSelectComboBox cmb = new ChoMultiSelectComboBox();
-            cmb.HorizontalAlignment = HorizontalAlignment.Stretch;
-
-            //create the binding from the bound property item to the editor
-            var _binding = new Binding("Value"); //bind to the Value property of the PropertyItem
-            _binding.Source = propertyItem;
-            _binding.ValidatesOnExceptions = true;
-            _binding.ValidatesOnDataErrors = true;
-            _binding.Mode = propertyItem.IsReadOnly ? BindingMode.OneWay : BindingMode.TwoWay;
-            BindingOperations.SetBinding(cmb, ChoMultiSelectComboBox.TextProperty, _binding);
-
-            cmb.ItemsSource = ChoEnum.AsNodeList<ChoFileSelectionAttributes>(propertyItem.Value.ToNString());
-
-            return cmb;
-        }
-    }
-
-    public class FileMoveSelectionAttributesEditor : Xceed.Wpf.Toolkit.PropertyGrid.Editors.ITypeEditor
-    {
-        public FrameworkElement ResolveEditor(Xceed.Wpf.Toolkit.PropertyGrid.PropertyItem propertyItem)
-        {
-            ChoFileMoveComboBox cmb = new ChoFileMoveComboBox();
-            cmb.HorizontalAlignment = HorizontalAlignment.Stretch;
-
-            //create the binding from the bound property item to the editor
-            var _binding = new Binding("Value"); //bind to the Value property of the PropertyItem
-            _binding.Source = propertyItem;
-            _binding.ValidatesOnExceptions = true;
-            _binding.ValidatesOnDataErrors = true;
-            _binding.Mode = propertyItem.IsReadOnly ? BindingMode.OneWay : BindingMode.TwoWay;
-            BindingOperations.SetBinding(cmb, ChoFileMoveComboBox.TextProperty, _binding);
-
-            cmb.ItemsSource = ChoEnum.AsNodeList<ChoFileMoveAttributes>(propertyItem.Value.ToNString()).Select(c => c.Title);
-            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => cmb.SelectedItem = propertyItem.Value.ToNString()));
-            return cmb;
-        }
-    }
-
-    public class ChoFileMoveComboBox : ComboBox
-    {
-        protected override void OnSelectionChanged(SelectionChangedEventArgs e)
-        {
-            if (e.RemovedItems.Count > 0)
-            {
-                if (e.AddedItems != null && e.AddedItems.Count > 0)
-                {
-                    var value = (ChoFileMoveAttributes)Enum.Parse(typeof(ChoFileMoveAttributes), e.AddedItems.OfType<string>().FirstOrDefault());
-                    if (value == ChoFileMoveAttributes.MoveFilesOnly)
-                    {
-                        if (MessageBox.Show("Would like to delete the original file(s) after transferring the copies to the new location?", MainWindow.Caption, MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.No)
-                        {
-                            e.Handled = true;
-                            return;
-                        }
-                    }
-                    else if (value == ChoFileMoveAttributes.MoveDirectoriesAndFiles)
-                    {
-                        if (MessageBox.Show("Would like to delete the original file(s) / folder(s) after transferring the copies to the new location?", MainWindow.Caption, MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.No)
-                        {
-                            e.Handled = true;
-                            return;
-                        }
-                    }
-                }
-            }
-            base.OnSelectionChanged(e);
-        }
-    }
-    public class ChoMultilineTextBoxEditor : Xceed.Wpf.Toolkit.PropertyGrid.Editors.ITypeEditor
-    {
-        public FrameworkElement ResolveEditor(Xceed.Wpf.Toolkit.PropertyGrid.PropertyItem propertyItem)
-        {
-            System.Windows.Controls.TextBox textBox = new System.Windows.Controls.TextBox();
-            textBox.AcceptsReturn = true;
-            //create the binding from the bound property item to the editor
-            var _binding = new Binding("Value"); //bind to the Value property of the PropertyItem
-            _binding.Source = propertyItem;
-            _binding.ValidatesOnExceptions = true;
-            _binding.ValidatesOnDataErrors = true;
-            _binding.Mode = propertyItem.IsReadOnly ? BindingMode.OneWay : BindingMode.TwoWay;
-            BindingOperations.SetBinding(textBox, System.Windows.Controls.TextBox.TextProperty, _binding);
-            return textBox;
         }
     }
 }

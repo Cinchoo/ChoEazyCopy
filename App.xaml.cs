@@ -175,12 +175,12 @@ namespace ChoEazyCopy
             {
                 if (Application.Current == null)
                     new App();
-                ////ThemeManager.ChangeAppStyle(Application.Current,
-                ////                            ThemeManager.GetAccent("Blue"),
-                ////                            ThemeManager.GetAppTheme("BaseDark"));
                 //ThemeManager.ChangeAppStyle(Application.Current,
                 //                            ThemeManager.GetAccent("Blue"),
                 //                            ThemeManager.GetAppTheme("BaseDark"));
+                //ThemeManager.ChangeAppStyle(Application.Current,
+                //                            ThemeManager.GetAccent("Steel"),
+                //                            ThemeManager.GetAppTheme("BaseLight"));
 
                 Application.Current.Exit += (o, e) => ChoApplication.NotifyIcon.Dispose();
                 return Application.Current;

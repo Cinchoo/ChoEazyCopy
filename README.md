@@ -40,6 +40,10 @@ Features:
 ## Setup
 * Download latest binary zip file from https://github.com/Cinchoo/ChoEazyCopy/releases
 * Unzip to local drive (ex c:\ChoEazyCopy)
+* Run ChoEazyCopy.exe from the unzip folder.
+* This tool requires RoboCopy.exe (which is part of OS), must be in system path. If not, it can be specified in tool.
+<img width="950" height="600" alt="image" src="https://github.com/user-attachments/assets/a91edcea-7f44-43b0-aa0a-8d4e8326be9c" />
+  
 
 If this project helps you be more productive, you can give me a cup of coffee :)
 

@@ -82,9 +82,10 @@ namespace ChoEazyCopy
         {
             get
             {
-                //if (_isDarkMode)
-                //    return (Brush)_appTheme.Resources["WhiteBrush"];
-                //else
+                if (!_isDarkMode)
+                    return System.Windows.SystemColors.ControlLightBrush;
+                else
+                    return new SolidColorBrush(Colors.SlateGray);
                 return System.Windows.SystemColors.ControlLightBrush;
             }
         }
@@ -94,9 +95,9 @@ namespace ChoEazyCopy
             get
             {
                 if (_isDarkMode)
-                    return (Brush)_appTheme.Resources["WhiteBrush"];
+                    return new SolidColorBrush(Colors.White);
                 else
-                    return (Brush)_appTheme.Resources["BlackBrush"];
+                    return new SolidColorBrush(Colors.Black);
             }
         }
 

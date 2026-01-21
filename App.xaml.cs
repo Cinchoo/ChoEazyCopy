@@ -35,7 +35,7 @@ namespace ChoEazyCopy
                 Settings.Default.UpdateSettings = false;
                 Settings.Default.Save();
             }
-            ChoApplication.Run(args);
+            ChoApplication.Run(args, ChoApplicationMode.Windows);
         }
         public override void OnTrayAppExitMenuClicked(object sender, EventArgs e)
         {

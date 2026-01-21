@@ -1327,7 +1327,10 @@ namespace ChoEazyCopy
                 _roboCopyManager.Progress += (sender, e) =>
                 {
                     RobocopyProgresssBarValue = (int)(((double)e._runningBytes / e._totalBytes) * 100);
-                    RobocopyProgresssText = $"Copied {e._runningFileCount:N0} of {e._totalFileCount:N0} files; Copied {ChoFileSizeFormatter.FormatSize(e._runningBytes)} of {ChoFileSizeFormatter.FormatSize(e._totalBytes)}";
+                    if (appSettings.MoveFilesAndDirectories == ChoFileMoveAttributes.None)
+                        RobocopyProgresssText = $"Copied {e._runningFileCount:N0} of {e._totalFileCount:N0} files; Copied {ChoFileSizeFormatter.FormatSize(e._runningBytes)} of {ChoFileSizeFormatter.FormatSize(e._totalBytes)}";
+                    else
+                        RobocopyProgresssText = $"Moved {e._runningFileCount:N0} of {e._totalFileCount:N0} files; Moved {ChoFileSizeFormatter.FormatSize(e._runningBytes)} of {ChoFileSizeFormatter.FormatSize(e._totalBytes)}";
                 };
 
                 _roboCopyManager.Process(appSettings);

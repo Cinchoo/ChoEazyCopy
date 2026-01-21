@@ -173,19 +173,16 @@
             get { return _showRoboCopyProgress; }
             set
             {
-                if (value)
-                {
-                    //CopySubDirectories = false;
-                    //CopyFlags = String.Empty;
+                //CopySubDirectories = false;
+                //CopyFlags = String.Empty;
 
-                    //MirrorDirTree = true; //MIR = Mirror mode
-                    NoProgress = true; //NP  = Don't show progress percentage in log
-                    NoDirListLog = true; // NDL - No directory list log
-                    NoFileClassLog = true; //NC  = Don't log file classes (existing, new file, etc.)
-                    PrintByteSizes = true; //BYTES = Show file sizes in bytes
-                    NoJobHeader = true; //NJH = Do not display robocopy job header (JH)
-                    NoJobSummary = true; //NJS = Do not display robocopy job summary (JS)
-                }
+                //MirrorDirTree = true; //MIR = Mirror mode
+                NoProgress = value; //NP  = Don't show progress percentage in log
+                NoDirListLog = value; // NDL - No directory list log
+                NoFileClassLog = value; //NC  = Don't log file classes (existing, new file, etc.)
+                PrintByteSizes = value; //BYTES = Show file sizes in bytes
+                NoJobHeader = value; //NJH = Do not display robocopy job header (JH)
+                NoJobSummary = value; //NJS = Do not display robocopy job summary (JS)
 
                 _showRoboCopyProgress = value;
                 NotifyPropertyChanged();
@@ -377,7 +374,11 @@
             set
             {
                 _copySubDirectories = value;
-                if (!value) ShowRoboCopyProgress = false;
+                if (!value)
+                {
+                    _showRoboCopyProgress = value;
+                    NotifyPropertyChanged(nameof(ShowRoboCopyProgress));
+                }
                 NotifyPropertyChanged();
             }
         }
@@ -409,7 +410,7 @@
                 if (value != null)
                 {
                     if (!value.Contains(","))
-                    value = value.Replace(" ", ",").Trim();
+                        value = value.Replace(" ", ",").Trim();
                 }
 
                 ChoCopyFileFlags copyFlags;
@@ -1512,11 +1513,15 @@
         public bool NoProgress
         {
             get { return _noProgress; }
-            set 
-            { 
+            set
+            {
                 _noProgress = value;
-                if (!value) ShowRoboCopyProgress = false;
-                NotifyPropertyChanged(); 
+                if (!value)
+                {
+                    _showRoboCopyProgress = value;
+                    NotifyPropertyChanged(nameof(ShowRoboCopyProgress));
+                }
+                NotifyPropertyChanged();
             }
         }
 
@@ -1616,11 +1621,16 @@
         public bool NoFileClassLog
         {
             get { return _noFileClassLog; }
-            set 
-            { 
+            set
+            {
                 _noFileClassLog = value;
-                if (!value) ShowRoboCopyProgress = false;
-                NotifyPropertyChanged(); 
+                if (!value)
+                {
+                    _showRoboCopyProgress = value;
+                    NotifyPropertyChanged(nameof(ShowRoboCopyProgress));
+                }
+
+                NotifyPropertyChanged();
             }
         }
 
@@ -1643,11 +1653,15 @@
         public bool NoDirListLog
         {
             get { return _noDirListLog; }
-            set 
-            { 
+            set
+            {
                 _noDirListLog = value;
-                if (!value) ShowRoboCopyProgress = false;
-                NotifyPropertyChanged(); 
+                if (!value)
+                {
+                    _showRoboCopyProgress = value;
+                    NotifyPropertyChanged(nameof(ShowRoboCopyProgress));
+                }
+                NotifyPropertyChanged();
             }
         }
 
@@ -1669,11 +1683,16 @@
         public bool NoJobHeader
         {
             get { return _noJobHeader; }
-            set 
-            { 
+            set
+            {
                 _noJobHeader = value;
-                if (!value) ShowRoboCopyProgress = false;
-                NotifyPropertyChanged(); 
+                if (!value)
+                {
+                    _showRoboCopyProgress = value;
+                    NotifyPropertyChanged(nameof(ShowRoboCopyProgress));
+                }
+
+                NotifyPropertyChanged();
             }
         }
 
@@ -1685,11 +1704,16 @@
         public bool NoJobSummary
         {
             get { return _noJobSummary; }
-            set 
-            { 
+            set
+            {
                 _noJobSummary = value;
-                if (!value) ShowRoboCopyProgress = false;
-                NotifyPropertyChanged(); 
+                if (!value)
+                {
+                    _showRoboCopyProgress = value;
+                    NotifyPropertyChanged(nameof(ShowRoboCopyProgress));
+                }
+
+                NotifyPropertyChanged();
             }
         }
 
@@ -1701,11 +1725,16 @@
         public bool PrintByteSizes
         {
             get { return _printByteSizes; }
-            set 
-            { 
+            set
+            {
                 _printByteSizes = value;
-                if (!value) ShowRoboCopyProgress = false;
-                NotifyPropertyChanged(); 
+                if (!value)
+                {
+                    _showRoboCopyProgress = value;
+                    NotifyPropertyChanged(nameof(ShowRoboCopyProgress));
+                }
+
+                NotifyPropertyChanged();
             }
         }
 
@@ -1755,6 +1784,33 @@
 
         #endregion Instance Data Members (Logging Options)
 
+        private bool _quickMoveDirectoriesAndFiles;
+        [Browsable(false)]
+        public bool QuickMoveDirectoriesAndFiles
+        {
+            get { return MoveFilesAndDirectories == ChoFileMoveAttributes.MoveDirectoriesAndFiles; }
+            set
+            {
+                if (value)
+                {
+                    if (MoveFilesAndDirectories == ChoFileMoveAttributes.None)
+                    {
+                        MoveFilesAndDirectories = ChoFileMoveAttributes.MoveDirectoriesAndFiles;
+                    }
+                }
+                else
+                {
+                    if (MoveFilesAndDirectories == ChoFileMoveAttributes.MoveDirectoriesAndFiles)
+                    {
+                        MoveFilesAndDirectories = ChoFileMoveAttributes.None;
+                    }
+                }
+
+                _quickMoveDirectoriesAndFiles = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         #region Commented
 
         //[Category("Copy Options")]
@@ -1791,7 +1847,7 @@
             Postcommands = null;
             Comments = null;
         }
-        
+
         public string GetCmdLineText()
         {
             return "{0} {1}".FormatString(RoboCopyFilePath, GetCmdLineParams());
@@ -1826,7 +1882,7 @@
         internal string GetCmdLineParams(string sourceDirectory = null, string destDirectory = null)
         {
             StringBuilder cmdText = new StringBuilder();
-            
+
             if (!sourceDirectory.IsNullOrWhiteSpace())
                 cmdText.AppendFormat(" \"{0}\"", DirSafeguard(sourceDirectory));
             else if (!SourceDirectory.IsNullOrWhiteSpace())
@@ -2042,7 +2098,7 @@
                 removeFileAttributes.Append($"O");
             if (excludeFilesWithGivenAttributes.Length > 0)
                 cmdText.AppendFormat(" /XA:{0}", excludeFilesWithGivenAttributes.ToString());
-            
+
             if (!ExcludeFilesWithGivenNames.IsNullOrWhiteSpace())
                 cmdText.AppendFormat(@" /XF {0}", String.Join(" ", ExcludeFilesWithGivenNames.Split(";").Select(f => f).Select(f => f.Contains(" ") ? String.Format(@"""{0}""", f) : f)));
             if (!ExcludeDirsWithGivenNames.IsNullOrWhiteSpace())

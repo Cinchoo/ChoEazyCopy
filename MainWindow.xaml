@@ -678,6 +678,28 @@
                                     <CheckBox
                                         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                                         xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
+                                        Margin="5,0,0,0"
+                                        Content="MOVE"
+                                        DockPanel.Dock="Right"
+                                        IsChecked="{Binding Path=AppSettings.QuickMoveDirectoriesAndFiles}"
+                                        Style="{DynamicResource MetroCheckBox}"
+                                        ToolTip="Move files and folders">
+                                        <CheckBox.Foreground>
+                                            <MultiBinding Converter="{x:Static Converters:BackgroundToForegroundConverter.Instance}">
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="Background"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                                <Binding
+                                                    Mode="OneWay"
+                                                    Path="(Controls:GroupBoxHelper.HeaderForeground)"
+                                                    RelativeSource="{RelativeSource AncestorType=GroupBox}" />
+                                            </MultiBinding>
+                                        </CheckBox.Foreground>
+                                    </CheckBox>
+                                    <CheckBox
+                                        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                        xmlns:Converters="clr-namespace:MahApps.Metro.Converters;assembly=MahApps.Metro"
                                         Content="TEST RUN"
                                         DockPanel.Dock="Right"
                                         IsChecked="{Binding Path=AppSettings.ListOnly}"

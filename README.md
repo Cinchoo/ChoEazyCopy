@@ -45,7 +45,7 @@ Features:
 <img width="950" height="600" alt="image" src="https://github.com/user-attachments/assets/a91edcea-7f44-43b0-aa0a-8d4e8326be9c" />
   
 ## Donate
-If this project helps you be more productive, you can give me a cup of coffee :)
+If this project helps you be more productive, you can buy me a cup of coffee :)
 
 [$10](https://buy.stripe.com/8wM7u54Gk2SQ4us001)/[$25](https://buy.stripe.com/8wMdSt5KogJGf969AE)/[$50](https://buy.stripe.com/28o5lX4Gk652e527su)/[$100](https://buy.stripe.com/eVa3dP2ycbpm0ec6or)
 

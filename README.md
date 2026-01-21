@@ -43,6 +43,11 @@ Features:
 * Run ChoEazyCopy.exe from the unzip folder.
 * This tool requires RoboCopy.exe (which is part of OS), must be in system path. If not, it can be specified in tool.
 <img width="950" height="600" alt="image" src="https://github.com/user-attachments/assets/a91edcea-7f44-43b0-aa0a-8d4e8326be9c" />
+
+## Help
+You can read this article for more information about this tool
+
+https://cinchoo.medium.com/eazycopy-yet-another-robocopy-gui-96b2713bf324
   
 ## Donate
 If this project helps you be more productive, you can buy me a cup of coffee :)

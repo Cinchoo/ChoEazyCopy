@@ -38,7 +38,8 @@ Features:
 [.NET Framework 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48)
 
 ## Setup
-
+* Download latest binary zip file from https://github.com/Cinchoo/ChoEazyCopy/releases
+* Unzip to local drive (ex c:\ChoEazyCopy)
 
 If this project helps you be more productive, you can give me a cup of coffee :)
 

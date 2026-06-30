@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1C308884-EEE4-4156-812A-A83EA79C50C8}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ChoEazyCopy</RootNamespace>
     <AssemblyName>ChoEazyCopy</AssemblyName>
@@ -116,6 +116,7 @@
       <HintPath>Lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="PresentationFramework.Classic" />
     <Reference Include="SoftFluent.Windows, Version=1.0.0.0, Culture=neutral, PublicKeyToken=02a67131d2a99c25, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\SoftFluent.Windows.dll</HintPath>

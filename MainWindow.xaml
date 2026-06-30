@@ -250,7 +250,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Window.Resources>
     <DockPanel>
         <StatusBar
@@ -258,8 +257,9 @@
             Margin="5,0,5,5"
             DockPanel.Dock="Bottom">
             <StatusBarItem
+                Height="20"
                 Padding="0"
-                VerticalContentAlignment="Top"
+                VerticalContentAlignment="Center"
                 Focusable="False">
                 <TextBlock x:Name="sbAppStatus" Style="{StaticResource StatusBarTextBlock}"><Run Text="{Binding AppStatusText}" /></TextBlock>
             </StatusBarItem>
@@ -444,7 +444,7 @@
                         <Border
                             Grid.Row="0"
                             Margin="5,5,5,0"
-                            Background="{Binding WindowTitleBrush}"
+                            Background="DarkBlue"
                             BorderBrush="{Binding WindowTitleBrush}"
                             BorderThickness="1">
                             <DockPanel LastChildFill="true">
@@ -500,7 +500,7 @@
                                     <ColumnDefinition Width="35*" />
                                     <ColumnDefinition Width="145*" />
                                     <ColumnDefinition Width="368*" />
-                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="30" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
@@ -519,8 +519,9 @@
                                     Grid.Row="1"
                                     Grid.Column="0"
                                     Grid.ColumnSpan="3"
+                                    Height="25"
                                     Margin="1"
-                                    VerticalAlignment="Stretch"
+                                    VerticalContentAlignment="Center"
                                     BorderBrush="{Binding SourceDirStatus, Converter={local:SourceDirBorderColorConverter}}"
                                     TabIndex="0"
                                     Text="{Binding Path=AppSettings.SourceDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -529,6 +530,8 @@
                                     x:Name="btnSourceDirBrowse"
                                     Grid.Row="1"
                                     Grid.Column="3"
+                                    Width="25"
+                                    Height="25"
                                     Margin="1,0,1,2"
                                     VerticalAlignment="Bottom"
                                     Click="btnSourceDirBrowse_Click"
@@ -558,7 +561,9 @@
                                     Grid.Row="3"
                                     Grid.Column="0"
                                     Grid.ColumnSpan="3"
+                                    Height="25"
                                     Margin="1"
+                                    VerticalContentAlignment="Center"
                                     TabIndex="2"
                                     Text="{Binding Path=AppSettings.DestDirectory, UpdateSourceTrigger=PropertyChanged}"
                                     ToolTip="Destination directory." />
@@ -566,7 +571,9 @@
                                     x:Name="btnDestDirBrowse"
                                     Grid.Row="3"
                                     Grid.Column="3"
-                                    Margin="1,2,1,1"
+                                    Width="25"
+                                    Height="25"
+                                    Margin="1,0,1,2"
                                     Click="btnDestDirBrowse_Click"
                                     Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                                     TabIndex="3"
@@ -890,9 +897,9 @@
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsSelected" Value="True">
                                                 <Setter Property="Panel.ZIndex" Value="100" />
-                                                <Setter TargetName="Border" Property="Background" Value="{Binding TabControlForegroundBrush}" />
-                                                <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0" />
-                                                <Setter Property="Foreground" Value="{Binding TabControlBackgroundBrush}" />
+                                                <Setter TargetName="Border" Property="Background" Value="DarkBlue" />
+                                                <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,1" />
+                                                <Setter Property="Foreground" Value="White" />
                                             </Trigger>
                                             <Trigger Property="IsSelected" Value="False">
                                                 <Setter TargetName="Border" Property="Background" Value="{Binding TabControlBackgroundBrush}" />
@@ -965,15 +972,15 @@
                             Header="Backup Tasks">
                             <DockPanel LastChildFill="True">
                                 <DockPanel HorizontalAlignment="Stretch" DockPanel.Dock="Top">
-                                    <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Directory</TextBlock>
+                                    <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Backup Tasks Directory</TextBlock>
                                     <DockPanel
                                         HorizontalAlignment="Stretch"
                                         DockPanel.Dock="Bottom"
                                         LastChildFill="True">
                                         <Button
                                             x:Name="btnFindBackupTaskDirectoryInFileExplorer"
-                                            Width="20"
-                                            Height="20"
+                                            Width="25"
+                                            Height="25"
                                             VerticalAlignment="Center"
                                             Click="btnFindBackupTaskDirectoryInFileExplorer_Click"
                                             DockPanel.Dock="Right"
@@ -996,7 +1003,8 @@
                                         </Button>
                                         <Button
                                             x:Name="btnRefreshBackupTasks"
-                                            Width="20"
+                                            Width="25"
+                                            Height="25"
                                             Margin="1,0,1,2"
                                             VerticalAlignment="Bottom"
                                             Click="btnRefreshBackupTasks_Click"
@@ -1018,7 +1026,8 @@
                                         </Button>
                                         <Button
                                             x:Name="btnBackupTaskDirectory"
-                                            Width="20"
+                                            Width="25"
+                                            Height="25"
                                             Margin="1,0,1,2"
                                             VerticalAlignment="Bottom"
                                             Click="btnBackupTaskDirectory_Click"
@@ -1094,14 +1103,14 @@
                                                 ToolTip="Queue task" />
                                         </StackPanel>
                                         <DockPanel LastChildFill="True">
-                                            <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Backup Task Comments</TextBlock>
+                                            <TextBlock DockPanel.Dock="Top" FontWeight="Bold">Add/Edit task description</TextBlock>
                                             <TextBox
                                                 x:Name="txtTaskComments"
                                                 Height="70"
                                                 Margin="0,5,0,0"
                                                 Text="{Binding Path=AppSettings.Comments, UpdateSourceTrigger=PropertyChanged}"
                                                 TextWrapping="WrapWithOverflow"
-                                                ToolTip="Backup Task Comments"
+                                                ToolTip="Add/Edit short backup task comments..."
                                                 VerticalScrollBarVisibility="Auto" />
                                         </DockPanel>
                                     </DockPanel>

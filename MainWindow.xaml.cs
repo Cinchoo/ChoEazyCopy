@@ -2041,7 +2041,7 @@ namespace ChoEazyCopy
                 MessageBoxResult result = MessageBoxResult.Yes;
                 if (ConfirmOnDelete)
                 {
-                    result = MessageBox.Show($"Are you sure you want to delete `{Path.GetFileName(SelectedBackupTaskFilePath)}` task?",
+                    result = MessageBox.Show($"Are you sure you want to delete `{Path.GetFileNameWithoutExtension(SelectedBackupTaskFilePath)}` task?",
                         Caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 }
 

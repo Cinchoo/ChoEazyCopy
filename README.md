@@ -29,14 +29,28 @@ Features:
 
 [Download Binaries](https://github.com/Cinchoo/ChoEazyCopy/releases)
 
-### This software requires .NET Framework 4 / .NET Framework 4.5.2
+### This software requires .NET Framework 4 / .NET Framework 4.5.2 / .NET Framework 4.8
 
 [.NET Framework 4](https://www.microsoft.com/en-us/download/confirmation.aspx?id=17718)
 
 [.NET Framework 4.5.2](https://www.microsoft.com/en-us/download/details.aspx?id=42642)
 
+[.NET Framework 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48)
 
-If this project helps you be more productive, you can give me a cup of coffee :)
+## Setup
+* Download latest binary zip file from https://github.com/Cinchoo/ChoEazyCopy/releases
+* Unzip to local drive (ex c:\ChoEazyCopy)
+* Run ChoEazyCopy.exe from the unzip folder.
+* This tool requires RoboCopy.exe (which is part of OS), must be in system path. If not, it can be specified in tool.
+<img width="950" height="600" alt="image" src="https://github.com/user-attachments/assets/a91edcea-7f44-43b0-aa0a-8d4e8326be9c" />
+
+## Help
+You can read this article for more information about this tool
+
+https://cinchoo.medium.com/eazycopy-yet-another-robocopy-gui-96b2713bf324
+  
+## Donate
+If this project helps you be more productive, you can buy me a cup of coffee :)
 
 [$10](https://buy.stripe.com/8wM7u54Gk2SQ4us001)/[$25](https://buy.stripe.com/8wMdSt5KogJGf969AE)/[$50](https://buy.stripe.com/28o5lX4Gk652e527su)/[$100](https://buy.stripe.com/eVa3dP2ycbpm0ec6or)
 
